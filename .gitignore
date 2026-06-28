@@ -1,0 +1,3 @@
+# Local env files (inside web/ are already covered by web/.gitignore)
+web/.env.local
+web/.env*.local
