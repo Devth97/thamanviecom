@@ -44,6 +44,8 @@ export type ShopifyProduct = {
   collections: { nodes: { handle: string; title: string }[] };
 };
 
+export type ShopifyProductPreview = Pick<ShopifyProduct, "id" | "handle" | "title" | "images" | "priceRange">;
+
 export type ShopifyCollection = {
   id: string;
   handle: string;
@@ -51,6 +53,11 @@ export type ShopifyCollection = {
   description: string;
   image: ShopifyImage | null;
   products: { nodes: ShopifyProduct[] };
+};
+
+// Used by getCollections() which fetches partial product data
+export type ShopifyCollectionPreview = Omit<ShopifyCollection, "products"> & {
+  products: { nodes: ShopifyProductPreview[] };
 };
 
 export type ShopifyCartLine = {
@@ -225,7 +232,11 @@ async function shopifyFetch<T>(query: string, variables?: Record<string, unknown
     throw new Error(`Shopify GraphQL error: ${json.errors.map((e) => e.message).join(", ")}`);
   }
 
-  return json.data as T;
+  if (json.data === undefined) {
+    throw new Error("Shopify API returned no data");
+  }
+
+  return json.data;
 }
 
 // ─── Products ─────────────────────────────────────────────────────────────────
@@ -251,7 +262,7 @@ export async function getProducts(options: {
   reverse?: boolean;
   query?: string;
 }): Promise<{ products: ShopifyProduct[]; hasNextPage: boolean; endCursor: string | null }> {
-  const { collection, first = 20, after, sortKey, reverse, query } = options;
+  const { collection, first = 24, after, sortKey, reverse, query } = options;
 
   if (collection) {
     const gql = `
@@ -343,7 +354,7 @@ export async function getProduct(handle: string): Promise<ShopifyProduct | null>
 
 // ─── Collections ──────────────────────────────────────────────────────────────
 
-export async function getCollections(): Promise<ShopifyCollection[]> {
+export async function getCollections(): Promise<ShopifyCollectionPreview[]> {
   const gql = `
     query GetCollections {
       collections(first: 20) {
@@ -384,7 +395,7 @@ export async function getCollections(): Promise<ShopifyCollection[]> {
     }
   `;
 
-  const data = await shopifyFetch<{ collections: { nodes: ShopifyCollection[] } }>(gql);
+  const data = await shopifyFetch<{ collections: { nodes: ShopifyCollectionPreview[] } }>(gql);
   return data.collections.nodes;
 }
 
