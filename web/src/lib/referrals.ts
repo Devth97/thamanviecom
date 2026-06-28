@@ -13,11 +13,13 @@ export async function getReferralStats(userId: string): Promise<{
   referrals: Referral[];
 }> {
   const db = getServiceSupabase();
-  const { data } = await db
+  const { data, error } = await db
     .from("referrals")
     .select("*")
     .eq("referrer_user_id", userId)
     .order("created_at", { ascending: false });
+
+  if (error) throw new Error(`Failed to fetch referrals: ${error.message}`);
 
   const referrals = (data ?? []) as Referral[];
 

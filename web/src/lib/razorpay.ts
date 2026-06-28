@@ -1,4 +1,10 @@
-import crypto from "crypto";
+import crypto, { timingSafeEqual } from "crypto";
+
+function safeCompare(a: string, b: string): boolean {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  return bufA.length === bufB.length && timingSafeEqual(bufA, bufB);
+}
 
 export function createRazorpayClient() {
   // eslint-disable-next-line @typescript-eslint/no-require-imports
@@ -29,7 +35,7 @@ export function verifyRazorpaySignature(
     .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET!)
     .update(body)
     .digest("hex");
-  return expectedSignature === signature;
+  return safeCompare(expectedSignature, signature);
 }
 
 export function verifyRazorpayWebhook(body: string, signature: string): boolean {
@@ -37,5 +43,5 @@ export function verifyRazorpayWebhook(body: string, signature: string): boolean 
     .createHmac("sha256", process.env.RAZORPAY_WEBHOOK_SECRET!)
     .update(body)
     .digest("hex");
-  return expectedSignature === signature;
+  return safeCompare(expectedSignature, signature);
 }
