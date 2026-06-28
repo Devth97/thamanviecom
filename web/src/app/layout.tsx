@@ -5,7 +5,7 @@ import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" });
-// PostHogProvider imported here in Task 5
+import PostHogProvider from "@/components/PostHogProvider";
 
 export const metadata: Metadata = {
   title: { default: "Thamanvi Silks | Premium Sarees & Silk", template: "%s | Thamanvi Silks" },
@@ -23,7 +23,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <ClerkProvider>
       <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
         <body className="bg-[#FDF6EE] text-[#1A1A1A] font-sans antialiased">
-          {children}
+          <PostHogProvider>
+            {children}
+          </PostHogProvider>
         </body>
       </html>
     </ClerkProvider>
