@@ -27,6 +27,7 @@ export type ShopifyVariant = {
   price: ShopifyMoney;
   compareAtPrice: ShopifyMoney | null;
   availableForSale: boolean;
+  quantityAvailable: number | null;
   selectedOptions: { name: string; value: string }[];
 };
 
@@ -127,6 +128,7 @@ const PRODUCT_FRAGMENT = `
         currencyCode
       }
       availableForSale
+      quantityAvailable
       selectedOptions {
         name
         value
