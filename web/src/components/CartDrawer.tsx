@@ -3,7 +3,7 @@ import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import Image from "next/image";
 import { X, Minus, Plus, ShoppingBag } from "lucide-react";
-import { useCart } from "@/hooks/useCart";
+import { useCartContext as useCart } from "@/contexts/CartContext";
 import { formatPrice } from "@/lib/shopify";
 
 export default function CartDrawer() {

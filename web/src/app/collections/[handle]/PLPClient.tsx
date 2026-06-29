@@ -33,12 +33,21 @@ export default function PLPClient({ collection }: Props) {
 
   return (
     <>
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        <nav className="text-xs text-[#666] mb-6" aria-label="Breadcrumb">
-          <a href="/" className="hover:text-[#8B1A1A]">Home</a>
-          <span className="mx-2" aria-hidden="true">›</span>
-          <span>{collection.title}</span>
-        </nav>
+      {/* Back bar */}
+      <div className="border-b border-[#E8DDD0] bg-[#FAF6F0] pt-16">
+        <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
+          <a href="/" className="inline-flex items-center gap-2 text-xs text-[#666] hover:text-[#8B1A1A] transition-colors group">
+            <span className="group-hover:-translate-x-1 transition-transform">←</span>
+            <span>Back to Home</span>
+          </a>
+          <nav className="hidden md:flex items-center text-xs text-[#999]">
+            <a href="/" className="hover:text-[#8B1A1A] transition-colors">Home</a>
+            <span className="mx-2">›</span>
+            <span className="text-[#1A1A1A]">{collection.title}</span>
+          </nav>
+        </div>
+      </div>
+      <div className="mx-auto max-w-6xl px-4 py-8">
         <h1 className="font-display text-3xl text-[#8B1A1A] mb-2">{collection.title}</h1>
         {collection.description && (
           <p className="text-sm text-[#666] mb-8 max-w-xl">{collection.description}</p>

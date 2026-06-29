@@ -3,6 +3,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { Inter, Playfair_Display } from "next/font/google";
 import PostHogProvider from "@/components/PostHogProvider";
 import Navbar from "@/components/Navbar";
+import { CartProvider } from "@/contexts/CartContext";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
@@ -25,6 +26,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
         <body className="bg-[#FAF6F0] text-[#1A1A1A] font-sans antialiased">
           <PostHogProvider>
+            <CartProvider>
             <Navbar />
             {children}
             <footer className="bg-[#0D0808] border-t border-[#B8860B]/10 py-12">
@@ -60,6 +62,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 </div>
               </div>
             </footer>
+            </CartProvider>
           </PostHogProvider>
         </body>
       </html>

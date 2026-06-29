@@ -57,21 +57,35 @@ export default async function ProductPage({
 
   return (
     <>
-      <div className="mx-auto max-w-6xl px-4 py-10">
-        {/* Breadcrumb */}
-        <nav className="text-xs text-[#666] mb-6" aria-label="Breadcrumb">
-          <a href="/" className="hover:text-[#8B1A1A]">Home</a>
-          <span className="mx-2" aria-hidden="true">›</span>
-          {product.collections.nodes[0] && (
-            <>
-              <a href={`/collections/${product.collections.nodes[0].handle}`} className="hover:text-[#8B1A1A]">
-                {product.collections.nodes[0].title}
-              </a>
-              <span className="mx-2" aria-hidden="true">›</span>
-            </>
-          )}
-          <span>{product.title}</span>
-        </nav>
+      {/* Top nav bar below fixed navbar — back button + breadcrumb */}
+      <div className="border-b border-[#E8DDD0] bg-[#FAF6F0] pt-16">
+        <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
+          {/* Back button */}
+          <a
+            href={product.collections.nodes[0] ? `/collections/${product.collections.nodes[0].handle}` : "/"}
+            className="inline-flex items-center gap-2 text-xs text-[#666] hover:text-[#8B1A1A] transition-colors group"
+          >
+            <span className="group-hover:-translate-x-1 transition-transform">←</span>
+            <span>Back to {product.collections.nodes[0]?.title ?? "Collections"}</span>
+          </a>
+          {/* Breadcrumb */}
+          <nav className="hidden md:flex items-center text-xs text-[#999]" aria-label="Breadcrumb">
+            <a href="/" className="hover:text-[#8B1A1A] transition-colors">Home</a>
+            <span className="mx-2">›</span>
+            {product.collections.nodes[0] && (
+              <>
+                <a href={`/collections/${product.collections.nodes[0].handle}`} className="hover:text-[#8B1A1A] transition-colors">
+                  {product.collections.nodes[0].title}
+                </a>
+                <span className="mx-2">›</span>
+              </>
+            )}
+            <span className="text-[#1A1A1A] truncate max-w-[200px]">{product.title}</span>
+          </nav>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-6xl px-4 py-8">
 
         <div className="grid md:grid-cols-2 gap-10 lg:gap-16">
           {/* Gallery */}

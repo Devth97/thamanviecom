@@ -4,7 +4,7 @@ import { gsap } from "gsap";
 import { ShoppingBag, Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCart } from "@/hooks/useCart";
+import { useCartContext as useCart } from "@/contexts/CartContext";
 
 export default function Navbar() {
   const navRef = useRef<HTMLElement>(null);

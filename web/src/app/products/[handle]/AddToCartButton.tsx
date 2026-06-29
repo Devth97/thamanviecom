@@ -1,7 +1,7 @@
 "use client";
 import { useState } from "react";
 import { ShopifyProduct } from "@/lib/shopify";
-import { useCart } from "@/hooks/useCart";
+import { useCartContext as useCart } from "@/contexts/CartContext";
 
 export default function AddToCartButton({ product }: { product: ShopifyProduct }) {
   const { addItem, loading } = useCart();
