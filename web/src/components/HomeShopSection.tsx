@@ -11,7 +11,16 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
   const [sortKey, setSortKey] = useState("BEST_SELLING");
   const [loading, setLoading] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [isDesktop, setIsDesktop] = useState(false);
   const gridRef = useRef<HTMLDivElement>(null);
+
+  // Only render sidebar in DOM on desktop (1024px+)
+  useEffect(() => {
+    const check = () => setIsDesktop(window.innerWidth >= 1024);
+    check();
+    window.addEventListener("resize", check);
+    return () => window.removeEventListener("resize", check);
+  }, []);
 
   // Filter state
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
@@ -84,7 +93,7 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
           {/* Mobile filter button */}
           <button
             onClick={() => setFiltersOpen(true)}
-            className="lg:hidden flex items-center gap-2 border border-[#D4A96A] px-3 py-2 text-xs rounded-full text-[#1A1A1A]"
+            className={`${isDesktop ? "hidden" : "flex"} items-center gap-2 border border-[#D4A96A] px-3 py-2 text-xs rounded-full text-[#1A1A1A]`}
           >
             <SlidersHorizontal className="h-3.5 w-3.5" />
             Filter {activeCount > 0 && <span className="bg-[#8B1A1A] text-white rounded-full px-1.5 text-[10px]">{activeCount}</span>}
@@ -92,10 +101,8 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
         </div>
 
         <div className="flex gap-6 items-start">
-          {/* Desktop filter sidebar — only show on lg+ to avoid squeeze */}
-          <div className="hidden lg:block">
-            <FilterSidebar {...filterProps} />
-          </div>
+          {/* Sidebar — only in DOM on desktop, never renders on mobile */}
+          {isDesktop && <FilterSidebar {...filterProps} />}
 
           {/* Product grid */}
           <div className="flex-1 min-w-0">
@@ -119,9 +126,9 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
         </div>
       </div>
 
-      {/* Mobile/tablet filter drawer */}
-      {filtersOpen && (
-        <div className="fixed inset-0 z-50 lg:hidden">
+      {/* Mobile/tablet filter drawer — only when not desktop */}
+      {filtersOpen && !isDesktop && (
+        <div className="fixed inset-0 z-50">
           <div className="absolute inset-0 bg-black/50" onClick={() => setFiltersOpen(false)} />
           <div className="absolute right-0 top-0 bottom-0 w-[88vw] max-w-xs bg-white overflow-y-auto shadow-2xl flex flex-col">
             {/* Sticky header inside drawer */}
