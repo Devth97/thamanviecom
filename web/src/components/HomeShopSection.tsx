@@ -122,16 +122,32 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
       {/* Mobile/tablet filter drawer */}
       {filtersOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
-          <div className="absolute inset-0 bg-black/40" onClick={() => setFiltersOpen(false)} />
-          <div className="absolute right-0 top-0 bottom-0 w-[85vw] max-w-sm bg-[#FAF6F0] overflow-y-auto p-4 shadow-2xl">
-            <div className="flex items-center justify-between mb-4">
-              <h2 className="font-semibold text-[#1A1A1A]">Filters</h2>
-              <button onClick={() => setFiltersOpen(false)}><X className="h-5 w-5 text-[#666]" /></button>
+          <div className="absolute inset-0 bg-black/50" onClick={() => setFiltersOpen(false)} />
+          <div className="absolute right-0 top-0 bottom-0 w-[88vw] max-w-xs bg-white overflow-y-auto shadow-2xl flex flex-col">
+            {/* Sticky header inside drawer */}
+            <div className="sticky top-0 bg-white border-b border-[#E8DDD0] px-4 py-4 flex items-center justify-between z-10">
+              <span className="font-semibold text-sm text-[#1A1A1A] tracking-wide">FILTERS</span>
+              <button
+                onClick={() => setFiltersOpen(false)}
+                className="h-8 w-8 flex items-center justify-center rounded-full bg-[#F5EDE0] hover:bg-[#E8DDD0] transition-colors"
+                aria-label="Close filters"
+              >
+                <X className="h-4 w-4 text-[#666]" />
+              </button>
             </div>
-            <FilterSidebar {...filterProps} />
-            <button onClick={() => setFiltersOpen(false)} className="mt-6 w-full bg-[#8B1A1A] text-white py-3 text-sm font-semibold rounded">
-              View {filtered.length} Sarees
-            </button>
+            {/* Filter content — hide FilterSidebar's own title */}
+            <div className="flex-1 overflow-y-auto px-4 py-2">
+              <FilterSidebar {...filterProps} />
+            </div>
+            {/* Apply button */}
+            <div className="sticky bottom-0 bg-white border-t border-[#E8DDD0] p-4">
+              <button
+                onClick={() => setFiltersOpen(false)}
+                className="w-full bg-[#8B1A1A] text-white py-3 text-sm font-semibold tracking-wide rounded-sm hover:bg-[#6d1414] transition-colors"
+              >
+                View {filtered.length} Saree{filtered.length !== 1 ? "s" : ""}
+              </button>
+            </div>
           </div>
         </div>
       )}

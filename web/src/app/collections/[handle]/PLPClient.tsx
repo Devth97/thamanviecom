@@ -155,7 +155,7 @@ export default function PLPClient({ collection }: Props) {
       {filtersOpen && (
         <div className="fixed inset-0 z-50 md:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setFiltersOpen(false)} />
-          <div className="absolute right-0 top-0 bottom-0 w-[85vw] max-w-sm bg-[#FAF6F0] overflow-y-auto p-4 shadow-2xl">
+          <div className="absolute right-0 top-0 bottom-0 w-[88vw] max-w-xs bg-white overflow-y-auto shadow-2xl flex flex-col">
             <div className="flex items-center justify-between mb-4">
               <h2 className="font-semibold text-[#1A1A1A]">Filters</h2>
               <button onClick={() => setFiltersOpen(false)} aria-label="Close filters">

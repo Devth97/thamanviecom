@@ -114,10 +114,10 @@ export default function FilterSidebar({
   };
 
   return (
-    <aside className="w-full md:w-60 shrink-0">
+    <aside className="w-full lg:w-60 shrink-0">
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
-        <h3 className="font-semibold text-sm text-[#1A1A1A] tracking-wide uppercase">Filters</h3>
+        <span className="font-semibold text-xs text-[#1A1A1A] tracking-widest uppercase">Filters</span>
         {hasFilters && onReset && (
           <button onClick={onReset} className="text-xs text-[#8B1A1A] hover:underline">Reset all</button>
         )}
