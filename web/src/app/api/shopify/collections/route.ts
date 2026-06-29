@@ -1,8 +1,6 @@
 import { NextResponse } from "next/server";
 import { getCollections } from "@/lib/shopify";
 
-export const runtime = "edge";
-
 export async function GET() {
   try {
     const collections = await getCollections();

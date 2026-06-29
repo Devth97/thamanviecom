@@ -1,8 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getProduct } from "@/lib/shopify";
 
-export const runtime = "edge";
-
 export async function GET(
   _req: NextRequest,
   { params }: { params: Promise<{ handle: string }> }
