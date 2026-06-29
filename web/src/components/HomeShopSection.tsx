@@ -68,7 +68,7 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
   };
 
   return (
-    <section id="shop" className="bg-[#FAF6F0] py-8 md:py-12">
+    <section id="shop" className="bg-[#FAF6F0] py-8 md:py-12 scroll-mt-16 border-t border-[#E8DDD0]">
       <div className="mx-auto max-w-7xl px-4 md:px-8">
 
         {/* Header row */}
@@ -84,16 +84,16 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
           {/* Mobile filter button */}
           <button
             onClick={() => setFiltersOpen(true)}
-            className="md:hidden flex items-center gap-2 border border-[#D4A96A] px-3 py-2 text-xs rounded-full text-[#1A1A1A]"
+            className="lg:hidden flex items-center gap-2 border border-[#D4A96A] px-3 py-2 text-xs rounded-full text-[#1A1A1A]"
           >
             <SlidersHorizontal className="h-3.5 w-3.5" />
             Filter {activeCount > 0 && <span className="bg-[#8B1A1A] text-white rounded-full px-1.5 text-[10px]">{activeCount}</span>}
           </button>
         </div>
 
-        <div className="flex gap-6">
-          {/* Desktop filter sidebar */}
-          <div className="hidden md:block">
+        <div className="flex gap-6 items-start">
+          {/* Desktop filter sidebar — only show on lg+ to avoid squeeze */}
+          <div className="hidden lg:block">
             <FilterSidebar {...filterProps} />
           </div>
 
@@ -119,9 +119,9 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
         </div>
       </div>
 
-      {/* Mobile filter drawer */}
+      {/* Mobile/tablet filter drawer */}
       {filtersOpen && (
-        <div className="fixed inset-0 z-50 md:hidden">
+        <div className="fixed inset-0 z-50 lg:hidden">
           <div className="absolute inset-0 bg-black/40" onClick={() => setFiltersOpen(false)} />
           <div className="absolute right-0 top-0 bottom-0 w-[85vw] max-w-sm bg-[#FAF6F0] overflow-y-auto p-4 shadow-2xl">
             <div className="flex items-center justify-between mb-4">
