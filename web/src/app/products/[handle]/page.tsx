@@ -153,18 +153,35 @@ export default async function ProductPage({
                   </span>
                 )}
               </div>
-              {/* In stock indicator */}
-              {product.variants.nodes.some(v => v.availableForSale) ? (
-                <p className="mt-1.5 text-xs font-semibold text-[#2E7D32] flex items-center gap-1.5">
-                  <span className="inline-block w-2 h-2 rounded-full bg-[#2E7D32]" />
-                  In Stock · Ready to Ship
-                </p>
-              ) : (
-                <p className="mt-1.5 text-xs font-semibold text-[#C62828] flex items-center gap-1.5">
-                  <span className="inline-block w-2 h-2 rounded-full bg-[#C62828]" />
-                  Currently Out of Stock
-                </p>
-              )}
+              {/* Stock status */}
+              {(() => {
+                const totalQty = product.variants.nodes.reduce((s, v) => s + (v.quantityAvailable ?? 0), 0);
+                const inStock = product.variants.nodes.some(v => v.availableForSale);
+                if (!inStock) return (
+                  <p className="mt-1.5 text-xs font-semibold text-[#C62828] flex items-center gap-1.5">
+                    <span className="inline-block w-2 h-2 rounded-full bg-[#C62828]" />
+                    Currently Out of Stock
+                  </p>
+                );
+                if (totalQty > 0 && totalQty <= 3) return (
+                  <p className="mt-1.5 text-xs font-semibold text-[#C62828] flex items-center gap-1.5">
+                    <span className="inline-block w-2 h-2 rounded-full bg-[#C62828] animate-pulse" />
+                    Only {totalQty} left in stock — order soon!
+                  </p>
+                );
+                if (totalQty > 3 && totalQty <= 7) return (
+                  <p className="mt-1.5 text-xs font-semibold text-[#E65100] flex items-center gap-1.5">
+                    <span className="inline-block w-2 h-2 rounded-full bg-[#E65100]" />
+                    Selling fast — {totalQty} pieces left
+                  </p>
+                );
+                return (
+                  <p className="mt-1.5 text-xs font-semibold text-[#2E7D32] flex items-center gap-1.5">
+                    <span className="inline-block w-2 h-2 rounded-full bg-[#2E7D32]" />
+                    In Stock · Ready to Ship
+                  </p>
+                );
+              })()}
             </div>
 
             {/* Size guide link */}
