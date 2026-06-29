@@ -44,50 +44,120 @@ type Props = {
   onReset?: () => void;
 };
 
-function Section({ title, children, defaultOpen = true }: { title: string; children: React.ReactNode; defaultOpen?: boolean }) {
+function Section({
+  title,
+  children,
+  defaultOpen = true,
+}: {
+  title: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}) {
   const [open, setOpen] = useState(defaultOpen);
   return (
-    <div className="border-b border-[#E8DDD0] py-4">
+    <div className="border-b border-[#E8DDD0] last:border-b-0">
       <button
         onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between text-left mb-3"
+        className="w-full flex items-center justify-between text-left px-4 py-3.5"
+        aria-expanded={open}
       >
-        <span className="font-semibold text-sm text-[#1A1A1A] tracking-wide">{title}</span>
-        {open ? <ChevronUp className="h-4 w-4 text-[#666]" /> : <ChevronDown className="h-4 w-4 text-[#666]" />}
+        <span className="text-sm font-semibold text-[#1A1A1A] tracking-wide">{title}</span>
+        {open
+          ? <ChevronUp className="h-4 w-4 text-[#888] shrink-0" />
+          : <ChevronDown className="h-4 w-4 text-[#888] shrink-0" />
+        }
       </button>
-      {open && children}
+      {open && (
+        <div className="px-4 pb-4 pt-0">
+          {children}
+        </div>
+      )}
     </div>
   );
 }
 
-function CheckList({ items, selected, onChange }: { items: string[]; selected: string[]; onChange: (v: string[]) => void }) {
-  const toggle = (item: string) => {
-    onChange(selected.includes(item) ? selected.filter(i => i !== item) : [...selected, item]);
-  };
+function RadioOption({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: () => void;
+}) {
+  return (
+    <label className="flex items-center gap-3 py-1 cursor-pointer group">
+      <span className={`flex-shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
+        checked ? "border-[#8B1A1A]" : "border-[#CCC] group-hover:border-[#8B1A1A]"
+      }`}>
+        {checked && <span className="w-2 h-2 rounded-full bg-[#8B1A1A]" />}
+      </span>
+      <span className={`text-sm leading-none transition-colors ${checked ? "text-[#8B1A1A] font-medium" : "text-[#444] group-hover:text-[#8B1A1A]"}`}>
+        {label}
+      </span>
+    </label>
+  );
+}
+
+function CheckOption({
+  label,
+  checked,
+  onChange,
+}: {
+  label: string;
+  checked: boolean;
+  onChange: () => void;
+}) {
+  return (
+    <label className="flex items-center gap-3 py-1 cursor-pointer group">
+      <span className={`flex-shrink-0 w-4 h-4 rounded-sm border-2 flex items-center justify-center transition-colors ${
+        checked ? "border-[#8B1A1A] bg-[#8B1A1A]" : "border-[#CCC] group-hover:border-[#8B1A1A]"
+      }`}>
+        {checked && (
+          <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 10 10">
+            <path d="M1 5l3 3 5-5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
+        )}
+      </span>
+      <span className={`text-sm leading-none transition-colors ${checked ? "text-[#8B1A1A] font-medium" : "text-[#444] group-hover:text-[#8B1A1A]"}`}>
+        {label}
+      </span>
+    </label>
+  );
+}
+
+function CheckList({
+  items,
+  selected,
+  onChange,
+}: {
+  items: string[];
+  selected: string[];
+  onChange: (v: string[]) => void;
+}) {
   const [showAll, setShowAll] = useState(false);
-  const visible = showAll ? items : items.slice(0, 7);
+  const visible = showAll ? items : items.slice(0, 6);
+  const toggle = (item: string) =>
+    onChange(selected.includes(item) ? selected.filter(i => i !== item) : [...selected, item]);
 
   return (
     <div>
-      <div className="space-y-2">
+      <div className="space-y-0.5">
         {visible.map(item => (
-          <label key={item} className="flex items-center gap-2.5 cursor-pointer group">
-            <input
-              type="checkbox"
-              checked={selected.includes(item)}
-              onChange={() => toggle(item)}
-              className="w-3.5 h-3.5 accent-[#8B1A1A] rounded-sm"
-            />
-            <span className="text-sm text-[#444] group-hover:text-[#8B1A1A] transition-colors">{item}</span>
-          </label>
+          <CheckOption
+            key={item}
+            label={item}
+            checked={selected.includes(item)}
+            onChange={() => toggle(item)}
+          />
         ))}
       </div>
-      {items.length > 7 && (
+      {items.length > 6 && (
         <button
           onClick={() => setShowAll(!showAll)}
-          className="mt-2 text-xs text-[#8B1A1A] hover:underline"
+          className="mt-3 text-xs font-medium text-[#8B1A1A] hover:underline underline-offset-2"
         >
-          {showAll ? "Show less" : `+${items.length - 7} more`}
+          {showAll ? "Show less ↑" : `+ ${items.length - 6} more`}
         </button>
       )}
     </div>
@@ -105,105 +175,113 @@ export default function FilterSidebar({
   inStockOnly = false, onInStockChange = () => {},
   onReset,
 }: Props) {
-  const hasFilters = selectedTypes.length > 0 || selectedFabrics.length > 0 ||
-    selectedWorks.length > 0 || selectedColors.length > 0 || inStockOnly ||
-    priceRange[0] > 0 || priceRange[1] < maxPrice;
+  const hasFilters =
+    selectedTypes.length > 0 || selectedFabrics.length > 0 ||
+    selectedWorks.length > 0 || selectedColors.length > 0 ||
+    inStockOnly || priceRange[0] > 0 || priceRange[1] < maxPrice;
 
-  const toggleColor = (name: string) => {
-    onColorChange(selectedColors.includes(name) ? selectedColors.filter(c => c !== name) : [...selectedColors, name]);
-  };
+  const toggleColor = (name: string) =>
+    onColorChange(selectedColors.includes(name)
+      ? selectedColors.filter(c => c !== name)
+      : [...selectedColors, name]);
 
   return (
     <aside className="w-full lg:w-60 shrink-0">
-      {/* Header */}
-      <div className="flex items-center justify-between mb-2">
-        <span className="font-semibold text-xs text-[#1A1A1A] tracking-widest uppercase">Filters</span>
+      {/* Header row */}
+      <div className="flex items-center justify-between mb-3 px-1">
+        <span className="text-xs font-bold text-[#1A1A1A] tracking-[0.15em] uppercase">Filters</span>
         {hasFilters && onReset && (
-          <button onClick={onReset} className="text-xs text-[#8B1A1A] hover:underline">Reset all</button>
+          <button
+            onClick={onReset}
+            className="text-xs text-[#8B1A1A] hover:underline underline-offset-2 font-medium"
+          >
+            Reset all
+          </button>
         )}
       </div>
 
-      <div className="bg-white border border-[#E8DDD0] rounded-lg overflow-hidden">
+      {/* Filter card */}
+      <div className="bg-white border border-[#E8DDD0] rounded-xl overflow-hidden divide-y divide-[#E8DDD0]">
 
-        {/* Sort */}
+        {/* Sort By */}
         <Section title="Sort By">
-          <div className="space-y-2">
+          <div className="space-y-0.5">
             {SORT_OPTIONS.map(opt => (
-              <label key={opt.value} className="flex items-center gap-2.5 cursor-pointer group">
-                <input
-                  type="radio"
-                  name="sort"
-                  value={opt.value}
-                  checked={sortKey === opt.value}
-                  onChange={() => onSortChange(opt.value)}
-                  className="w-3.5 h-3.5 accent-[#8B1A1A]"
-                />
-                <span className="text-sm text-[#444] group-hover:text-[#8B1A1A] transition-colors">{opt.label}</span>
-              </label>
+              <RadioOption
+                key={opt.value}
+                label={opt.label}
+                checked={sortKey === opt.value}
+                onChange={() => onSortChange(opt.value)}
+              />
             ))}
           </div>
         </Section>
 
         {/* Availability */}
         <Section title="Availability">
-          <label className="flex items-center gap-2.5 cursor-pointer group">
-            <input
-              type="checkbox"
-              checked={inStockOnly}
-              onChange={e => onInStockChange(e.target.checked)}
-              className="w-3.5 h-3.5 accent-[#8B1A1A]"
-            />
-            <span className="text-sm text-[#444] group-hover:text-[#8B1A1A] transition-colors">In stock</span>
-          </label>
+          <CheckOption
+            label="In stock only"
+            checked={inStockOnly}
+            onChange={() => onInStockChange(!inStockOnly)}
+          />
         </Section>
 
         {/* Price Range */}
         <Section title="Price">
-          <div className="px-1">
-            <div className="flex justify-between text-xs text-[#666] mb-3">
-              <span>₹{priceRange[0].toLocaleString("en-IN")}</span>
-              <span>₹{priceRange[1].toLocaleString("en-IN")}</span>
+          <div className="space-y-3">
+            {/* Min / Max labels */}
+            <div className="flex items-center justify-between">
+              <span className="text-xs font-medium text-[#555] bg-[#F5EDE0] px-2 py-1 rounded">
+                ₹{priceRange[0].toLocaleString("en-IN")}
+              </span>
+              <span className="text-xs font-medium text-[#555] bg-[#F5EDE0] px-2 py-1 rounded">
+                ₹{priceRange[1].toLocaleString("en-IN")}
+              </span>
             </div>
-            <input
-              type="range"
-              min={0}
-              max={maxPrice}
-              step={500}
-              value={priceRange[1]}
-              onChange={e => onPriceChange([priceRange[0], Number(e.target.value)])}
-              className="w-full accent-[#8B1A1A] cursor-pointer"
-            />
-            <p className="text-xs text-[#666] mt-2 text-center">
-              Price: ₹{priceRange[0].toLocaleString("en-IN")} — ₹{priceRange[1].toLocaleString("en-IN")}
+            {/* Slider */}
+            <div className="px-0.5">
+              <input
+                type="range"
+                min={0}
+                max={maxPrice}
+                step={500}
+                value={priceRange[1]}
+                onChange={e => onPriceChange([priceRange[0], Number(e.target.value)])}
+                className="w-full h-1.5 accent-[#8B1A1A] cursor-pointer"
+              />
+            </div>
+            {/* Summary */}
+            <p className="text-[11px] text-[#888] text-center">
+              ₹{priceRange[0].toLocaleString("en-IN")} — ₹{priceRange[1].toLocaleString("en-IN")}
             </p>
           </div>
         </Section>
 
         {/* Color */}
-        <Section title="Color" defaultOpen={false}>
+        <Section title="Colour" defaultOpen={false}>
           <div className="flex flex-wrap gap-2">
             {COLORS.map(({ name, hex }) => (
               <button
                 key={name}
                 onClick={() => toggleColor(name)}
                 title={name}
-                className={`flex items-center gap-1.5 px-2 py-1 rounded-full border text-xs transition-all ${
+                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border text-xs font-medium transition-all ${
                   selectedColors.includes(name)
-                    ? "border-[#8B1A1A] shadow-sm"
-                    : "border-[#E8DDD0] hover:border-[#B8860B]"
+                    ? "border-[#8B1A1A] bg-[#8B1A1A]/5 text-[#8B1A1A]"
+                    : "border-[#E0D8CF] text-[#555] hover:border-[#B8860B]"
                 }`}
               >
                 <span
-                  className="w-4 h-4 rounded-full border border-[#00000015] inline-block shrink-0"
+                  className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0"
                   style={{ backgroundColor: hex }}
                 />
-                <span className="text-[#444]">{name}</span>
+                {name}
               </button>
             ))}
           </div>
         </Section>
 
-        {/* Category / Type */}
+        {/* Type */}
         <Section title="Type" defaultOpen={false}>
           <CheckList items={SAREE_TYPES} selected={selectedTypes} onChange={onTypeChange} />
         </Section>
