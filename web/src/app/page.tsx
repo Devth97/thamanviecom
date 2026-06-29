@@ -7,6 +7,7 @@ import CartDrawer from "@/components/CartDrawer";
 import CollectionsShowcase from "@/components/CollectionsShowcase";
 import HeritageBanner from "@/components/HeritageBanner";
 import TestimonialsSection from "@/components/TestimonialsSection";
+import ScrollFrameAnimation from "@/components/ScrollFrameAnimation";
 import { getProducts } from "@/lib/shopify";
 import Link from "next/link";
 
@@ -21,6 +22,7 @@ export default async function HomePage() {
       <MarqueeStrip />
       <CollectionsShowcase />
       <HeritageBanner />
+      <ScrollFrameAnimation />
 
       {/* Bestsellers */}
       <section className="bg-[#FDF6EE] py-24">
