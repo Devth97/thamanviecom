@@ -7,7 +7,7 @@ const stats = [
   { value: "30+", label: "Years of Excellence", sub: "Est. 1994, Puttur" },
   { value: "420+", label: "Google Reviews", sub: "4.8 star rating" },
   { value: "100%", label: "Authentic Silk", sub: "Direct from weavers" },
-  { value: "∞", label: "Free Exchanges", sub: "Hassle-free policy" },
+  { value: "COD", label: "Cash on Delivery", sub: "Pan India" },
 ];
 
 export default function HeritageBanner() {

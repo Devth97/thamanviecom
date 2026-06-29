@@ -1,9 +1,9 @@
-import { Star, RefreshCw, Award, MapPin } from "lucide-react";
+import { Star, Truck, Award, MapPin } from "lucide-react";
 
 const items = [
   { icon: Star, label: "4.8 Google Rating", sub: "420+ Reviews" },
-  { icon: RefreshCw, label: "Free Exchanges", sub: "Hassle-free policy" },
-  { icon: Award, label: "30-Year Legacy", sub: "Trusted since 1994" },
+  { icon: Truck, label: "Free Shipping", sub: "Pan India" },
+  { icon: Award, label: "100% Authentic", sub: "Direct from weavers" },
   { icon: MapPin, label: "Puttur, Karnataka", sub: "Visit our store" },
 ];
 

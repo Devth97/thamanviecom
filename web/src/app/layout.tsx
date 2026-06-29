@@ -11,7 +11,7 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfa
 
 export const metadata: Metadata = {
   title: { default: "Thamanvi Silks | Premium Sarees & Silk", template: "%s | Thamanvi Silks" },
-  description: "Authentic silk sarees from Thamanvi Silks, Puttur. Kanjivaram, Banarasi, Mysore Silk & more. Free exchanges. 30-year legacy.",
+  description: "Authentic silk sarees from Thamanvi Silks, Puttur. Kanjivaram, Banarasi, Mysore Silk & more. Free shipping. 100% pure silk.",
   keywords: ["saree", "silk saree", "kanjivaram", "puttur", "karnataka", "thamanvi silks"],
   openGraph: {
     type: "website",
