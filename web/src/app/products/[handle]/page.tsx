@@ -36,15 +36,24 @@ export default async function ProductPage({
   const product = await getProduct(handle).catch(() => null);
   if (!product) notFound();
 
-  const [recommendations, collectionProducts] = await Promise.all([
+  const [recommendations, collectionProducts, allStoreProducts] = await Promise.all([
     getProductRecommendations(product.id).catch(() => []),
     product.collections.nodes[0]
       ? getProducts({ collection: product.collections.nodes[0].handle, first: 8 })
           .then(r => r.products.filter(p => p.id !== product.id).slice(0, 4))
           .catch(() => [])
       : Promise.resolve([]),
+    // Always fetch store products as final fallback
+    getProducts({ first: 8, sortKey: "BEST_SELLING" })
+      .then(r => r.products.filter(p => p.id !== product.id).slice(0, 4))
+      .catch(() => []),
   ]);
-  const relatedProducts = recommendations.length > 0 ? recommendations.slice(0, 4) : collectionProducts;
+
+  // Priority: AI recommendations → same collection → all store products
+  const relatedProducts =
+    recommendations.length > 0 ? recommendations.slice(0, 4) :
+    collectionProducts.length > 0 ? collectionProducts :
+    allStoreProducts;
 
   const price = product.priceRange.minVariantPrice;
   const comparePrice = product.compareAtPriceRange.minVariantPrice;
