@@ -19,6 +19,31 @@ export default async function HomePage() {
     <>
       <HeroSection />
       <MarqueeStrip />
+
+      {/* Category quick-links */}
+      <div className="bg-[#FAF6F0] border-b border-[#E8DDD0]">
+        <div className="mx-auto max-w-7xl px-4 py-4">
+          <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+            {[
+              { label: "All Sarees", href: "/collections/all" },
+              { label: "Kanjivaram", href: "/collections/kanjivaram-silk" },
+              { label: "Banarasi", href: "/collections/banarasi-silk" },
+              { label: "Mysore Silk", href: "/collections/mysore-silk" },
+              { label: "Wedding", href: "/collections/wedding-silk" },
+              { label: "Cotton", href: "/collections/casual-cotton" },
+            ].map(({ label, href }) => (
+              <a
+                key={label}
+                href={href}
+                className="shrink-0 px-4 py-1.5 text-xs tracking-[0.1em] uppercase border border-[#D4A96A]/50 text-[#1A1A1A] hover:bg-[#8B1A1A] hover:text-white hover:border-[#8B1A1A] transition-colors rounded-full whitespace-nowrap"
+              >
+                {label}
+              </a>
+            ))}
+          </div>
+        </div>
+      </div>
+
       <CollectionsShowcase />
       <HeritageBanner />
 

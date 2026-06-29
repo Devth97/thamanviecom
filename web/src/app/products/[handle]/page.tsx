@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getProduct, getProductRecommendations, formatPrice, getMetafield } from "@/lib/shopify";
+import { getProduct, getProductRecommendations, getProducts, formatPrice, getMetafield } from "@/lib/shopify";
 import ProductGallery from "@/components/ProductGallery";
 import ProductCard from "@/components/ProductCard";
 import WhatsAppCTA from "@/components/WhatsAppCTA";
@@ -36,7 +36,15 @@ export default async function ProductPage({
   const product = await getProduct(handle).catch(() => null);
   if (!product) notFound();
 
-  const recommendations = await getProductRecommendations(product.id).catch(() => []);
+  const [recommendations, collectionProducts] = await Promise.all([
+    getProductRecommendations(product.id).catch(() => []),
+    product.collections.nodes[0]
+      ? getProducts({ collection: product.collections.nodes[0].handle, first: 8 })
+          .then(r => r.products.filter(p => p.id !== product.id).slice(0, 4))
+          .catch(() => [])
+      : Promise.resolve([]),
+  ]);
+  const relatedProducts = recommendations.length > 0 ? recommendations.slice(0, 4) : collectionProducts;
 
   const price = product.priceRange.minVariantPrice;
   const comparePrice = product.compareAtPriceRange.minVariantPrice;
@@ -129,6 +137,21 @@ export default async function ProductPage({
               Enquire on WhatsApp
             </a>
 
+            {/* Trust badges */}
+            <div className="grid grid-cols-3 gap-2 pt-4 border-t border-[#E8DDD0]">
+              {[
+                { icon: "🚚", label: "Free Shipping", sub: "Pan India" },
+                { icon: "↩️", label: "Easy Returns", sub: "7 days" },
+                { icon: "✓", label: "Authentic", sub: "100% Pure Silk" },
+              ].map(({ icon, label, sub }) => (
+                <div key={label} className="flex flex-col items-center text-center py-3 rounded border border-[#E8DDD0]">
+                  <span className="text-lg mb-1">{icon}</span>
+                  <span className="text-xs font-semibold text-[#1A1A1A]">{label}</span>
+                  <span className="text-[10px] text-[#666]">{sub}</span>
+                </div>
+              ))}
+            </div>
+
             {/* Product details table */}
             {metaRows.length > 0 && (
               <div>
@@ -156,14 +179,14 @@ export default async function ProductPage({
           </div>
         </div>
 
-        {/* Recommendations */}
-        {recommendations.length > 0 && (
-          <div className="mt-16">
-            <h2 className="font-display text-2xl text-[#8B1A1A] mb-6">You May Also Like</h2>
+        {/* You May Also Like — always shows if any related products exist */}
+        {relatedProducts.length > 0 && (
+          <section className="mt-16 pt-12 border-t border-[#E8DDD0]">
+            <h2 className="font-display text-2xl md:text-3xl text-[#1A1A1A] mb-8">You May Also Like</h2>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              {recommendations.slice(0, 4).map((p) => <ProductCard key={p.id} product={p} />)}
+              {relatedProducts.map((p) => <ProductCard key={p.id} product={p} />)}
             </div>
-          </div>
+          </section>
         )}
       </div>
 

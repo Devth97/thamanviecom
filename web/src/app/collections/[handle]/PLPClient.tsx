@@ -49,6 +49,7 @@ export default function PLPClient({ collection }: Props) {
       </div>
       <div className="mx-auto max-w-6xl px-4 py-8">
         <h1 className="font-display text-3xl text-[#8B1A1A] mb-2">{collection.title}</h1>
+        <p className="text-sm text-[#666] mb-8">{products.length} products</p>
         {collection.description && (
           <p className="text-sm text-[#666] mb-8 max-w-xl">{collection.description}</p>
         )}
