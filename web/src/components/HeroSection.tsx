@@ -45,10 +45,11 @@ export default function HeroSection() {
         <div className="absolute top-[20%] right-[8%] w-64 h-64 rounded-full border border-[#B8860B]/10" />
         <div className="absolute top-[30%] right-[12%] w-40 h-40 rounded-full border border-[#B8860B]/10" />
         {/* Video placeholder — replace with real silk video */}
-        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-luminosity" aria-hidden="true">
+        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-60" aria-hidden="true">
           <source src="/hero-silk.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0D0808]/95 via-[#0D0808]/70 to-[#0D0808]/20" />
+        {/* Strong left gradient so text stays readable over video */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0D0808] via-[#0D0808]/75 to-[#0D0808]/10" />
       </div>
 
       {/* Content */}
