@@ -184,16 +184,44 @@ export default async function ProductPage({
           </div>
         </div>
 
-        {/* You May Also Like — always shows if any related products exist */}
-        {relatedProducts.length > 0 && (
-          <section className="mt-16 pt-12 border-t border-[#E8DDD0]">
-            <h2 className="font-display text-2xl md:text-3xl text-[#1A1A1A] mb-8">You May Also Like</h2>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
-              {relatedProducts.map((p) => <ProductCard key={p.id} product={p} />)}
-            </div>
-          </section>
-        )}
       </div>
+
+      {/* ── People Also Bought ── */}
+      {relatedProducts.length > 0 && (
+        <section className="bg-[#FAF6F0] border-t border-[#E8DDD0] py-12 md:py-16">
+          <div className="mx-auto max-w-6xl px-4">
+            {/* Centered heading */}
+            <div className="text-center mb-10">
+              <div className="flex items-center justify-center gap-4 mb-3">
+                <div className="h-px w-12 bg-[#B8860B]" />
+                <span className="text-[#B8860B] text-[10px] tracking-[0.3em] uppercase">Customers Love</span>
+                <div className="h-px w-12 bg-[#B8860B]" />
+              </div>
+              <h2 className="font-display text-2xl md:text-4xl text-[#0D0808]">People Also Bought</h2>
+            </div>
+
+            {/* Desktop: 4-col grid | Mobile: 2-col grid */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+              {relatedProducts.slice(0, 4).map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+
+            {/* View All CTA */}
+            <div className="text-center mt-10">
+              <a
+                href={relatedProducts[0]?.collections?.nodes?.[0]?.handle
+                  ? `/collections/${relatedProducts[0].collections.nodes[0].handle}`
+                  : "/"}
+                className="inline-flex items-center gap-2 border border-[#8B1A1A] text-[#8B1A1A] text-sm tracking-[0.1em] uppercase px-8 py-3 hover:bg-[#8B1A1A] hover:text-white transition-colors duration-300 group"
+              >
+                View Full Collection
+                <span className="group-hover:translate-x-1 transition-transform">→</span>
+              </a>
+            </div>
+          </div>
+        </section>
+      )}
 
       {/* JSON-LD Product schema */}
       <script
