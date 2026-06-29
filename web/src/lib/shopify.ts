@@ -530,3 +530,4 @@ export function getMetafield(product: ShopifyProduct, key: string): string | nul
   const field = product.metafields.find((m) => m !== null && m.key === key);
   return field ? field.value : null;
 }
+// shopify connected Mon Jun 29 13:33:52 IST 2026
