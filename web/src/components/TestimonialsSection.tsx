@@ -33,12 +33,14 @@ export default function TestimonialsSection() {
           <div className="h-px w-8 bg-[#B8860B]" />
           <span className="text-[#B8860B] text-xs tracking-[0.25em] uppercase">What they say</span>
         </div>
-        <h2 className="font-display text-4xl md:text-5xl text-white italic mb-16">Voices of Trust</h2>
-        <div className="grid md:grid-cols-3 gap-6">
+        <h2 className="font-display text-2xl md:text-5xl text-white italic mb-6 md:mb-10">Voices of Trust</h2>
+
+        {/* Mobile: horizontal scroll | Desktop: 3-col grid */}
+        <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:pb-0">
           {testimonials.map(({ quote, name, location }) => (
-            <div key={name} className="testimonial-card opacity-0 border border-[#B8860B]/20 p-8 hover:border-[#B8860B]/50 transition-colors duration-500 group">
-              <div className="font-display text-6xl text-[#B8860B]/20 leading-none mb-4 group-hover:text-[#B8860B]/40 transition-colors">&quot;</div>
-              <p className="text-white/70 text-sm leading-relaxed mb-6 italic">{quote}</p>
+            <div key={name} className="testimonial-card opacity-0 shrink-0 w-[80vw] md:w-auto border border-[#B8860B]/20 p-5 md:p-8 hover:border-[#B8860B]/50 transition-colors duration-500 group">
+              <div className="font-display text-4xl md:text-6xl text-[#B8860B]/20 leading-none mb-2 md:mb-4">&quot;</div>
+              <p className="text-white/70 text-sm leading-relaxed mb-4 md:mb-6 italic">{quote}</p>
               <div className="flex items-center gap-3">
                 <div className="h-px flex-1 bg-[#B8860B]/20" />
                 <div className="text-right">
@@ -49,6 +51,8 @@ export default function TestimonialsSection() {
             </div>
           ))}
         </div>
+        {/* Scroll hint on mobile */}
+        <p className="md:hidden text-center text-[#B8860B]/40 text-[10px] tracking-widest uppercase mt-3">Swipe for more →</p>
       </div>
     </section>
   );
