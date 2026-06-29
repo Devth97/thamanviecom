@@ -1,5 +1,5 @@
 export default function MarqueeStrip() {
-  const items = ["Pure Zari", "COD Available", "Puttur, Karnataka", "4.8★ Google Rated", "Handwoven Silk", "Free Shipping", "420+ Happy Customers", "Open Box Returns"];
+  const items = ["Pure Zari", "COD Available", "Puttur, Karnataka", "4.8★ Google Rated", "Handwoven Silk", "Free Shipping", "480+ Happy Customers", "Open Box Returns"];
 
   return (
     <div className="bg-[#8B1A1A] overflow-hidden py-3 border-y border-[#6d1414]">

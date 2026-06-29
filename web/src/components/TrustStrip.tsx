@@ -1,7 +1,7 @@
 import { Star, Truck, Award, MapPin } from "lucide-react";
 
 const items = [
-  { icon: Star, label: "4.8 Google Rating", sub: "420+ Reviews" },
+  { icon: Star, label: "4.8 Google Rating", sub: "480+ Reviews" },
   { icon: Truck, label: "Free Shipping", sub: "Pan India" },
   { icon: Award, label: "100% Authentic", sub: "Direct from weavers" },
   { icon: MapPin, label: "Puttur, Karnataka", sub: "Visit our store" },

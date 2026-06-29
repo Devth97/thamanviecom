@@ -69,7 +69,7 @@ export default function HeroSection() {
         {/* Sub + CTA */}
         <div className="max-w-md">
           <p ref={subRef} className="text-white/60 text-base md:text-lg leading-relaxed mb-8 opacity-0">
-            Authentic Kanjivaram, Banarasi & Mysore silk sarees. Each piece a story woven in pure gold zari, trusted by families across India for three decades.
+            Authentic Kanjivaram, Banarasi & Mysore silk sarees. Each piece a story woven in pure gold zari, trusted by families across India.
           </p>
           <a
             ref={ctaRef}
@@ -92,7 +92,7 @@ export default function HeroSection() {
 
       {/* Stats bottom-right */}
       <div className="absolute bottom-8 right-8 hidden lg:flex gap-10">
-        {[["4.8★", "Google Rating"], ["420+", "Reviews"], ["30yr", "Legacy"]].map(([val, label]) => (
+        {[["4.8★", "Google Rating"], ["480+", "Reviews"], ["3yr", "Legacy"]].map(([val, label]) => (
           <div key={label} className="text-right">
             <div className="font-display text-2xl text-[#B8860B]">{val}</div>
             <div className="text-white/40 text-[10px] tracking-[0.1em] uppercase">{label}</div>

@@ -34,7 +34,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <div className="grid md:grid-cols-4 gap-8 mb-10">
                   <div className="md:col-span-2">
                     <div className="font-display text-2xl text-white tracking-[0.2em] mb-3">THAMANVI</div>
-                    <p className="text-white/40 text-sm leading-relaxed max-w-xs">Premium silk sarees from Puttur, Karnataka. Authentic craftsmanship since 1994.</p>
+                    <p className="text-white/40 text-sm leading-relaxed max-w-xs">Premium silk sarees from Puttur, Karnataka. Authentic craftsmanship since 2023.</p>
                     <div className="flex gap-4 mt-4">
                       <a href="https://wa.me/919535779597" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-[#B8860B] text-xs tracking-widest uppercase transition-colors">WhatsApp</a>
                     </div>
