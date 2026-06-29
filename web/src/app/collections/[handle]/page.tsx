@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { redirect } from "next/navigation";
 import { getCollection, getCollections, getProducts, ShopifyCollection } from "@/lib/shopify";
 import PLPClient from "./PLPClient";
 
@@ -39,6 +40,9 @@ export default async function CollectionPage({
   params: Promise<{ handle: string }>;
 }) {
   const { handle } = await params;
+
+  // frontpage is Shopify's default collection — redirect to homepage shop section
+  if (handle === "frontpage") redirect("/#shop");
 
   // Try to get the real Shopify collection first
   const collection = await getCollection(handle).catch(() => null);
