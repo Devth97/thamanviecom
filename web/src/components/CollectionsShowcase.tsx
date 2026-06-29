@@ -3,13 +3,14 @@ import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
+import Image from "next/image";
 
 const collections = [
-  { num: "01", handle: "kanjivaram-silk", title: "Kanjivaram Silk", origin: "Kanchipuram, TN", desc: "Pure mulberry silk with gold zari. The queen of Indian sarees." },
-  { num: "02", handle: "banarasi-silk", title: "Banarasi Silk", origin: "Varanasi, UP", desc: "Royal brocade weaving with intricate motifs from the holy city." },
-  { num: "03", handle: "mysore-silk", title: "Mysore Silk", origin: "Mysuru, Karnataka", desc: "Lustrous silk with pure gold zari, the pride of Karnataka." },
-  { num: "04", handle: "wedding-silk", title: "Bridal Collection", origin: "Curated Selection", desc: "The most auspicious sarees for your most treasured moments." },
-  { num: "05", handle: "casual-cotton", title: "Cotton Weaves", origin: "South India", desc: "Lightweight elegance for everyday grace and comfort." },
+  { num: "01", handle: "kanjivaram-silk", title: "Kanjivaram Silk", origin: "Kanchipuram, TN", desc: "Pure mulberry silk with gold zari. The queen of Indian sarees.", image: "/collections/kanjivaram-silk.jpg" },
+  { num: "02", handle: "banarasi-silk", title: "Banarasi Silk", origin: "Varanasi, UP", desc: "Royal brocade weaving with intricate motifs from the holy city.", image: "/collections/banarasi-silk.jpg" },
+  { num: "03", handle: "mysore-silk", title: "Mysore Silk", origin: "Mysuru, Karnataka", desc: "Lustrous silk with pure gold zari, the pride of Karnataka.", image: "/collections/mysore-silk.jpg" },
+  { num: "04", handle: "wedding-silk", title: "Bridal Collection", origin: "Curated Selection", desc: "The most auspicious sarees for your most treasured moments.", image: "/collections/wedding-silk.jpg" },
+  { num: "05", handle: "casual-cotton", title: "Cotton Weaves", origin: "South India", desc: "Lightweight elegance for everyday grace and comfort.", image: "/collections/casual-cotton.jpg" },
 ];
 
 export default function CollectionsShowcase() {
@@ -42,23 +43,26 @@ export default function CollectionsShowcase() {
         <h2 className="font-display text-4xl md:text-5xl text-[#0D0808] mb-16">Our Collections</h2>
 
         <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
-          {collections.map(({ num, handle, title, origin, desc }) => (
+          {collections.map(({ num, handle, title, origin, desc, image }) => (
             <Link
               key={handle}
               href={`/collections/${handle}`}
               className="collection-card group opacity-0 flex flex-col"
             >
-              {/* Image placeholder */}
-              <div className="relative aspect-[3/4] bg-gradient-to-br from-[#FDF0E0] to-[#E8D5C0] overflow-hidden mb-4 border border-[#D4A96A]/20">
-                <div className="absolute top-3 left-3 font-display text-5xl text-[#B8860B]/15 leading-none select-none">{num}</div>
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-14 h-14 border border-[#B8860B]/30 flex items-center justify-center group-hover:scale-110 transition-transform duration-500">
-                    <span className="text-[#B8860B]/40 text-xs tracking-widest">IMG</span>
-                  </div>
-                </div>
-                <div className="absolute inset-0 bg-[#0D0808]/0 group-hover:bg-[#0D0808]/30 transition-colors duration-500" />
-                <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-500 bg-[#0D0808]/80">
-                  <p className="text-white text-[10px] leading-relaxed">{desc}</p>
+              {/* Collection image */}
+              <div className="relative aspect-[3/4] bg-[#1A0A0A] overflow-hidden mb-4">
+                <div className="absolute top-3 left-3 z-10 font-display text-5xl text-white/10 leading-none select-none">{num}</div>
+                <Image
+                  src={image}
+                  alt={title}
+                  fill
+                  className="object-cover transition-transform duration-700 group-hover:scale-110"
+                  sizes="(max-width: 768px) 50vw, 20vw"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0D0808]/60 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-[#0D0808]/0 group-hover:bg-[#0D0808]/20 transition-colors duration-500" />
+                <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-500 bg-[#0D0808]/85">
+                  <p className="text-white/90 text-[10px] leading-relaxed">{desc}</p>
                 </div>
               </div>
               <div>
