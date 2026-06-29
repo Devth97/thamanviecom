@@ -1,52 +1,112 @@
 "use client";
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 export default function HeroSection() {
-  const headlineRef = useRef<HTMLHeadingElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const line1Ref = useRef<HTMLDivElement>(null);
+  const line2Ref = useRef<HTMLDivElement>(null);
   const subRef = useRef<HTMLParagraphElement>(null);
   const ctaRef = useRef<HTMLAnchorElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    gsap.registerPlugin(ScrollTrigger);
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-    if (mq.matches || !headlineRef.current) return;
-    const tl = gsap.timeline({ delay: 0.3 });
-    tl.fromTo(headlineRef.current, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power3.out" })
-      .fromTo(subRef.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }, "-=0.4")
-      .fromTo(ctaRef.current, { y: 15, opacity: 0 }, { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" }, "-=0.3");
+    if (mq.matches) return;
+
+    // Entrance
+    const tl = gsap.timeline({ delay: 0.5 });
+    tl.fromTo(line1Ref.current, { y: 80, opacity: 0 }, { y: 0, opacity: 1, duration: 1.1, ease: "power4.out" })
+      .fromTo(line2Ref.current, { y: 80, opacity: 0 }, { y: 0, opacity: 1, duration: 1.1, ease: "power4.out" }, "-=0.7")
+      .fromTo(subRef.current, { y: 30, opacity: 0 }, { y: 0, opacity: 1, duration: 0.8, ease: "power2.out" }, "-=0.4")
+      .fromTo(ctaRef.current, { y: 20, opacity: 0 }, { y: 0, opacity: 1, duration: 0.6, ease: "power2.out" }, "-=0.3")
+      .fromTo(scrollRef.current, { opacity: 0 }, { opacity: 1, duration: 0.6 }, "-=0.1");
+
+    // Parallax on scroll
+    gsap.to(overlayRef.current, {
+      yPercent: 30,
+      ease: "none",
+      scrollTrigger: { trigger: sectionRef.current, start: "top top", end: "bottom top", scrub: true },
+    });
+
+    return () => ScrollTrigger.getAll().forEach(t => t.kill());
   }, []);
 
   return (
-    <section className="relative min-h-screen flex items-center overflow-hidden bg-[#1A0A0A]">
-      <video
-        autoPlay
-        muted
-        loop
-        playsInline
-        className="absolute inset-0 h-full w-full object-cover opacity-60"
-        aria-hidden="true"
-      >
-        <source src="/hero-silk.mp4" type="video/mp4" />
-      </video>
-      <div className="absolute inset-0 bg-gradient-to-r from-[#1A0A0A]/80 via-[#1A0A0A]/40 to-transparent" />
-      <div className="relative z-10 mx-auto max-w-6xl px-6 py-24">
-        <h1
-          ref={headlineRef}
-          className="font-display text-4xl md:text-6xl lg:text-7xl text-white leading-tight max-w-2xl opacity-0"
-        >
-          Wear the<br />
-          <span className="text-[#B8860B]">Art of Silk</span>
-        </h1>
-        <p ref={subRef} className="mt-6 max-w-md text-white/80 text-lg opacity-0">
-          Authentic silk sarees from Puttur, Karnataka — Kanjivaram, Banarasi, Mysore Silk and more. Trusted since 1994.
-        </p>
-        <a
-          ref={ctaRef}
-          href="/collections/kanjivaram-silk"
-          className="mt-10 inline-block rounded bg-[#8B1A1A] px-8 py-4 text-base font-semibold text-white shadow-lg hover:bg-[#6d1414] transition-colors opacity-0"
-        >
-          Explore Collections
-        </a>
+    <section ref={sectionRef} className="relative min-h-screen flex items-center overflow-hidden bg-[#0D0808]">
+      {/* Background texture — animated silk gradient */}
+      <div ref={overlayRef} className="absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#1A0A0A] via-[#0D0808] to-[#0A0505]" />
+        {/* Decorative gold lines */}
+        <div className="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-transparent via-[#B8860B]/20 to-transparent" />
+        <div className="absolute top-[20%] right-[8%] w-64 h-64 rounded-full border border-[#B8860B]/10" />
+        <div className="absolute top-[30%] right-[12%] w-40 h-40 rounded-full border border-[#B8860B]/10" />
+        {/* Video placeholder — replace with real silk video */}
+        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-20 mix-blend-luminosity" aria-hidden="true">
+          <source src="/hero-silk.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0D0808]/95 via-[#0D0808]/70 to-[#0D0808]/20" />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12 pt-24 pb-16 w-full">
+        {/* Label */}
+        <div className="mb-8 flex items-center gap-4">
+          <div className="h-px w-12 bg-[#B8860B]" />
+          <span className="text-[#B8860B] text-xs tracking-[0.3em] uppercase">Est. 1994 · Puttur, Karnataka</span>
+        </div>
+
+        {/* Headline */}
+        <div className="overflow-hidden mb-1">
+          <div ref={line1Ref} className="opacity-0">
+            <h1 className="font-display text-[12vw] md:text-[9vw] lg:text-[8vw] text-white leading-[0.9] tracking-tight">
+              Wear the
+            </h1>
+          </div>
+        </div>
+        <div className="overflow-hidden mb-10">
+          <div ref={line2Ref} className="opacity-0">
+            <h1 className="font-display text-[12vw] md:text-[9vw] lg:text-[8vw] text-[#B8860B] leading-[0.9] tracking-tight italic">
+              Art of Silk
+            </h1>
+          </div>
+        </div>
+
+        {/* Sub + CTA */}
+        <div className="max-w-md">
+          <p ref={subRef} className="text-white/60 text-base md:text-lg leading-relaxed mb-8 opacity-0">
+            Authentic Kanjivaram, Banarasi & Mysore silk sarees. Each piece a story woven in pure gold zari, trusted by families across India for three decades.
+          </p>
+          <a
+            ref={ctaRef}
+            href="/collections/kanjivaram-silk"
+            className="opacity-0 inline-flex items-center gap-4 group"
+          >
+            <span className="bg-[#8B1A1A] text-white text-sm tracking-[0.15em] uppercase px-8 py-4 hover:bg-[#B8860B] transition-colors duration-300">
+              Explore Collections
+            </span>
+            <span className="text-[#B8860B] group-hover:translate-x-2 transition-transform duration-300">→</span>
+          </a>
+        </div>
+      </div>
+
+      {/* Scroll indicator */}
+      <div ref={scrollRef} className="absolute bottom-8 left-1/2 -translate-x-1/2 opacity-0 flex flex-col items-center gap-2">
+        <span className="text-white/40 text-[10px] tracking-[0.2em] uppercase">Scroll</span>
+        <div className="w-px h-12 bg-gradient-to-b from-[#B8860B] to-transparent animate-pulse" />
+      </div>
+
+      {/* Stats bottom-right */}
+      <div className="absolute bottom-8 right-8 hidden lg:flex gap-10">
+        {[["4.8★", "Google Rating"], ["420+", "Reviews"], ["30yr", "Legacy"]].map(([val, label]) => (
+          <div key={label} className="text-right">
+            <div className="font-display text-2xl text-[#B8860B]">{val}</div>
+            <div className="text-white/40 text-[10px] tracking-[0.1em] uppercase">{label}</div>
+          </div>
+        ))}
       </div>
     </section>
   );
