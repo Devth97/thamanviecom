@@ -8,8 +8,8 @@ import BottomNav from "@/components/BottomNav";
 import { CartProvider } from "@/contexts/CartContext";
 import "./globals.css";
 
-// ── Retargeting pixel IDs — replace with real IDs from Meta & Google ──
-const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "";
+// ── Retargeting pixel IDs ──
+const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "3272610399588521";
 const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
