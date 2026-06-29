@@ -27,7 +27,7 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
   const [selectedFabrics, setSelectedFabrics] = useState<string[]>([]);
   const [selectedWorks, setSelectedWorks] = useState<string[]>([]);
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
-  const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 999999]); // High default so nothing is filtered initially
   const [inStockOnly, setInStockOnly] = useState(false);
 
   useEffect(() => {
@@ -35,21 +35,24 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
     fetch(`/api/shopify/products?sortKey=${sortKey}&first=48`)
       .then(r => r.json())
       .then(({ products: p }: { products: ShopifyProduct[] }) => {
-        setAllProducts(p ?? []);
-        const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
-        if (!mq.matches && gridRef.current) {
-          const cards = gridRef.current.querySelectorAll("a");
-          gsap.fromTo(cards, { opacity: 0, y: 16 }, { opacity: 1, y: 0, stagger: 0.04, duration: 0.35, ease: "power2.out" });
+        // Only update if we actually got products — never overwrite with empty
+        if (p && p.length > 0) {
+          setAllProducts(p);
+          const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
+          if (!mq.matches && gridRef.current) {
+            const cards = gridRef.current.querySelectorAll("a");
+            gsap.fromTo(cards, { opacity: 0, y: 16 }, { opacity: 1, y: 0, stagger: 0.04, duration: 0.35, ease: "power2.out" });
+          }
         }
       })
       .catch(() => {})
       .finally(() => setLoading(false));
   }, [sortKey]);
 
-  const maxPrice = useMemo(() =>
-    allProducts.length === 0 ? 50000 : Math.max(...allProducts.map(p => Number(p.priceRange.minVariantPrice.amount)), 1000),
-    [allProducts]
-  );
+  const maxPrice = useMemo(() => {
+    if (allProducts.length === 0) return 50000;
+    return Math.ceil(Math.max(...allProducts.map(p => Number(p.priceRange.minVariantPrice.amount)), 1000) / 500) * 500;
+  }, [allProducts]);
 
   const filtered = useMemo(() => allProducts.filter(p => {
     if (inStockOnly && !p.variants.nodes.some(v => v.availableForSale)) return false;
