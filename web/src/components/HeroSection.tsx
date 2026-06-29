@@ -50,12 +50,6 @@ export default function HeroSection() {
 
       {/* Content */}
       <div className="relative z-10 mx-auto max-w-7xl px-6 md:px-12 pt-24 pb-16 w-full">
-        {/* Label */}
-        <div className="mb-8 flex items-center gap-4">
-          <div className="h-px w-12 bg-[#B8860B]" />
-          <span className="text-[#B8860B] text-xs tracking-[0.3em] uppercase">Est. 1994 · Puttur, Karnataka</span>
-        </div>
-
         {/* Headline */}
         <div className="overflow-hidden mb-1">
           <div ref={line1Ref} className="opacity-0">

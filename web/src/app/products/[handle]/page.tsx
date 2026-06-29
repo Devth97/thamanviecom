@@ -68,26 +68,31 @@ export default async function ProductPage({
       {/* Top nav bar below fixed navbar — back button + breadcrumb */}
       <div className="border-b border-[#E8DDD0] bg-[#FAF6F0] pt-16">
         <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-          {/* Back button */}
-          <a
-            href={product.collections.nodes[0] ? `/collections/${product.collections.nodes[0].handle}` : "/"}
-            className="inline-flex items-center gap-2 text-xs text-[#666] hover:text-[#8B1A1A] transition-colors group"
-          >
-            <span className="group-hover:-translate-x-1 transition-transform">←</span>
-            <span>Back to {product.collections.nodes[0]?.title ?? "Collections"}</span>
-          </a>
+          {/* Back button — frontpage collection always goes to home */}
+          {(() => {
+            const col = product.collections.nodes[0];
+            const isFrontpage = !col || col.handle === "frontpage";
+            const backHref = isFrontpage ? "/" : `/collections/${col.handle}`;
+            const backLabel = isFrontpage ? "Home" : col.title;
+            return (
+              <a href={backHref} className="inline-flex items-center gap-2 text-xs text-[#666] hover:text-[#8B1A1A] transition-colors group">
+                <span className="group-hover:-translate-x-1 transition-transform">←</span>
+                <span>Back to {backLabel}</span>
+              </a>
+            );
+          })()}
           {/* Breadcrumb */}
           <nav className="hidden md:flex items-center text-xs text-[#999]" aria-label="Breadcrumb">
             <a href="/" className="hover:text-[#8B1A1A] transition-colors">Home</a>
-            <span className="mx-2">›</span>
-            {product.collections.nodes[0] && (
+            {product.collections.nodes[0] && product.collections.nodes[0].handle !== "frontpage" && (
               <>
+                <span className="mx-2">›</span>
                 <a href={`/collections/${product.collections.nodes[0].handle}`} className="hover:text-[#8B1A1A] transition-colors">
                   {product.collections.nodes[0].title}
                 </a>
-                <span className="mx-2">›</span>
               </>
             )}
+            <span className="mx-2">›</span>
             <span className="text-[#1A1A1A] truncate max-w-[200px]">{product.title}</span>
           </nav>
         </div>
@@ -141,7 +146,7 @@ export default async function ProductPage({
             <div className="grid grid-cols-3 gap-2 pt-4 border-t border-[#E8DDD0]">
               {[
                 { icon: "🚚", label: "Free Shipping", sub: "Pan India" },
-                { icon: "↩️", label: "Easy Returns", sub: "7 days" },
+                { icon: "↩️", label: "Open Box Return", sub: "On delivery only" },
                 { icon: "✓", label: "Authentic", sub: "100% Pure Silk" },
               ].map(({ icon, label, sub }) => (
                 <div key={label} className="flex flex-col items-center text-center py-3 rounded border border-[#E8DDD0]">
