@@ -6,11 +6,11 @@ import Link from "next/link";
 import Image from "next/image";
 
 const collections = [
-  { num: "01", handle: "kanjivaram-silk", title: "Kanjivaram Silk", origin: "Kanchipuram, TN", desc: "Pure mulberry silk with gold zari. The queen of Indian sarees.", image: "/collections/kanjivaram-silk.jpg" },
-  { num: "02", handle: "banarasi-silk", title: "Banarasi Silk", origin: "Varanasi, UP", desc: "Royal brocade weaving with intricate motifs from the holy city.", image: "/collections/banarasi-silk.jpg" },
-  { num: "03", handle: "mysore-silk", title: "Mysore Silk", origin: "Mysuru, Karnataka", desc: "Lustrous silk with pure gold zari, the pride of Karnataka.", image: "/collections/mysore-silk.jpg" },
-  { num: "04", handle: "wedding-silk", title: "Bridal Collection", origin: "Curated Selection", desc: "The most auspicious sarees for your most treasured moments.", image: "/collections/wedding-silk.jpg" },
-  { num: "05", handle: "casual-cotton", title: "Cotton Weaves", origin: "South India", desc: "Lightweight elegance for everyday grace and comfort.", image: "/collections/casual-cotton.jpg" },
+  { num: "01", handle: "kanjivaram-silk", title: "Kanjivaram Silk", origin: "Kanchipuram, TN", desc: "Pure mulberry silk with gold zari. The queen of Indian sarees.", image: "/collections/kanjivaram-silk.png" },
+  { num: "02", handle: "banarasi-silk", title: "Banarasi Silk", origin: "Varanasi, UP", desc: "Royal brocade weaving with intricate motifs from the holy city.", image: "/collections/banarasi-silk.png" },
+  { num: "03", handle: "mysore-silk", title: "Mysore Silk", origin: "Mysuru, Karnataka", desc: "Lustrous silk with pure gold zari, the pride of Karnataka.", image: "/collections/mysore-silk.png" },
+  { num: "04", handle: "wedding-silk", title: "Bridal Collection", origin: "Curated Selection", desc: "The most auspicious sarees for your most treasured moments.", image: "/collections/wedding-silk.png" },
+  { num: "05", handle: "casual-cotton", title: "Cotton Weaves", origin: "South India", desc: "Lightweight elegance for everyday grace and comfort.", image: "/collections/casual-cotton.png" },
 ];
 
 export default function CollectionsShowcase() {
