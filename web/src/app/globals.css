@@ -3,8 +3,8 @@
 :root {
   --color-crimson: #8B1A1A;
   --color-gold: #B8860B;
-  --color-cream: #FDF6EE;
-  --color-warm: #FDF0E0;
+  --color-cream: #FAF6F0;
+  --color-warm: #F5EDE0;
   --font-sans: var(--font-inter);
   --font-display: var(--font-playfair);
 }

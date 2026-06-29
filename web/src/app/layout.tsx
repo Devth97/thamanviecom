@@ -23,7 +23,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <ClerkProvider>
       <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
-        <body className="bg-[#FDF6EE] text-[#1A1A1A] font-sans antialiased">
+        <body className="bg-[#FAF6F0] text-[#1A1A1A] font-sans antialiased">
           <PostHogProvider>
             <Navbar />
             {children}

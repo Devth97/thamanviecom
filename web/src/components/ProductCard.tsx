@@ -12,7 +12,7 @@ export default function ProductCard({ product }: { product: ShopifyProduct }) {
 
   return (
     <Link href={`/products/${product.handle}`} className="group relative flex flex-col">
-      <div className="relative aspect-[3/4] w-full overflow-hidden rounded bg-[#FDF0E0]">
+      <div className="relative aspect-[3/4] w-full overflow-hidden rounded bg-[#F5EDE0]">
         {image ? (
           <Image
             src={image.url}

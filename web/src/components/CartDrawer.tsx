@@ -38,7 +38,7 @@ export default function CartDrawer() {
       />
       <div
         ref={drawerRef}
-        className="fixed right-0 top-0 z-50 h-full w-full max-w-md bg-[#FDF6EE] shadow-2xl flex flex-col translate-x-full"
+        className="fixed right-0 top-0 z-50 h-full w-full max-w-md bg-[#FAF6F0] shadow-2xl flex flex-col translate-x-full"
         role="dialog"
         aria-label="Shopping cart"
       >
@@ -52,7 +52,7 @@ export default function CartDrawer() {
           <button
             onClick={() => setIsOpen(false)}
             aria-label="Close cart"
-            className="rounded-full p-1 hover:bg-[#FDF0E0] transition-colors"
+            className="rounded-full p-1 hover:bg-[#F5EDE0] transition-colors"
           >
             <X className="h-5 w-5" />
           </button>
@@ -73,7 +73,7 @@ export default function CartDrawer() {
           ) : (
             cart.lines.nodes.map((line) => (
               <div key={line.id} className="flex gap-4 items-start">
-                <div className="relative h-20 w-16 shrink-0 rounded overflow-hidden bg-[#FDF0E0]">
+                <div className="relative h-20 w-16 shrink-0 rounded overflow-hidden bg-[#F5EDE0]">
                   {line.merchandise.product.images.nodes[0] && (
                     <Image
                       src={line.merchandise.product.images.nodes[0].url}
@@ -97,7 +97,7 @@ export default function CartDrawer() {
                       onClick={() => updateItem(line.id, line.quantity - 1)}
                       disabled={loading || line.quantity <= 1}
                       aria-label="Decrease quantity"
-                      className="rounded-full border border-[#D4A96A] p-0.5 disabled:opacity-40 hover:bg-[#FDF0E0] transition-colors"
+                      className="rounded-full border border-[#D4A96A] p-0.5 disabled:opacity-40 hover:bg-[#F5EDE0] transition-colors"
                     >
                       <Minus className="h-3 w-3" />
                     </button>
@@ -106,7 +106,7 @@ export default function CartDrawer() {
                       onClick={() => updateItem(line.id, line.quantity + 1)}
                       disabled={loading}
                       aria-label="Increase quantity"
-                      className="rounded-full border border-[#D4A96A] p-0.5 disabled:opacity-40 hover:bg-[#FDF0E0] transition-colors"
+                      className="rounded-full border border-[#D4A96A] p-0.5 disabled:opacity-40 hover:bg-[#F5EDE0] transition-colors"
                     >
                       <Plus className="h-3 w-3" />
                     </button>

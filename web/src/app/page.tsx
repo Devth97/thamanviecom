@@ -23,7 +23,7 @@ export default async function HomePage() {
       <HeritageBanner />
 
       {/* Bestsellers */}
-      <section className="bg-[#FDF6EE] py-24">
+      <section className="bg-[#FAF6F0] py-24">
         <div className="mx-auto max-w-7xl px-6 md:px-12">
           <div className="flex items-end justify-between mb-12">
             <div>
@@ -46,7 +46,7 @@ export default async function HomePage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {["Kanjivaram Crimson", "Mysore Blue", "Banarasi Gold", "Wedding Red"].map((name, i) => (
                 <div key={name} className="group cursor-pointer">
-                  <div className="relative aspect-[3/4] bg-gradient-to-br from-[#FDF0E0] to-[#E8D5B7] overflow-hidden border border-[#D4A96A]/30 mb-3">
+                  <div className="relative aspect-[3/4] bg-gradient-to-br from-[#F5EDE0] to-[#E8D5B7] overflow-hidden border border-[#D4A96A]/30 mb-3">
                     <div className="absolute inset-0 flex flex-col items-center justify-center p-4 text-center">
                       <div className="w-12 h-12 border border-[#B8860B]/40 rounded-full flex items-center justify-center mb-3">
                         <span className="text-[#B8860B] text-xs font-display italic">0{i + 1}</span>

@@ -39,17 +39,13 @@ export default function HeroSection() {
     <section ref={sectionRef} className="relative min-h-screen flex items-center overflow-hidden bg-[#0D0808]">
       {/* Background texture — animated silk gradient */}
       <div ref={overlayRef} className="absolute inset-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1A0A0A] via-[#0D0808] to-[#0A0505]" />
-        {/* Decorative gold lines */}
-        <div className="absolute top-0 right-0 w-px h-full bg-gradient-to-b from-transparent via-[#B8860B]/20 to-transparent" />
-        <div className="absolute top-[20%] right-[8%] w-64 h-64 rounded-full border border-[#B8860B]/10" />
-        <div className="absolute top-[30%] right-[12%] w-40 h-40 rounded-full border border-[#B8860B]/10" />
-        {/* Video placeholder — replace with real silk video */}
-        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-60" aria-hidden="true">
+        <div className="absolute inset-0 bg-[#0D0808]" />
+        {/* Silk video — full brightness, only text area darkened */}
+        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-90" aria-hidden="true">
           <source src="/hero-silk.mp4" type="video/mp4" />
         </video>
-        {/* Strong left gradient so text stays readable over video */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#0D0808] via-[#0D0808]/75 to-[#0D0808]/10" />
+        {/* Gradient only on the left third where text lives — right side shows full video */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0D0808]/90 via-[#0D0808]/50 to-transparent" />
       </div>
 
       {/* Content */}

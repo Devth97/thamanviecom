@@ -34,7 +34,7 @@ export default function CollectionsShowcase() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="bg-[#FDF6EE] py-24" id="collections">
+    <section ref={sectionRef} className="bg-[#FAF6F0] py-24" id="collections">
       <div className="mx-auto max-w-7xl px-6 md:px-12">
         <div className="flex items-center gap-4 mb-4">
           <div className="h-px w-8 bg-[#B8860B]" />

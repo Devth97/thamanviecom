@@ -3,6 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ShoppingBag, Menu, X } from "lucide-react";
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useCart } from "@/hooks/useCart";
 
 export default function Navbar() {
@@ -10,7 +11,12 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { cart, setIsOpen } = useCart();
+  const pathname = usePathname();
   const itemCount = cart?.totalQuantity ?? 0;
+
+  // Only start transparent on homepage — all other pages get dark nav immediately
+  const isHomepage = pathname === "/";
+  const isDark = !isHomepage || scrolled;
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
@@ -29,7 +35,9 @@ export default function Navbar() {
       <nav
         ref={navRef}
         className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
-          scrolled ? "bg-[#0D0808]/95 backdrop-blur-sm shadow-lg shadow-black/20" : "bg-transparent"
+          isDark
+            ? "bg-[#0D0808]/95 backdrop-blur-sm shadow-lg shadow-black/20"
+            : "bg-transparent"
         }`}
       >
         <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">

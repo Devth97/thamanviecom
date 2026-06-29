@@ -26,7 +26,7 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
 
   if (images.length === 0) {
     return (
-      <div className="aspect-[3/4] w-full rounded bg-[#FDF0E0] flex items-center justify-center text-6xl">
+      <div className="aspect-[3/4] w-full rounded bg-[#F5EDE0] flex items-center justify-center text-6xl">
         🧣
       </div>
     );
@@ -61,7 +61,7 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
       {/* Main image */}
       <div
         ref={mainRef}
-        className="flex-1 relative aspect-[3/4] rounded overflow-hidden bg-[#FDF0E0]"
+        className="flex-1 relative aspect-[3/4] rounded overflow-hidden bg-[#F5EDE0]"
       >
         <Image
           src={images[active].url}
