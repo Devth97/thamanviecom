@@ -36,7 +36,7 @@ export default function HeroSection() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="relative min-h-screen flex items-center overflow-hidden bg-[#0D0808]">
+    <section ref={sectionRef} className="relative min-h-[80vh] md:min-h-screen flex items-center overflow-hidden bg-[#0D0808]">
       {/* Background texture — animated silk gradient */}
       <div ref={overlayRef} className="absolute inset-0">
         <div className="absolute inset-0 bg-[#0D0808]" />

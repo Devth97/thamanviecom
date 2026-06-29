@@ -34,38 +34,39 @@ export default function CollectionsShowcase() {
   }, []);
 
   return (
-    <section ref={sectionRef} className="bg-[#FAF6F0] py-24" id="collections">
-      <div className="mx-auto max-w-7xl px-6 md:px-12">
-        <div className="flex items-center gap-4 mb-4">
-          <div className="h-px w-8 bg-[#B8860B]" />
-          <span className="text-[#B8860B] text-xs tracking-[0.25em] uppercase">Curated Silks</span>
+    <section ref={sectionRef} className="bg-[#FAF6F0] py-8 md:py-16" id="collections">
+      <div className="mx-auto max-w-7xl px-4 md:px-12">
+        <div className="flex items-center gap-3 mb-2">
+          <div className="h-px w-6 bg-[#B8860B]" />
+          <span className="text-[#B8860B] text-[10px] tracking-[0.25em] uppercase">Curated Silks</span>
         </div>
-        <h2 className="font-display text-4xl md:text-5xl text-[#0D0808] mb-16">Our Collections</h2>
+        <h2 className="font-display text-2xl md:text-5xl text-[#0D0808] mb-6 md:mb-10">Our Collections</h2>
 
-        <div className="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
+        {/* Mobile: horizontal scroll — Desktop: 5-col grid */}
+        <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 md:grid md:grid-cols-3 lg:grid-cols-5 md:gap-4 md:overflow-visible md:pb-0">
           {collections.map(({ num, handle, title, origin, desc, image }) => (
             <Link
               key={handle}
               href={`/collections/${handle}`}
-              className="collection-card group opacity-0 flex flex-col"
+              className="collection-card group opacity-0 flex flex-col shrink-0 w-36 md:w-auto"
             >
-              {/* Collection image */}
-              <div className="relative aspect-[3/4] bg-[#1A0A0A] overflow-hidden mb-4">
-                <div className="absolute top-3 left-3 z-10 font-display text-5xl text-white/10 leading-none select-none">{num}</div>
+              {/* Collection image — shorter aspect on mobile */}
+              <div className="relative aspect-[3/4] w-full bg-[#1A0A0A] overflow-hidden mb-2 md:mb-4">
                 <Image
                   src={image}
                   alt={title}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-110"
-                  sizes="(max-width: 768px) 50vw, 20vw"
+                  sizes="(max-width: 768px) 144px, 20vw"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0D0808]/60 via-transparent to-transparent" />
-                <div className="absolute inset-0 bg-[#0D0808]/0 group-hover:bg-[#0D0808]/20 transition-colors duration-500" />
-                <div className="absolute bottom-0 left-0 right-0 p-3 translate-y-full group-hover:translate-y-0 transition-transform duration-500 bg-[#0D0808]/85">
-                  <p className="text-white/90 text-[10px] leading-relaxed">{desc}</p>
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0D0808]/50 via-transparent to-transparent" />
+                {/* Title overlay on mobile */}
+                <div className="absolute bottom-0 left-0 right-0 p-2 md:translate-y-full md:group-hover:translate-y-0 md:transition-transform md:duration-500 bg-[#0D0808]/70 md:bg-[#0D0808]/85">
+                  <p className="text-white text-[9px] md:text-[10px] leading-relaxed font-medium md:font-normal">{title}</p>
                 </div>
               </div>
-              <div>
+              {/* Below-image label — desktop only */}
+              <div className="hidden md:block">
                 <p className="text-[#B8860B] text-[10px] tracking-[0.2em] uppercase mb-1">{origin}</p>
                 <h3 className="font-display text-base text-[#0D0808] group-hover:text-[#8B1A1A] transition-colors">{title}</h3>
               </div>

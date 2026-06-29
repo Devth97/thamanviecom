@@ -48,7 +48,7 @@ export default async function HomePage() {
       <HeritageBanner />
 
       {/* Bestsellers */}
-      <section className="bg-[#FAF6F0] py-24">
+      <section className="bg-[#FAF6F0] py-8 md:py-16">
         <div className="mx-auto max-w-7xl px-6 md:px-12">
           <div className="flex items-end justify-between mb-12">
             <div>
@@ -127,7 +127,7 @@ export default async function HomePage() {
       </section>
 
       {/* Heritage video 1 — Hands weaving */}
-      <section className="relative h-[60vh] overflow-hidden">
+      <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
         <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" aria-hidden="true">
           <source src="/videos/hands-weaving.mp4" type="video/mp4" />
         </video>
@@ -139,7 +139,7 @@ export default async function HomePage() {
       </section>
 
       {/* Heritage video 2 — Gold zari */}
-      <section className="relative h-[60vh] overflow-hidden">
+      <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
         <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" aria-hidden="true">
           <source src="/videos/gold-zari.mp4" type="video/mp4" />
         </video>
@@ -151,7 +151,7 @@ export default async function HomePage() {
       </section>
 
       {/* Heritage video 3 — Silk reeling */}
-      <section className="relative h-[60vh] overflow-hidden">
+      <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
         <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" aria-hidden="true">
           <source src="/videos/silk-reeling.mp4" type="video/mp4" />
         </video>

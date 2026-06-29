@@ -27,7 +27,7 @@ export default function TestimonialsSection() {
   }, []);
 
   return (
-    <section ref={ref} className="bg-[#0D0808] py-24 border-t border-[#B8860B]/10">
+    <section ref={ref} className="bg-[#0D0808] py-8 md:py-16 border-t border-[#B8860B]/10">
       <div className="mx-auto max-w-7xl px-6 md:px-12">
         <div className="flex items-center gap-4 mb-4">
           <div className="h-px w-8 bg-[#B8860B]" />

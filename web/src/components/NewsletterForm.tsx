@@ -22,7 +22,7 @@ export default function NewsletterForm({ source = "homepage" }: { source?: strin
   }
 
   return (
-    <section className="bg-[#F5EDE0] py-14 px-4">
+    <section className="bg-[#F5EDE0] py-8 md:py-12 px-4">
       <div className="mx-auto max-w-xl text-center">
         <h2 className="font-display text-3xl text-[#8B1A1A] mb-2">Get 10% Off Your First Order</h2>
         <p className="text-sm text-[#666] mb-6">Subscribe for new arrivals, exclusive offers & styling tips.</p>

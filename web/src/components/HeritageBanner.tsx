@@ -28,7 +28,7 @@ export default function HeritageBanner() {
   }, []);
 
   return (
-    <section ref={ref} id="heritage" className="bg-[#0D0808] py-20 border-y border-[#B8860B]/10">
+    <section ref={ref} id="heritage" className="bg-[#0D0808] py-8 md:py-16 border-y border-[#B8860B]/10">
       <div className="mx-auto max-w-7xl px-6 md:px-12">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-0 md:divide-x md:divide-[#B8860B]/20">
           {stats.map(({ value, label, sub }) => (
