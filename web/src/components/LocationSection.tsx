@@ -14,7 +14,7 @@ export default function LocationSection() {
             Looking for a saree shop near you in Puttur? Thamanvi Silks is a saree shop on Bypass
             Road, Bappalige, stocking authentic Kanjivaram, Banarasi, and Mysore Silk sarees for
             weddings, festivals, and everyday wear. Walk in to feel the fabric, see the zari work
-            up close, and get help from our team — or shop the same collection online with COD and
+            up close, and get help from our team, or shop the same collection online with COD and
             free shipping across India.
           </p>
           <p className="text-white/40 text-sm leading-relaxed mb-2">

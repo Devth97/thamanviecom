@@ -21,11 +21,11 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfa
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Thamanvi Silks — Saree Shop in Puttur | Kanjivaram Silk",
+    default: "Thamanvi Silks | Saree Shop in Puttur | Kanjivaram Silk",
     template: "%s | Thamanvi Silks",
   },
   description:
-    "Saree shop in Puttur, Karnataka — authentic Kanjivaram, Banarasi & Mysore silk sarees. 4.8★ on Google. COD available, free shipping across India.",
+    "Saree shop in Puttur, Karnataka with authentic Kanjivaram, Banarasi & Mysore silk sarees. 4.8★ on Google. COD available, free shipping across India.",
   keywords: [
     "saree shop", "saree shop near me", "saree shop puttur", "saree shop karnataka",
     "saree", "buy saree online", "silk saree", "kanjivaram saree", "banarasi saree",

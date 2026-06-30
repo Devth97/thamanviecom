@@ -18,14 +18,14 @@ export default function AboutPage() {
         <div className="prose prose-sm md:prose-base max-w-none text-[#444] space-y-4 leading-relaxed">
           <p>
             Thamanvi Silks &amp; Sarees was founded in 2023 in Puttur, Karnataka, with a simple goal:
-            bring authentic, pure silk sarees — Kanjivaram, Banarasi, and Mysore Silk — directly to
-            customers without compromising on quality or pricing them out of reach.
+            bring authentic, pure silk sarees, including Kanjivaram, Banarasi, and Mysore Silk,
+            directly to customers without compromising on quality or pricing them out of reach.
           </p>
           <p>
-            Every saree we sell is sourced directly from weaving regions known for the craft —
-            Kanjivaram from Kanchipuram, Banarasi from Varanasi, and Mysore Silk from Karnataka&apos;s
-            own silk farms. We personally select each design for weave quality, zari purity, and
-            finish before it reaches our store.
+            Every saree we sell is sourced directly from weaving regions known for the craft,
+            including Kanjivaram from Kanchipuram, Banarasi from Varanasi, and Mysore Silk from
+            Karnataka&apos;s own silk farms. We personally select each design for weave quality,
+            zari purity, and finish before it reaches our store.
           </p>
           <p>
             We&apos;re rated {GOOGLE_RATING}★ on Google from {GOOGLE_REVIEW_COUNT}+ customer reviews,
@@ -35,7 +35,7 @@ export default function AboutPage() {
           <p>
             Whether you&apos;re shopping for a wedding, a festival, or everyday wear, we offer Cash on
             Delivery, free shipping across India, and an open-box return policy so you can be confident
-            in what you&apos;re buying — even online.
+            in what you&apos;re buying, even online.
           </p>
         </div>
 

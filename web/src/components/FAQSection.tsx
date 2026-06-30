@@ -6,7 +6,7 @@ import { ChevronDown } from "lucide-react";
 const FAQS = [
   {
     q: "Are Thamanvi Silks sarees 100% pure silk?",
-    a: "Yes. Every saree is sourced directly from authentic weaving regions — Kanjivaram from Kanchipuram, Banarasi from Varanasi, and Mysore Silk from Karnataka's silk farms. Each product page lists fabric type, weave, and zari purity.",
+    a: "Yes. Every saree is sourced directly from authentic weaving regions, including Kanjivaram from Kanchipuram, Banarasi from Varanasi, and Mysore Silk from Karnataka's silk farms. Each product page lists fabric type, weave, and zari purity.",
   },
   {
     q: "Does Thamanvi Silks offer Cash on Delivery (COD)?",
@@ -14,7 +14,7 @@ const FAQS = [
   },
   {
     q: "What is the exchange and return policy?",
-    a: "We offer an open box return and free exchange policy — you can inspect your saree on delivery before accepting, and exchanges are hassle-free if the fit or color isn't right.",
+    a: "We offer an open box return and free exchange policy. You can inspect your saree on delivery before accepting, and exchanges are hassle-free if the fit or color isn't right.",
   },
   {
     q: "How long does delivery take?",
@@ -26,7 +26,7 @@ const FAQS = [
   },
   {
     q: "Can I get a blouse stitched with my saree?",
-    a: "Yes, blouse pieces are included with most sarees, and our team can guide you on measurements and draping styles via WhatsApp — just ask before or after your purchase.",
+    a: "Yes, blouse pieces are included with most sarees, and our team can guide you on measurements and draping styles via WhatsApp. Just ask before or after your purchase.",
   },
 ];
 
