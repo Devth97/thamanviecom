@@ -4,9 +4,9 @@ import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 
 const testimonials = [
-  { quote: "The Kanjivaram saree I bought for my daughter's wedding was breathtaking. Three months later, guests still ask where we got it.", name: "Kavitha R.", location: "Bengaluru" },
-  { quote: "Been buying from Thamanvi Silks for over ten years. The zari quality and authenticity is unmatched by any online store I've tried.", name: "Anitha Bhat", location: "Mangaluru" },
-  { quote: "Staff took two hours showing us different sarees without any pressure. Rare patience. We left with three. Absolutely worth the visit.", name: "Meena Shetty", location: "Puttur" },
+  { quote: "Very good ambience and the friendly staffs make us feel comfortable at shopping.", name: "Manisha", location: "Google Review" },
+  { quote: "Gud collection...but you can have discount for your regular customers..", name: "Preethi Bhat Kumar", location: "Google Review" },
+  { quote: "A wonderful place to purchase a variety of silk sarees and other dresses.", name: "Mohan K", location: "Google Review" },
 ];
 
 export default function TestimonialsSection() {
@@ -33,7 +33,18 @@ export default function TestimonialsSection() {
           <div className="h-px w-8 bg-[#B8860B]" />
           <span className="text-[#B8860B] text-xs tracking-[0.25em] uppercase">What they say</span>
         </div>
-        <h2 className="font-display text-2xl md:text-5xl text-white italic mb-6 md:mb-10">Voices of Trust</h2>
+        <h2 className="font-display text-2xl md:text-5xl text-white italic mb-3 md:mb-4">Voices of Trust</h2>
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 mb-6 md:mb-10 text-sm">
+          <div className="flex items-center gap-1.5">
+            <span className="flex text-[#B8860B]">
+              {"★★★★★".split("").map((s, i) => <span key={i}>{s}</span>)}
+            </span>
+            <span className="text-white font-medium">4.8</span>
+            <span className="text-white/50">· 421 Google reviews</span>
+          </div>
+          <span className="text-white/30 hidden md:inline">|</span>
+          <span className="text-white/50">4.8/5 Justdial · 363 votes</span>
+        </div>
 
         {/* Mobile: horizontal scroll | Desktop: 3-col grid */}
         <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:pb-0">

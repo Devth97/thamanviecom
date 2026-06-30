@@ -10,7 +10,7 @@ import "./globals.css";
 
 // ── Retargeting pixel IDs ──
 const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "3272610399588521";
-const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "";
+const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "AW-18284564481";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" });
