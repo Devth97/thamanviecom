@@ -6,23 +6,45 @@ import PostHogProvider from "@/components/PostHogProvider";
 import Navbar from "@/components/Navbar";
 import BottomNav from "@/components/BottomNav";
 import { CartProvider } from "@/contexts/CartContext";
+import { GOOGLE_RATING, GOOGLE_REVIEW_COUNT } from "@/data/googleReviews";
 import "./globals.css";
 
 // ── Retargeting pixel IDs ──
 const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "3272610399588521";
 const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "AW-18284564481";
 
+const SITE_URL = "https://thamanvi.com";
+
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter", display: "swap" });
 const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfair", display: "swap" });
 
 export const metadata: Metadata = {
-  title: { default: "Thamanvi Silks | Premium Sarees & Silk", template: "%s | Thamanvi Silks" },
-  description: "Authentic silk sarees from Thamanvi Silks, Puttur. Kanjivaram, Banarasi, Mysore Silk & more. Free shipping. 100% pure silk.",
-  keywords: ["saree", "silk saree", "kanjivaram", "puttur", "karnataka", "thamanvi silks"],
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Thamanvi Silks | Buy Sarees Online — Kanjivaram, Banarasi & Mysore Silk Sarees",
+    template: "%s | Thamanvi Silks",
+  },
+  description:
+    "Shop authentic silk sarees online from Thamanvi Silks, Puttur, Karnataka. Pure Kanjivaram, Banarasi, Mysore Silk & wedding sarees. Rated 4.8★ on Google (421+ reviews). COD available, free shipping across India.",
+  keywords: [
+    "saree", "buy saree online", "silk saree", "kanjivaram saree", "banarasi saree",
+    "mysore silk saree", "wedding saree", "saree shop puttur", "saree shop karnataka",
+    "thamanvi silks", "pure silk saree online india",
+  ],
+  alternates: { canonical: SITE_URL },
   openGraph: {
     type: "website",
     locale: "en_IN",
     siteName: "Thamanvi Silks",
+    url: SITE_URL,
+    title: "Thamanvi Silks | Buy Sarees Online — Kanjivaram, Banarasi & Mysore Silk Sarees",
+    description:
+      "Shop authentic silk sarees online from Thamanvi Silks, Puttur, Karnataka. Rated 4.8★ on Google. COD available, free shipping across India.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Thamanvi Silks | Buy Sarees Online",
+    description: "Authentic Kanjivaram, Banarasi & Mysore Silk sarees. Rated 4.8★ on Google.",
   },
 };
 
@@ -30,6 +52,51 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <ClerkProvider>
       <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+        {/* ── LocalBusiness structured data — powers Google Maps/Search rich results
+            and is what AI answer engines (ChatGPT, Perplexity, Google AI Overviews)
+            read to answer "saree shop in Puttur" / "is Thamanvi Silks real" queries ── */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "ClothingStore",
+              "@id": `${SITE_URL}/#business`,
+              name: "Thamanvi Silks",
+              alternateName: "Thamanvi Silks & Sarees",
+              url: SITE_URL,
+              description:
+                "Authentic Kanjivaram, Banarasi, and Mysore silk sarees. Traditional and modern collections for weddings and festive wear.",
+              telephone: "+919535779597",
+              priceRange: "₹₹₹",
+              address: {
+                "@type": "PostalAddress",
+                streetAddress: "Ground Floor, Bappalige Tower, Bypass Road, Bappalige",
+                addressLocality: "Puttur",
+                addressRegion: "Karnataka",
+                postalCode: "574201",
+                addressCountry: "IN",
+              },
+              areaServed: "IN",
+              aggregateRating: {
+                "@type": "AggregateRating",
+                ratingValue: GOOGLE_RATING,
+                reviewCount: GOOGLE_REVIEW_COUNT,
+              },
+              openingHoursSpecification: [
+                {
+                  "@type": "OpeningHoursSpecification",
+                  dayOfWeek: ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"],
+                  opens: "10:00",
+                  closes: "20:00",
+                },
+              ],
+              sameAs: [
+                "https://wa.me/919535779597",
+              ],
+            }),
+          }}
+        />
         {/* ── Meta Pixel (Instagram + Facebook retargeting) ── */}
         {META_PIXEL_ID && (
           <>

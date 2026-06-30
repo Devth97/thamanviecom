@@ -7,6 +7,6 @@ export default function robots(): MetadataRoute.Robots {
       allow: "/",
       disallow: ["/account/", "/api/"],
     },
-    sitemap: "https://thamanvie.com/sitemap.xml",
+    sitemap: "https://thamanvi.com/sitemap.xml",
   };
 }

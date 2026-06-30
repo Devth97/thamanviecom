@@ -6,6 +6,7 @@ import CartDrawer from "@/components/CartDrawer";
 import CollectionsShowcase from "@/components/CollectionsShowcase";
 import HeritageBanner from "@/components/HeritageBanner";
 import TestimonialsSection from "@/components/TestimonialsSection";
+import FAQSection from "@/components/FAQSection";
 import HomeShopSection from "@/components/HomeShopSection";
 import { getProducts } from "@/lib/shopify";
 import Link from "next/link";
@@ -120,6 +121,7 @@ export default async function HomePage() {
       </section>
 
       <TestimonialsSection />
+      <FAQSection />
       <NewsletterForm />
       <WhatsAppCTA />
       <CartDrawer />
