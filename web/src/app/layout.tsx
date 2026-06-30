@@ -37,14 +37,16 @@ export const metadata: Metadata = {
     locale: "en_IN",
     siteName: "Thamanvi Silks",
     url: SITE_URL,
-    title: "Thamanvi Silks — Saree Shop in Puttur | Kanjivaram Silk",
+    title: "Thamanvi Silks | Saree Shop in Puttur | Kanjivaram Silk",
     description:
       "Saree shop in Puttur, Karnataka with authentic Kanjivaram, Banarasi & Mysore silk sarees. 4.8★ on Google. COD available, free shipping across India.",
+    images: [{ url: "/logo-512.png", width: 512, height: 512, alt: "Thamanvi Silks" }],
   },
   twitter: {
     card: "summary_large_image",
     title: "Thamanvi Silks | Buy Sarees Online",
     description: "Authentic Kanjivaram, Banarasi & Mysore Silk sarees. Rated 4.8★ on Google.",
+    images: ["/logo-512.png"],
   },
 };
 
@@ -65,6 +67,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               name: "Thamanvi Silks",
               alternateName: "Thamanvi Silks & Sarees",
               url: SITE_URL,
+              logo: `${SITE_URL}/logo-512.png`,
+              image: `${SITE_URL}/logo-512.png`,
               description:
                 "Authentic Kanjivaram, Banarasi, and Mysore silk sarees. Traditional and modern collections for weddings and festive wear.",
               telephone: "+919535779597",

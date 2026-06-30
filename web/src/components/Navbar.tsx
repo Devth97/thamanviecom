@@ -2,6 +2,7 @@
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
 import { ShoppingBag, Menu, X } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCartContext as useCart } from "@/contexts/CartContext";
@@ -42,8 +43,11 @@ export default function Navbar() {
       >
         <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
           {/* Logo */}
-          <Link href="/" className="font-display text-xl tracking-[0.2em] text-white hover:text-[#B8860B] transition-colors">
-            THAMANVI
+          <Link href="/" className="flex items-center gap-2.5 group">
+            <Image src="/logo-512.png" alt="Thamanvi Silks" width={36} height={36} className="rounded-full" priority />
+            <span className="font-display text-xl tracking-[0.2em] text-white group-hover:text-[#B8860B] transition-colors">
+              THAMANVI
+            </span>
           </Link>
 
           {/* Desktop nav */}
