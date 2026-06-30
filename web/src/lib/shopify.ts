@@ -43,6 +43,7 @@ export type ShopifyProduct = {
   variants: { nodes: ShopifyVariant[] };
   metafields: (ShopifyMetafield | null)[];
   collections: { nodes: { handle: string; title: string }[] };
+  tags: string[];
 };
 
 export type ShopifyProductPreview = Pick<ShopifyProduct, "id" | "handle" | "title" | "images" | "priceRange">;
@@ -154,6 +155,7 @@ const PRODUCT_FRAGMENT = `
       title
     }
   }
+  tags
 `;
 
 const CART_FRAGMENT = `

@@ -44,17 +44,29 @@ export default function PLPClient({ collection }: Props) {
 
   // Client-side filtering
   const filteredProducts = useMemo(() => {
+    const matchesAny = (productTags: string[], selected: string[]) => {
+      if (selected.length === 0) return true;
+      const lowerTags = productTags.map(t => t.toLowerCase());
+      return selected.some(s => lowerTags.includes(s.toLowerCase()));
+    };
+
     return allProducts.filter(p => {
       // In stock
       if (inStockOnly && !p.variants.nodes.some(v => v.availableForSale)) return false;
       // Price
       const price = Number(p.priceRange.minVariantPrice.amount);
       if (price < priceRange[0] || price > priceRange[1]) return false;
-      // Tags/type (if Shopify product tags were available — we filter by title keywords as fallback)
-      // Color — skip for now (needs tag support from Shopify)
+      // Type / Fabric / Work / Colour — matched against Shopify product tags.
+      // Requires the corresponding tag (e.g. "Kanjivaram", "Silk", "Maroon") to be
+      // set on the product in Shopify Admin; products without tags won't match
+      // any of these filters.
+      if (!matchesAny(p.tags, selectedTypes)) return false;
+      if (!matchesAny(p.tags, selectedFabrics)) return false;
+      if (!matchesAny(p.tags, selectedWorks)) return false;
+      if (!matchesAny(p.tags, selectedColors)) return false;
       return true;
     });
-  }, [allProducts, inStockOnly, priceRange]);
+  }, [allProducts, inStockOnly, priceRange, selectedTypes, selectedFabrics, selectedWorks, selectedColors]);
 
   const maxPrice = useMemo(() => {
     if (allProducts.length === 0) return 50000;

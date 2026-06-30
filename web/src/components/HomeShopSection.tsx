@@ -54,14 +54,27 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
     return Math.ceil(Math.max(...allProducts.map(p => Number(p.priceRange.minVariantPrice.amount)), 1000) / 500) * 500;
   }, [allProducts]);
 
-  const filtered = useMemo(() => allProducts.filter(p => {
-    if (inStockOnly && !p.variants.nodes.some(v => v.availableForSale)) return false;
-    const price = Number(p.priceRange.minVariantPrice.amount);
-    if (price < priceRange[0] || price > priceRange[1]) return false;
-    return true;
-  }), [allProducts, inStockOnly, priceRange]);
+  const filtered = useMemo(() => {
+    const matchesAny = (productTags: string[], selected: string[]) => {
+      if (selected.length === 0) return true;
+      const lowerTags = productTags.map(t => t.toLowerCase());
+      return selected.some(s => lowerTags.includes(s.toLowerCase()));
+    };
 
-  const activeCount = (inStockOnly ? 1 : 0) + (priceRange[0] > 0 || priceRange[1] < maxPrice ? 1 : 0);
+    return allProducts.filter(p => {
+      if (inStockOnly && !p.variants.nodes.some(v => v.availableForSale)) return false;
+      const price = Number(p.priceRange.minVariantPrice.amount);
+      if (price < priceRange[0] || price > priceRange[1]) return false;
+      if (!matchesAny(p.tags, selectedTypes)) return false;
+      if (!matchesAny(p.tags, selectedFabrics)) return false;
+      if (!matchesAny(p.tags, selectedWorks)) return false;
+      if (!matchesAny(p.tags, selectedColors)) return false;
+      return true;
+    });
+  }, [allProducts, inStockOnly, priceRange, selectedTypes, selectedFabrics, selectedWorks, selectedColors]);
+
+  const activeCount = (inStockOnly ? 1 : 0) + (priceRange[0] > 0 || priceRange[1] < maxPrice ? 1 : 0) +
+    selectedTypes.length + selectedFabrics.length + selectedWorks.length + selectedColors.length;
 
   const reset = () => {
     setSelectedTypes([]); setSelectedFabrics([]); setSelectedWorks([]);
