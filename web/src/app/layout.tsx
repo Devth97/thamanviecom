@@ -21,15 +21,15 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfa
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Thamanvi Silks | Buy Sarees Online — Kanjivaram & Silk Sarees",
+    default: "Thamanvi Silks — Saree Shop in Puttur | Kanjivaram Silk",
     template: "%s | Thamanvi Silks",
   },
   description:
-    "Authentic Kanjivaram, Banarasi & Mysore silk sarees from Puttur, Karnataka. 4.8★ on Google (421+ reviews). COD available, free shipping across India.",
+    "Saree shop in Puttur, Karnataka — authentic Kanjivaram, Banarasi & Mysore silk sarees. 4.8★ on Google. COD available, free shipping across India.",
   keywords: [
+    "saree shop", "saree shop near me", "saree shop puttur", "saree shop karnataka",
     "saree", "buy saree online", "silk saree", "kanjivaram saree", "banarasi saree",
-    "mysore silk saree", "wedding saree", "saree shop puttur", "saree shop karnataka",
-    "thamanvi silks", "pure silk saree online india",
+    "mysore silk saree", "wedding saree", "thamanvi silks", "pure silk saree online india",
   ],
   alternates: { canonical: SITE_URL },
   openGraph: {
@@ -37,9 +37,9 @@ export const metadata: Metadata = {
     locale: "en_IN",
     siteName: "Thamanvi Silks",
     url: SITE_URL,
-    title: "Thamanvi Silks | Buy Sarees Online — Kanjivaram & Silk Sarees",
+    title: "Thamanvi Silks — Saree Shop in Puttur | Kanjivaram Silk",
     description:
-      "Authentic Kanjivaram, Banarasi & Mysore silk sarees from Puttur, Karnataka. 4.8★ on Google. COD available, free shipping across India.",
+      "Saree shop in Puttur, Karnataka with authentic Kanjivaram, Banarasi & Mysore silk sarees. 4.8★ on Google. COD available, free shipping across India.",
   },
   twitter: {
     card: "summary_large_image",
@@ -78,6 +78,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 addressCountry: "IN",
               },
               areaServed: "IN",
+              geo: {
+                "@type": "GeoCoordinates",
+                latitude: 12.7632858,
+                longitude: 75.2018421,
+              },
+              hasMap: "https://www.google.com/maps?q=Bappalige+Tower+Bypass+Road+Bappalige+Mani+Puttur+Karnataka+574201",
               aggregateRating: {
                 "@type": "AggregateRating",
                 ratingValue: GOOGLE_RATING,
