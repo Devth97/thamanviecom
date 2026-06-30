@@ -2,12 +2,7 @@
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-const testimonials = [
-  { quote: "Very good ambience and the friendly staffs make us feel comfortable at shopping.", name: "Manisha", location: "Google Review" },
-  { quote: "Gud collection...but you can have discount for your regular customers..", name: "Preethi Bhat Kumar", location: "Google Review" },
-  { quote: "A wonderful place to purchase a variety of silk sarees and other dresses.", name: "Mohan K", location: "Google Review" },
-];
+import { GOOGLE_REVIEWS, GOOGLE_RATING, GOOGLE_REVIEW_COUNT } from "@/data/googleReviews";
 
 export default function TestimonialsSection() {
   const ref = useRef<HTMLElement>(null);
@@ -39,8 +34,8 @@ export default function TestimonialsSection() {
             <span className="flex text-[#B8860B]">
               {"★★★★★".split("").map((s, i) => <span key={i}>{s}</span>)}
             </span>
-            <span className="text-white font-medium">4.8</span>
-            <span className="text-white/50">· 421 Google reviews</span>
+            <span className="text-white font-medium">{GOOGLE_RATING}</span>
+            <span className="text-white/50">· {GOOGLE_REVIEW_COUNT} Google reviews</span>
           </div>
           <span className="text-white/30 hidden md:inline">|</span>
           <span className="text-white/50">4.8/5 Justdial · 363 votes</span>
@@ -48,7 +43,7 @@ export default function TestimonialsSection() {
 
         {/* Mobile: horizontal scroll | Desktop: 3-col grid */}
         <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2 md:grid md:grid-cols-3 md:gap-6 md:overflow-visible md:pb-0">
-          {testimonials.map(({ quote, name, location }) => (
+          {GOOGLE_REVIEWS.map(({ quote, name }) => (
             <div key={name} className="testimonial-card opacity-0 shrink-0 w-[80vw] md:w-auto border border-[#B8860B]/20 p-5 md:p-8 hover:border-[#B8860B]/50 transition-colors duration-500 group">
               <div className="font-display text-4xl md:text-6xl text-[#B8860B]/20 leading-none mb-2 md:mb-4">&quot;</div>
               <p className="text-white/70 text-sm leading-relaxed mb-4 md:mb-6 italic">{quote}</p>
@@ -56,7 +51,7 @@ export default function TestimonialsSection() {
                 <div className="h-px flex-1 bg-[#B8860B]/20" />
                 <div className="text-right">
                   <div className="text-white text-sm font-medium">{name}</div>
-                  <div className="text-[#B8860B]/60 text-xs tracking-wide">{location}</div>
+                  <div className="text-[#B8860B]/60 text-xs tracking-wide">Google Review</div>
                 </div>
               </div>
             </div>

@@ -10,8 +10,10 @@ import SizeGuideModal from "@/components/SizeGuideModal";
 import PincodeChecker from "@/components/PincodeChecker";
 import NotifyMe from "@/components/NotifyMe";
 import RecentlyViewed from "@/components/RecentlyViewed";
+import ProductReviews from "@/components/ProductReviews";
 import AddToCartButton from "./AddToCartButton";
 import RecentlyViewedTracker from "./RecentlyViewedTracker";
+import { GOOGLE_RATING, GOOGLE_REVIEW_COUNT } from "@/data/googleReviews";
 
 export const revalidate = 60;
 
@@ -322,9 +324,17 @@ export default async function ProductPage({
                 ? "https://schema.org/InStock"
                 : "https://schema.org/OutOfStock",
             },
+            aggregateRating: {
+              "@type": "AggregateRating",
+              ratingValue: GOOGLE_RATING,
+              reviewCount: GOOGLE_REVIEW_COUNT,
+            },
           }),
         }}
       />
+
+      {/* Reviews (real Google reviews, store-wide) */}
+      <ProductReviews />
 
       {/* Recently Viewed */}
       <RecentlyViewed currentHandle={product.handle} />
