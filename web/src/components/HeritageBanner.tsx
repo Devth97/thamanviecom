@@ -2,10 +2,11 @@
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { GOOGLE_REVIEW_COUNT } from "@/data/googleReviews";
 
 const stats = [
   { value: "2023", label: "Founded in Puttur", sub: "Karnataka, India" },
-  { value: "480+", label: "Google Reviews", sub: "4.8 star rating" },
+  { value: `${GOOGLE_REVIEW_COUNT}+`, label: "Google Reviews", sub: "4.8 star rating" },
   { value: "100%", label: "Authentic Silk", sub: "Direct from weavers" },
   { value: "COD", label: "Cash on Delivery", sub: "Pan India" },
 ];

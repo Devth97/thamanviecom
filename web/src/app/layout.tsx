@@ -21,11 +21,11 @@ const playfair = Playfair_Display({ subsets: ["latin"], variable: "--font-playfa
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Thamanvi Silks | Buy Sarees Online — Kanjivaram, Banarasi & Mysore Silk Sarees",
+    default: "Thamanvi Silks | Buy Sarees Online — Kanjivaram & Silk Sarees",
     template: "%s | Thamanvi Silks",
   },
   description:
-    "Shop authentic silk sarees online from Thamanvi Silks, Puttur, Karnataka. Pure Kanjivaram, Banarasi, Mysore Silk & wedding sarees. Rated 4.8★ on Google (421+ reviews). COD available, free shipping across India.",
+    "Authentic Kanjivaram, Banarasi & Mysore silk sarees from Puttur, Karnataka. 4.8★ on Google (421+ reviews). COD available, free shipping across India.",
   keywords: [
     "saree", "buy saree online", "silk saree", "kanjivaram saree", "banarasi saree",
     "mysore silk saree", "wedding saree", "saree shop puttur", "saree shop karnataka",
@@ -37,9 +37,9 @@ export const metadata: Metadata = {
     locale: "en_IN",
     siteName: "Thamanvi Silks",
     url: SITE_URL,
-    title: "Thamanvi Silks | Buy Sarees Online — Kanjivaram, Banarasi & Mysore Silk Sarees",
+    title: "Thamanvi Silks | Buy Sarees Online — Kanjivaram & Silk Sarees",
     description:
-      "Shop authentic silk sarees online from Thamanvi Silks, Puttur, Karnataka. Rated 4.8★ on Google. COD available, free shipping across India.",
+      "Authentic Kanjivaram, Banarasi & Mysore silk sarees from Puttur, Karnataka. 4.8★ on Google. COD available, free shipping across India.",
   },
   twitter: {
     card: "summary_large_image",
@@ -155,7 +155,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <div>
                     <h4 className="text-white/60 text-xs tracking-[0.2em] uppercase mb-4">Info</h4>
                     <div className="space-y-2">
-                      {[["About", "/#heritage"], ["Contact", "https://wa.me/919535779597"], ["Privacy", "/privacy"], ["Refund Policy", "/refund"]].map(([label, href]) => (
+                      {[["About", "/about"], ["Contact", "https://wa.me/919535779597"], ["Privacy", "/privacy"], ["Refund Policy", "/refund"]].map(([label, href]) => (
                         <div key={label}><a href={href} className="text-white/40 hover:text-[#B8860B] text-sm transition-colors">{label}</a></div>
                       ))}
                     </div>

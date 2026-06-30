@@ -52,7 +52,7 @@ export default function Navbar() {
               { label: "Collections", href: "/collections/kanjivaram-silk" },
               { label: "Kanjivaram", href: "/collections/kanjivaram-silk" },
               { label: "Wedding", href: "/collections/wedding-silk" },
-              { label: "About", href: "/#heritage" },
+              { label: "About", href: "/about" },
             ].map(({ label, href }) => (
               <Link
                 key={label}
@@ -95,7 +95,7 @@ export default function Navbar() {
               { label: "Collections", href: "/collections/kanjivaram-silk" },
               { label: "Kanjivaram", href: "/collections/kanjivaram-silk" },
               { label: "Wedding", href: "/collections/wedding-silk" },
-              { label: "About", href: "/#heritage" },
+              { label: "About", href: "/about" },
             ].map(({ label, href }) => (
               <Link
                 key={label}

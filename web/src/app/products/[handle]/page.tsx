@@ -333,6 +333,34 @@ export default async function ProductPage({
         }}
       />
 
+      {/* JSON-LD Breadcrumb schema — matches the visible breadcrumb nav above */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://thamanvi.com/" },
+              ...(product.collections.nodes[0] && product.collections.nodes[0].handle !== "frontpage"
+                ? [{
+                    "@type": "ListItem",
+                    position: 2,
+                    name: product.collections.nodes[0].title,
+                    item: `https://thamanvi.com/collections/${product.collections.nodes[0].handle}`,
+                  }]
+                : []),
+              {
+                "@type": "ListItem",
+                position: product.collections.nodes[0] && product.collections.nodes[0].handle !== "frontpage" ? 3 : 2,
+                name: product.title,
+                item: `https://thamanvi.com/products/${product.handle}`,
+              },
+            ],
+          }),
+        }}
+      />
+
       {/* Reviews (real Google reviews, store-wide) */}
       <ProductReviews />
 
