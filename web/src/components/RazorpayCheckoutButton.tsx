@@ -1,12 +1,40 @@
 "use client";
 import { useState, useCallback } from "react";
-import Script from "next/script";
 
 declare global {
   interface Window {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     Razorpay: any;
   }
+}
+
+const RAZORPAY_SRC = "https://checkout.razorpay.com/v1/checkout.js";
+
+// Loads the Razorpay checkout script on demand and resolves once window.Razorpay
+// is available. Reuses an in-flight/loaded script tag if present.
+function loadRazorpayScript(): Promise<boolean> {
+  return new Promise((resolve) => {
+    if (typeof window === "undefined") return resolve(false);
+    if (window.Razorpay) return resolve(true);
+
+    const existing = document.querySelector<HTMLScriptElement>(
+      `script[src="${RAZORPAY_SRC}"]`
+    );
+    if (existing) {
+      existing.addEventListener("load", () => resolve(!!window.Razorpay));
+      existing.addEventListener("error", () => resolve(false));
+      // Already loaded but Razorpay not yet on window — check next tick
+      if (window.Razorpay) resolve(true);
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src = RAZORPAY_SRC;
+    script.async = true;
+    script.onload = () => resolve(!!window.Razorpay);
+    script.onerror = () => resolve(false);
+    document.body.appendChild(script);
+  });
 }
 
 interface RazorpayCheckoutButtonProps {
@@ -36,11 +64,6 @@ export default function RazorpayCheckoutButton({
   const [errorMsg, setErrorMsg] = useState("");
 
   const handlePay = useCallback(async () => {
-    if (!window.Razorpay) {
-      setStatus("error");
-      setErrorMsg("Payment script failed to load. Please refresh and try again.");
-      return;
-    }
     if (amountInPaise < 100) {
       setStatus("error");
       setErrorMsg("Minimum order value is ₹1.");
@@ -49,6 +72,14 @@ export default function RazorpayCheckoutButton({
 
     setStatus("loading");
     setErrorMsg("");
+
+    // Ensure the Razorpay checkout script is loaded before proceeding.
+    const scriptOk = await loadRazorpayScript();
+    if (!scriptOk || !window.Razorpay) {
+      setStatus("error");
+      setErrorMsg("Couldn't load the payment gateway. Check your connection and try again.");
+      return;
+    }
 
     // Step 1: Create order on server
     let orderData: { orderId: string; amount: number; currency: string };
@@ -139,10 +170,6 @@ export default function RazorpayCheckoutButton({
 
   return (
     <>
-      <Script
-        src="https://checkout.razorpay.com/v1/checkout.js"
-        strategy="lazyOnload"
-      />
       <div className="space-y-2">
         <button
           onClick={handlePay}
