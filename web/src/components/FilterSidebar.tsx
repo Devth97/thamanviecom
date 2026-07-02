@@ -11,8 +11,6 @@ const SORT_OPTIONS = [
 
 const OCCASIONS = ["Wedding", "Festive", "Party Wear", "Reception", "Casual", "Daily Wear"];
 const SAREE_TYPES = ["Baluchari", "Banarasi", "Bandhani", "Embellished", "Embroidery", "Floral Printed", "Foil Printed", "Geometric Printed", "Kanjivaram", "Mysore Silk"];
-const FABRICS = ["Chanderi", "Chanderi Cotton", "Chiffon", "Cotton", "Cotton Linen", "Cotton Silk", "Georgette", "Silk", "Tussar Silk"];
-const WORKS = ["Abstract", "Bandhani", "Dyed", "Embellished", "Embroidery", "Floral Printed", "Foil Printed", "Gota Lace", "Woven Zari"];
 const COLORS = [
   { name: "Beige", hex: "#F5F0E8" },
   { name: "Black", hex: "#1A1A1A" },
@@ -293,16 +291,6 @@ export default function FilterSidebar({
         {/* Type */}
         <Section title="Type" defaultOpen={false}>
           <CheckList items={SAREE_TYPES} selected={selectedTypes} onChange={onTypeChange} />
-        </Section>
-
-        {/* Fabric */}
-        <Section title="Fabric" defaultOpen={false}>
-          <CheckList items={FABRICS} selected={selectedFabrics} onChange={onFabricChange} />
-        </Section>
-
-        {/* Work */}
-        <Section title="Work" defaultOpen={false}>
-          <CheckList items={WORKS} selected={selectedWorks} onChange={onWorkChange} />
         </Section>
 
       </div>
