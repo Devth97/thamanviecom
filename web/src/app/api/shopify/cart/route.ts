@@ -1,20 +1,17 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createCart, addToCart, updateCartLine, removeFromCart } from "@/lib/shopify";
+import { getCart, createCart, addToCart, updateCartLine, removeFromCart } from "@/lib/shopify";
 
 export async function GET(req: NextRequest) {
   const cartId = new URL(req.url).searchParams.get("cartId");
   if (!cartId) return NextResponse.json({ error: "Missing cartId" }, { status: 400 });
-  // Return an empty cart shell — client refreshes via mutations
-  return NextResponse.json({
-    id: cartId,
-    totalQuantity: 0,
-    lines: { nodes: [] },
-    cost: {
-      totalAmount: { amount: "0", currencyCode: "INR" },
-      subtotalAmount: { amount: "0", currencyCode: "INR" },
-    },
-    checkoutUrl: "",
-  });
+
+  // Fetch the real cart from Shopify so it survives page reloads.
+  const cart = await getCart(cartId).catch(() => null);
+  if (!cart) {
+    // Cart expired or invalid — tell the client so it clears the stored id.
+    return NextResponse.json({ error: "Cart not found" }, { status: 404 });
+  }
+  return NextResponse.json(cart);
 }
 
 export async function POST(req: NextRequest) {

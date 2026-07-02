@@ -449,6 +449,20 @@ export async function getCollection(handle: string): Promise<ShopifyCollection |
 
 // ─── Cart ─────────────────────────────────────────────────────────────────────
 
+// Fetch an existing cart by ID (used to rehydrate the cart after a page reload).
+// Returns null if the cart no longer exists (e.g. expired).
+export async function getCart(cartId: string): Promise<ShopifyCart | null> {
+  const gql = `
+    query GetCart($cartId: ID!) {
+      cart(id: $cartId) {
+        ${CART_FRAGMENT}
+      }
+    }
+  `;
+  const data = await shopifyFetch<{ cart: ShopifyCart | null }>(gql, { cartId });
+  return data.cart;
+}
+
 export async function createCart(): Promise<ShopifyCart> {
   const gql = `
     mutation CreateCart {
