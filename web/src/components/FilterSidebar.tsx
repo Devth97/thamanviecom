@@ -11,18 +11,6 @@ const SORT_OPTIONS = [
 
 const OCCASIONS = ["Wedding", "Festive", "Party Wear", "Reception", "Casual", "Daily Wear"];
 const SAREE_TYPES = ["Banarasi", "Kanjivaram", "Mysore Silk", "Semi Silk"];
-const COLORS = [
-  { name: "Beige", hex: "#F5F0E8" },
-  { name: "Black", hex: "#1A1A1A" },
-  { name: "Blue", hex: "#1B4FD8" },
-  { name: "Brown", hex: "#7B3F1E" },
-  { name: "Golden", hex: "#B8860B" },
-  { name: "Green", hex: "#1B6B3A" },
-  { name: "Maroon", hex: "#7B0D1E" },
-  { name: "Pink", hex: "#E75480" },
-  { name: "Red", hex: "#C41E3A" },
-  { name: "White", hex: "#F8F8F8" },
-];
 
 type Props = {
   sortKey: string;
@@ -182,11 +170,6 @@ export default function FilterSidebar({
     selectedWorks.length > 0 || selectedColors.length > 0 ||
     inStockOnly || priceRange[0] > 0 || priceRange[1] < maxPrice;
 
-  const toggleColor = (name: string) =>
-    onColorChange(selectedColors.includes(name)
-      ? selectedColors.filter(c => c !== name)
-      : [...selectedColors, name]);
-
   return (
     <aside className="w-full lg:w-60 shrink-0">
       {/* Header row */}
@@ -261,30 +244,6 @@ export default function FilterSidebar({
             <p className="text-[11px] text-[#888] text-center">
               ₹{priceRange[0].toLocaleString("en-IN")} — ₹{priceRange[1].toLocaleString("en-IN")}
             </p>
-          </div>
-        </Section>
-
-        {/* Color */}
-        <Section title="Colour" defaultOpen={false}>
-          <div className="flex flex-wrap gap-2">
-            {COLORS.map(({ name, hex }) => (
-              <button
-                key={name}
-                onClick={() => toggleColor(name)}
-                title={name}
-                className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-full border text-xs font-medium transition-all ${
-                  selectedColors.includes(name)
-                    ? "border-[#8B1A1A] bg-[#8B1A1A]/5 text-[#8B1A1A]"
-                    : "border-[#E0D8CF] text-[#555] hover:border-[#B8860B]"
-                }`}
-              >
-                <span
-                  className="w-3.5 h-3.5 rounded-full border border-black/10 shrink-0"
-                  style={{ backgroundColor: hex }}
-                />
-                {name}
-              </button>
-            ))}
           </div>
         </Section>
 
