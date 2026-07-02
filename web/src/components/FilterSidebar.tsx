@@ -10,7 +10,7 @@ const SORT_OPTIONS = [
 ];
 
 const OCCASIONS = ["Wedding", "Festive", "Party Wear", "Reception", "Casual", "Daily Wear"];
-const SAREE_TYPES = ["Baluchari", "Banarasi", "Bandhani", "Embellished", "Embroidery", "Floral Printed", "Foil Printed", "Geometric Printed", "Kanjivaram", "Mysore Silk"];
+const SAREE_TYPES = ["Banarasi", "Kanjivaram", "Mysore Silk", "Semi Silk"];
 const COLORS = [
   { name: "Beige", hex: "#F5F0E8" },
   { name: "Black", hex: "#1A1A1A" },
