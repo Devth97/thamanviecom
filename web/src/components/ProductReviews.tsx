@@ -34,41 +34,29 @@ export default function ProductReviews() {
           </span>
         </div>
 
+        {/* Horizontal scroll row — keeps the reviews compact instead of a tall
+            stacked grid. Swipe on mobile, scroll on desktop. */}
         <motion.div
           variants={containerVariants}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true, amount: 0.2 }}
-          className="grid gap-5 sm:grid-cols-2"
+          className="flex gap-4 overflow-x-auto no-scrollbar snap-x snap-mandatory pb-2 -mx-6 px-6"
         >
-          {GOOGLE_REVIEWS.map(({ name, quote }, i) => (
-            // Outer: entrance + stagger (variants, parent-controlled)
-            <motion.div key={name} variants={cardVariants} className="will-change-transform">
-              {/* Inner: continuous float loop + hover lift (own animate/whileHover, no conflict) */}
-              <motion.div
-                animate={{ y: [0, -6, 0] }}
-                transition={{
-                  duration: 4 + (i % 3),
-                  repeat: Infinity,
-                  ease: "easeInOut",
-                  delay: i * 0.3,
-                }}
-                whileHover={{
-                  scale: 1.04,
-                  y: -8,
-                  boxShadow: "0px 16px 36px rgba(139, 26, 26, 0.18)",
-                  transition: { type: "spring", stiffness: 300, damping: 20 },
-                }}
-                className="bg-white border border-[#B8860B]/15 rounded-lg p-4 md:p-5 shadow-sm cursor-default"
-              >
-                <div className="flex items-center gap-2 mb-1.5">
-                  <span className="flex text-[#B8860B] text-xs">
-                    {"★★★★★".split("").map((s, idx) => <span key={idx}>{s}</span>)}
-                  </span>
-                  <span className="text-sm font-medium text-[#0D0808]">{name}</span>
-                </div>
-                <p className="text-sm text-[#444] leading-relaxed line-clamp-5">&quot;{quote}&quot;</p>
-              </motion.div>
+          {GOOGLE_REVIEWS.map(({ name, quote }) => (
+            <motion.div
+              key={name}
+              variants={cardVariants}
+              whileHover={{ y: -4, boxShadow: "0px 14px 30px rgba(139, 26, 26, 0.15)" }}
+              className="snap-start shrink-0 w-[260px] sm:w-[300px] bg-white border border-[#B8860B]/15 rounded-lg p-4 md:p-5 shadow-sm cursor-default"
+            >
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="flex text-[#B8860B] text-xs">
+                  {"★★★★★".split("").map((s, idx) => <span key={idx}>{s}</span>)}
+                </span>
+                <span className="text-sm font-medium text-[#0D0808]">{name}</span>
+              </div>
+              <p className="text-sm text-[#444] leading-relaxed line-clamp-4">&quot;{quote}&quot;</p>
             </motion.div>
           ))}
         </motion.div>

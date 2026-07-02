@@ -280,7 +280,7 @@ export default async function ProductPage({
                 <span className="text-[#B8860B] text-[10px] tracking-[0.3em] uppercase">Customers Love</span>
                 <div className="h-px w-12 bg-[#B8860B]" />
               </div>
-              <h2 className="font-display text-2xl md:text-4xl text-[#0D0808]">People Also Bought</h2>
+              <h2 className="font-display text-2xl md:text-4xl text-[#0D0808]">Similar Products</h2>
             </div>
 
             {/* Desktop: 4-col grid | Mobile: 2-col grid */}
@@ -361,11 +361,11 @@ export default async function ProductPage({
         }}
       />
 
+      {/* Recently Viewed — kept above reviews so product browsing comes first */}
+      <RecentlyViewed currentHandle={product.handle} />
+
       {/* Reviews (real Google reviews, store-wide) */}
       <ProductReviews />
-
-      {/* Recently Viewed */}
-      <RecentlyViewed currentHandle={product.handle} />
 
       {/* Track this product visit */}
       <RecentlyViewedTracker item={recentItem} />
