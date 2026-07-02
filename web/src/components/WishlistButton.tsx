@@ -1,7 +1,6 @@
 "use client";
 import { Heart } from "lucide-react";
 import { useWishlist } from "@/hooks/useWishlist";
-import { useAuth } from "@clerk/nextjs";
 
 export default function WishlistButton({
   productId,
@@ -10,16 +9,11 @@ export default function WishlistButton({
   productId: string;
   className?: string;
 }) {
-  const { isSignedIn } = useAuth();
   const { toggle, isWishlisted } = useWishlist();
   const active = isWishlisted(productId);
 
   async function handleClick(e: React.MouseEvent) {
     e.preventDefault();
-    if (!isSignedIn) {
-      window.location.href = "/sign-in";
-      return;
-    }
     await toggle(productId).catch(() => {});
   }
 

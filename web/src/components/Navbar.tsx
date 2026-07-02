@@ -1,7 +1,7 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { ShoppingBag, Menu, X } from "lucide-react";
+import { ShoppingBag, Menu, X, User } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -73,6 +73,14 @@ export default function Navbar() {
 
           {/* Right */}
           <div className="flex items-center gap-4">
+            {/* Account — Shopify customer portal (desktop only; mobile uses bottom nav) */}
+            <a
+              href="https://thamanvi-silks.myshopify.com/account"
+              aria-label="My account"
+              className="hidden md:block text-white/80 hover:text-[#B8860B] transition-colors"
+            >
+              <User className="h-5 w-5" />
+            </a>
             <button
               onClick={() => setIsOpen(true)}
               aria-label={`Cart (${itemCount} items)`}

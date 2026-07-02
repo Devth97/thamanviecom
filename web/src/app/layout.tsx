@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { ClerkProvider } from "@clerk/nextjs";
 import { Inter, Playfair_Display } from "next/font/google";
 import Script from "next/script";
 import PostHogProvider from "@/components/PostHogProvider";
@@ -52,7 +51,6 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <ClerkProvider>
       <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
         {/* ── LocalBusiness structured data — powers Google Maps/Search rich results
             and is what AI answer engines (ChatGPT, Perplexity, Google AI Overviews)
@@ -187,6 +185,5 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           </PostHogProvider>
         </body>
       </html>
-    </ClerkProvider>
   );
 }

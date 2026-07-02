@@ -1,45 +1,47 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { WishlistItem } from "@/lib/supabase";
-import { apiFetch } from "@/lib/api-client";
+
+// Wishlist is stored locally on the device (no account needed). Persists the
+// set of Shopify product IDs the shopper has saved.
+const STORAGE_KEY = "thamanvi_wishlist";
+
+function read(): string[] {
+  if (typeof window === "undefined") return [];
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as string[]) : [];
+  } catch {
+    return [];
+  }
+}
 
 export function useWishlist() {
-  const [items, setItems] = useState<WishlistItem[]>([]);
+  const [ids, setIds] = useState<string[]>([]);
 
   useEffect(() => {
-    apiFetch<WishlistItem[]>("/api/wishlist").then(setItems).catch(() => {});
+    setIds(read());
+  }, []);
+
+  const persist = useCallback((next: string[]) => {
+    setIds(next);
+    try {
+      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      /* ignore quota / private-mode errors */
+    }
   }, []);
 
   const toggle = useCallback(
-    async (shopify_product_id: string) => {
-      const exists = items.some((i) => i.shopify_product_id === shopify_product_id);
-      if (exists) {
-        await apiFetch(`/api/wishlist?productId=${shopify_product_id}`, { method: "DELETE" });
-        setItems((prev) => prev.filter((i) => i.shopify_product_id !== shopify_product_id));
-      } else {
-        await apiFetch("/api/wishlist", {
-          method: "POST",
-          body: JSON.stringify({ shopify_product_id }),
-        });
-        setItems((prev) => [
-          ...prev,
-          {
-            id: "",
-            user_id: "",
-            shopify_product_id,
-            shopify_variant_id: null,
-            created_at: "",
-          },
-        ]);
-      }
+    async (productId: string) => {
+      const next = ids.includes(productId)
+        ? ids.filter((id) => id !== productId)
+        : [...ids, productId];
+      persist(next);
     },
-    [items]
+    [ids, persist]
   );
 
-  const isWishlisted = useCallback(
-    (id: string) => items.some((i) => i.shopify_product_id === id),
-    [items]
-  );
+  const isWishlisted = useCallback((id: string) => ids.includes(id), [ids]);
 
-  return { items, toggle, isWishlisted };
+  return { items: ids, toggle, isWishlisted };
 }
