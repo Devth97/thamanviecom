@@ -8,9 +8,11 @@ import CartDrawer from "@/components/CartDrawer";
 import WhatsAppCTA from "@/components/WhatsAppCTA";
 import { SlidersHorizontal, X } from "lucide-react";
 
-type Props = { collection: ShopifyCollection };
+// `showAllProducts` is set when the requested handle isn't a real Shopify
+// collection — we then show the full catalog instead of an empty collection.
+type Props = { collection: ShopifyCollection; showAllProducts?: boolean };
 
-export default function PLPClient({ collection }: Props) {
+export default function PLPClient({ collection, showAllProducts = false }: Props) {
   const [allProducts, setAllProducts] = useState<ShopifyProduct[]>(collection.products.nodes);
   const [sortKey, setSortKey] = useState("BEST_SELLING");
   const [loading, setLoading] = useState(false);
@@ -25,13 +27,19 @@ export default function PLPClient({ collection }: Props) {
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 50000]);
   const [inStockOnly, setInStockOnly] = useState(false);
 
-  // Fetch from Shopify when sort changes
+  // Fetch from Shopify when sort changes.
+  // In showAllProducts mode the handle isn't a real collection, so fetch the
+  // whole catalog (no collection filter) instead of an empty collection.
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/shopify/products?collection=${collection.handle}&sortKey=${sortKey}&first=48`)
+    const url = showAllProducts
+      ? `/api/shopify/products?sortKey=${sortKey}&first=48`
+      : `/api/shopify/products?collection=${collection.handle}&sortKey=${sortKey}&first=48`;
+    fetch(url)
       .then(r => r.json())
       .then(({ products: p }: { products: ShopifyProduct[] }) => {
-        setAllProducts(p ?? []);
+        // Never clobber a populated list with an empty response.
+        if (p && p.length > 0) setAllProducts(p);
         const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
         if (!mq.matches && gridRef.current) {
           const cards = gridRef.current.querySelectorAll("a");
@@ -40,7 +48,7 @@ export default function PLPClient({ collection }: Props) {
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [sortKey, collection.handle]);
+  }, [sortKey, collection.handle, showAllProducts]);
 
   // Client-side filtering
   const filteredProducts = useMemo(() => {

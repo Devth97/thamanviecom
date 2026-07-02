@@ -64,5 +64,5 @@ export default async function CollectionPage({
     products: { nodes: products },
   };
 
-  return <PLPClient collection={fallbackCollection} />;
+  return <PLPClient collection={fallbackCollection} showAllProducts />;
 }
