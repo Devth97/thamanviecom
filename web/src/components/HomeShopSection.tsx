@@ -33,11 +33,15 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
   const [inStockOnly, setInStockOnly] = useState(false);
 
   // Pre-apply filters from URL query params (e.g. /?occasion=Wedding#shop from
-  // nav links / quick-links). Re-runs when the params change.
+  // nav links / quick-links). Keyed on the query STRING so it only runs when the
+  // URL actually changes — not on every render (which would wipe the user's
+  // manual checkbox selections).
   const searchParams = useSearchParams();
+  const queryString = searchParams.toString();
   useEffect(() => {
+    const sp = new URLSearchParams(queryString);
     const asArr = (key: string) => {
-      const v = searchParams.get(key);
+      const v = sp.get(key);
       return v ? [v] : [];
     };
     setSelectedOccasions(asArr("occasion"));
@@ -45,7 +49,7 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
     setSelectedFabrics(asArr("fabric"));
     setSelectedWorks(asArr("work"));
     setSelectedColors(asArr("color"));
-  }, [searchParams]);
+  }, [queryString]);
 
   useEffect(() => {
     setLoading(true);
