@@ -5,6 +5,7 @@ import Image from "next/image";
 import { X, Minus, Plus, ShoppingBag } from "lucide-react";
 import { useCartContext as useCart } from "@/contexts/CartContext";
 import { formatPrice } from "@/lib/shopify";
+import RazorpayCheckoutButton from "@/components/RazorpayCheckoutButton";
 
 export default function CartDrawer() {
   const { cart, loading, isOpen, setIsOpen, updateItem, removeItem } = useCart();
@@ -135,11 +136,17 @@ export default function CartDrawer() {
               <span className="font-semibold">{formatPrice(cart.cost.subtotalAmount)}</span>
             </div>
             <p className="text-xs text-[#666]">Shipping calculated at checkout</p>
+            <RazorpayCheckoutButton
+              amountInPaise={Math.round(parseFloat(cart.cost.totalAmount.amount) * 100)}
+              cartId={cart.id}
+            >
+              Pay Now (Razorpay)
+            </RazorpayCheckoutButton>
             <a
               href={cart.checkoutUrl}
-              className="block w-full rounded bg-[#8B1A1A] py-3 text-center text-sm font-semibold text-white hover:bg-[#6d1414] transition-colors"
+              className="block w-full rounded border border-[#8B1A1A] py-2.5 text-center text-sm font-medium text-[#8B1A1A] hover:bg-[#FDF5F0] transition-colors"
             >
-              Proceed to Checkout
+              Checkout via Shopify
             </a>
           </div>
         )}

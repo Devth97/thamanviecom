@@ -1,11 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAuth } from "@/lib/get-auth";
 import { createRazorpayOrder } from "@/lib/razorpay";
 
 export async function POST(req: NextRequest) {
-  const userId = await requireAuth().catch(() => null);
-  if (!userId) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-
   const body = await req.json().catch(() => null);
   if (!body?.amountInPaise || typeof body.amountInPaise !== "number" || body.amountInPaise < 100) {
     return NextResponse.json({ error: "Invalid amount — must be at least 100 paise (₹1)" }, { status: 400 });
