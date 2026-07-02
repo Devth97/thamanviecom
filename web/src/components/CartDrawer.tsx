@@ -5,6 +5,7 @@ import Image from "next/image";
 import { X, Minus, Plus, ShoppingBag } from "lucide-react";
 import { useCartContext as useCart } from "@/contexts/CartContext";
 import { formatPrice } from "@/lib/shopify";
+import CheckoutButton from "@/components/CheckoutButton";
 
 export default function CartDrawer() {
   const { cart, loading, isOpen, setIsOpen, updateItem, removeItem } = useCart();
@@ -135,12 +136,7 @@ export default function CartDrawer() {
               <span className="font-semibold">{formatPrice(cart.cost.subtotalAmount)}</span>
             </div>
             <p className="text-xs text-[#666]">Shipping &amp; address collected at checkout</p>
-            <a
-              href={cart.checkoutUrl}
-              className="block w-full rounded bg-[#8B1A1A] py-3 text-center text-sm font-semibold text-white hover:bg-[#6d1414] transition-colors"
-            >
-              Proceed to Checkout
-            </a>
+            <CheckoutButton checkoutUrl={cart.checkoutUrl} />
           </div>
         )}
       </div>
