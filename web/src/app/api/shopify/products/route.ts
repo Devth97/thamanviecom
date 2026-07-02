@@ -7,9 +7,22 @@ export async function GET(req: NextRequest) {
   const first = Number(searchParams.get("first") ?? 24);
   const after = searchParams.get("after") ?? undefined;
   const rawSortKey = searchParams.get("sortKey") ?? "BEST_SELLING";
-  // Shopify has no PRICE_DESC key — descending price is PRICE + reverse.
-  const sortKey = rawSortKey === "PRICE_DESC" ? "PRICE" : rawSortKey;
-  const reverse = rawSortKey === "PRICE_DESC" || searchParams.get("reverse") === "true";
+
+  // Translate UI sort options into valid Shopify sort keys + reverse flag:
+  // - PRICE_DESC: Shopify has no such key, use PRICE + reverse.
+  // - CREATED_AT (Newest) and BEST_SELLING: no real sales history on this store,
+  //   so both surface the most recently uploaded product first (CREATED_AT reverse).
+  // Shopify's collection sort enum uses CREATED; the product enum uses CREATED_AT.
+  const createdKey = collection ? "CREATED" : "CREATED_AT";
+  let sortKey = rawSortKey;
+  let reverse = searchParams.get("reverse") === "true";
+  if (rawSortKey === "PRICE_DESC") {
+    sortKey = "PRICE";
+    reverse = true;
+  } else if (rawSortKey === "CREATED_AT" || rawSortKey === "BEST_SELLING") {
+    sortKey = createdKey;
+    reverse = true;
+  }
 
   try {
     const result = await getProducts({ collection, first, after, sortKey, reverse });
