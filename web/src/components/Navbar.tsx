@@ -75,7 +75,7 @@ export default function Navbar() {
           <div className="flex items-center gap-4">
             {/* Account — Shopify customer portal (desktop only; mobile uses bottom nav) */}
             <a
-              href="https://thamanvi-silks.myshopify.com/account"
+              href="https://shopify.com/82183880953/account"
               aria-label="My account"
               className="hidden md:block text-white/80 hover:text-[#B8860B] transition-colors"
             >
