@@ -1,36 +1,9 @@
 "use client";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Menu, ShoppingBag, TrendingUp, User } from "lucide-react";
+import { Menu, ShoppingBag, User } from "lucide-react";
 import { useState } from "react";
 import { useCartContext } from "@/contexts/CartContext";
-
-const NAV_ITEMS = [
-  {
-    label: "Menu",
-    href: "/",
-    icon: Menu,
-    match: (p: string) => p === "/",
-  },
-  {
-    label: "Sarees",
-    href: "/#shop",
-    icon: ShoppingBag,
-    match: (p: string) => p.startsWith("/collections") || p === "/",
-  },
-  {
-    label: "Trending",
-    href: "/?type=Kanjivaram#shop",
-    icon: TrendingUp,
-    match: (p: string) => p.includes("kanjivaram"),
-  },
-  {
-    label: "Account",
-    href: "/account/orders",
-    icon: User,
-    match: (p: string) => p.startsWith("/account") || p.startsWith("/sign"),
-  },
-];
 
 export default function BottomNav() {
   const pathname = usePathname();
@@ -56,19 +29,6 @@ export default function BottomNav() {
             <span>MENU</span>
           </button>
 
-          {/* Sarees */}
-          <Link
-            href="/#shop"
-            className={`flex-1 flex flex-col items-center justify-center py-2 gap-1 text-[10px] font-medium tracking-wide transition-colors ${
-              pathname.startsWith("/collections") ? "text-[#B8860B]" : "text-[#555]"
-            }`}
-          >
-            <svg viewBox="0 0 24 24" className="h-5 w-5 fill-none stroke-current stroke-[1.5]">
-              <path strokeLinecap="round" strokeLinejoin="round" d="M3 6h18M3 12h18M3 18h18" />
-            </svg>
-            <span>SAREES</span>
-          </Link>
-
           {/* Cart (center, prominent) */}
           <button
             onClick={() => setIsOpen(true)}
@@ -84,17 +44,6 @@ export default function BottomNav() {
             </div>
             <span>CART</span>
           </button>
-
-          {/* Trending */}
-          <Link
-            href="/?type=Kanjivaram#shop"
-            className={`flex-1 flex flex-col items-center justify-center py-2 gap-1 text-[10px] font-medium tracking-wide transition-colors ${
-              pathname.includes("kanjivaram") ? "text-[#B8860B]" : "text-[#555]"
-            }`}
-          >
-            <TrendingUp className="h-5 w-5" />
-            <span>TRENDING</span>
-          </Link>
 
           {/* Account */}
           <Link
