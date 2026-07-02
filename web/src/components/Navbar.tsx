@@ -23,6 +23,7 @@ export default function Navbar() {
   // (works from any page — Next resolves the hash after navigating home).
   const NAV_LINKS = [
     { label: "Shop All", href: "/#shop" },
+    { label: "Wedding", href: "/?occasion=Wedding#shop" },
     { label: "About", href: "/about" },
   ];
 

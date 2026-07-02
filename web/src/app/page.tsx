@@ -11,6 +11,7 @@ import LocationSection from "@/components/LocationSection";
 import HomeShopSection from "@/components/HomeShopSection";
 import { getProducts } from "@/lib/shopify";
 import Link from "next/link";
+import { Suspense } from "react";
 
 export const revalidate = 60;
 
@@ -27,12 +28,12 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-4 py-4">
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
             {[
-              { label: "All Sarees", href: "/collections/all" },
-              { label: "Kanjivaram", href: "/collections/kanjivaram-silk" },
-              { label: "Banarasi", href: "/collections/banarasi-silk" },
-              { label: "Mysore Silk", href: "/collections/mysore-silk" },
-              { label: "Wedding", href: "/collections/wedding-silk" },
-              { label: "Cotton", href: "/collections/casual-cotton" },
+              { label: "All Sarees", href: "/#shop" },
+              { label: "Kanjivaram", href: "/?type=Kanjivaram#shop" },
+              { label: "Banarasi", href: "/?type=Banarasi#shop" },
+              { label: "Mysore Silk", href: "/?type=Mysore Silk#shop" },
+              { label: "Wedding", href: "/?occasion=Wedding#shop" },
+              { label: "Cotton", href: "/?fabric=Cotton#shop" },
             ].map(({ label, href }) => (
               <a
                 key={label}
@@ -49,7 +50,9 @@ export default async function HomePage() {
       <CollectionsShowcase />
 
       {/* Inline shop — all products with filters, no page navigation needed */}
-      <HomeShopSection initial={allProducts} />
+      <Suspense fallback={null}>
+        <HomeShopSection initial={allProducts} />
+      </Suspense>
 
       <HeritageBanner />
 

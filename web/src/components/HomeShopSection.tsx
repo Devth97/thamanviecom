@@ -1,5 +1,6 @@
 "use client";
 import { useState, useEffect, useRef, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { gsap } from "gsap";
 import { ShopifyProduct } from "@/lib/shopify";
 import ProductCard from "@/components/ProductCard";
@@ -30,6 +31,21 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
   const [selectedColors, setSelectedColors] = useState<string[]>([]);
   const [priceRange, setPriceRange] = useState<[number, number]>([0, 999999]); // High default so nothing is filtered initially
   const [inStockOnly, setInStockOnly] = useState(false);
+
+  // Pre-apply filters from URL query params (e.g. /?occasion=Wedding#shop from
+  // nav links / quick-links). Re-runs when the params change.
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    const asArr = (key: string) => {
+      const v = searchParams.get(key);
+      return v ? [v] : [];
+    };
+    setSelectedOccasions(asArr("occasion"));
+    setSelectedTypes(asArr("type"));
+    setSelectedFabrics(asArr("fabric"));
+    setSelectedWorks(asArr("work"));
+    setSelectedColors(asArr("color"));
+  }, [searchParams]);
 
   useEffect(() => {
     setLoading(true);
