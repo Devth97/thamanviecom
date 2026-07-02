@@ -1,6 +1,6 @@
 import { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getProduct, getProductRecommendations, getProducts, formatPrice, getMetafield } from "@/lib/shopify";
+import { getProduct, getProductRecommendations, getProducts, formatPrice, getMetafield, getProductVideoUrl } from "@/lib/shopify";
 import ProductGallery from "@/components/ProductGallery";
 import ProductCard from "@/components/ProductCard";
 import WhatsAppCTA from "@/components/WhatsAppCTA";
@@ -75,7 +75,7 @@ export default async function ProductPage({
     ["Wash Care", getMetafield(product, "wash_care")],
   ].filter((row): row is [string, string] => Boolean(row[1]));
 
-  const videoUrl = getMetafield(product, "product_video_url");
+  const videoUrl = getProductVideoUrl(product);
   const whatsappNumber = "919535779597";
   const whatsappMsg = `Hi! I'm interested in the ${product.title} on your website. Can you share more details?`;
 

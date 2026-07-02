@@ -44,6 +44,12 @@ export type ShopifyProduct = {
   metafields: (ShopifyMetafield | null)[];
   collections: { nodes: { handle: string; title: string }[] };
   tags: string[];
+  media?: {
+    nodes: {
+      mediaContentType: string;
+      sources?: { url: string; mimeType: string }[];
+    }[];
+  };
 };
 
 export type ShopifyProductPreview = Pick<ShopifyProduct, "id" | "handle" | "title" | "images" | "priceRange">;
@@ -156,6 +162,17 @@ const PRODUCT_FRAGMENT = `
     }
   }
   tags
+  media(first: 10) {
+    nodes {
+      mediaContentType
+      ... on Video {
+        sources {
+          url
+          mimeType
+        }
+      }
+    }
+  }
 `;
 
 const CART_FRAGMENT = `
@@ -533,5 +550,20 @@ export function formatPrice(money: ShopifyMoney): string {
 export function getMetafield(product: ShopifyProduct, key: string): string | null {
   const field = product.metafields.find((m) => m !== null && m.key === key);
   return field ? field.value : null;
+}
+
+// Returns a playable video URL: the `product_video_url` metafield if set,
+// otherwise the first Shopify-hosted video uploaded to the product's Media
+// (prefers an MP4 source for broad browser support).
+export function getProductVideoUrl(product: ShopifyProduct): string | null {
+  const fromMetafield = getMetafield(product, "product_video_url");
+  if (fromMetafield) return fromMetafield;
+
+  const videoNode = product.media?.nodes.find(
+    (n) => n.mediaContentType === "VIDEO" && n.sources && n.sources.length > 0
+  );
+  if (!videoNode?.sources) return null;
+  const mp4 = videoNode.sources.find((s) => s.mimeType === "video/mp4");
+  return (mp4 ?? videoNode.sources[0]).url;
 }
 // shopify connected Mon Jun 29 13:33:52 IST 2026
