@@ -6,8 +6,10 @@ export async function GET(req: NextRequest) {
   const collection = searchParams.get("collection") ?? undefined;
   const first = Number(searchParams.get("first") ?? 24);
   const after = searchParams.get("after") ?? undefined;
-  const sortKey = searchParams.get("sortKey") ?? "BEST_SELLING";
-  const reverse = searchParams.get("reverse") === "true";
+  const rawSortKey = searchParams.get("sortKey") ?? "BEST_SELLING";
+  // Shopify has no PRICE_DESC key — descending price is PRICE + reverse.
+  const sortKey = rawSortKey === "PRICE_DESC" ? "PRICE" : rawSortKey;
+  const reverse = rawSortKey === "PRICE_DESC" || searchParams.get("reverse") === "true";
 
   try {
     const result = await getProducts({ collection, first, after, sortKey, reverse });
