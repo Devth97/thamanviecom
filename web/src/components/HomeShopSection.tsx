@@ -23,6 +23,7 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
   }, []);
 
   // Filter state
+  const [selectedOccasions, setSelectedOccasions] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedFabrics, setSelectedFabrics] = useState<string[]>([]);
   const [selectedWorks, setSelectedWorks] = useState<string[]>([]);
@@ -65,24 +66,26 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
       if (inStockOnly && !p.variants.nodes.some(v => v.availableForSale)) return false;
       const price = Number(p.priceRange.minVariantPrice.amount);
       if (price < priceRange[0] || price > priceRange[1]) return false;
+      if (!matchesAny(p.tags, selectedOccasions)) return false;
       if (!matchesAny(p.tags, selectedTypes)) return false;
       if (!matchesAny(p.tags, selectedFabrics)) return false;
       if (!matchesAny(p.tags, selectedWorks)) return false;
       if (!matchesAny(p.tags, selectedColors)) return false;
       return true;
     });
-  }, [allProducts, inStockOnly, priceRange, selectedTypes, selectedFabrics, selectedWorks, selectedColors]);
+  }, [allProducts, inStockOnly, priceRange, selectedOccasions, selectedTypes, selectedFabrics, selectedWorks, selectedColors]);
 
   const activeCount = (inStockOnly ? 1 : 0) + (priceRange[0] > 0 || priceRange[1] < maxPrice ? 1 : 0) +
-    selectedTypes.length + selectedFabrics.length + selectedWorks.length + selectedColors.length;
+    selectedOccasions.length + selectedTypes.length + selectedFabrics.length + selectedWorks.length + selectedColors.length;
 
   const reset = () => {
-    setSelectedTypes([]); setSelectedFabrics([]); setSelectedWorks([]);
+    setSelectedOccasions([]); setSelectedTypes([]); setSelectedFabrics([]); setSelectedWorks([]);
     setSelectedColors([]); setPriceRange([0, maxPrice]); setInStockOnly(false);
   };
 
   const filterProps = {
     sortKey, onSortChange: setSortKey,
+    selectedOccasions, onOccasionChange: setSelectedOccasions,
     selectedTypes, onTypeChange: setSelectedTypes,
     selectedFabrics, onFabricChange: setSelectedFabrics,
     selectedWorks, onWorkChange: setSelectedWorks,

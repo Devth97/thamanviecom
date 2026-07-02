@@ -20,6 +20,7 @@ export default function PLPClient({ collection, showAllProducts = false }: Props
   const gridRef = useRef<HTMLDivElement>(null);
 
   // Filter state
+  const [selectedOccasions, setSelectedOccasions] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
   const [selectedFabrics, setSelectedFabrics] = useState<string[]>([]);
   const [selectedWorks, setSelectedWorks] = useState<string[]>([]);
@@ -64,17 +65,18 @@ export default function PLPClient({ collection, showAllProducts = false }: Props
       // Price
       const price = Number(p.priceRange.minVariantPrice.amount);
       if (price < priceRange[0] || price > priceRange[1]) return false;
-      // Type / Fabric / Work / Colour — matched against Shopify product tags.
-      // Requires the corresponding tag (e.g. "Kanjivaram", "Silk", "Maroon") to be
-      // set on the product in Shopify Admin; products without tags won't match
+      // Occasion / Type / Fabric / Work / Colour — matched against Shopify product tags.
+      // Requires the corresponding tag (e.g. "Wedding", "Kanjivaram", "Silk", "Maroon")
+      // to be set on the product in Shopify Admin; products without tags won't match
       // any of these filters.
+      if (!matchesAny(p.tags, selectedOccasions)) return false;
       if (!matchesAny(p.tags, selectedTypes)) return false;
       if (!matchesAny(p.tags, selectedFabrics)) return false;
       if (!matchesAny(p.tags, selectedWorks)) return false;
       if (!matchesAny(p.tags, selectedColors)) return false;
       return true;
     });
-  }, [allProducts, inStockOnly, priceRange, selectedTypes, selectedFabrics, selectedWorks, selectedColors]);
+  }, [allProducts, inStockOnly, priceRange, selectedOccasions, selectedTypes, selectedFabrics, selectedWorks, selectedColors]);
 
   const maxPrice = useMemo(() => {
     if (allProducts.length === 0) return 50000;
@@ -82,6 +84,7 @@ export default function PLPClient({ collection, showAllProducts = false }: Props
   }, [allProducts]);
 
   const resetFilters = () => {
+    setSelectedOccasions([]);
     setSelectedTypes([]);
     setSelectedFabrics([]);
     setSelectedWorks([]);
@@ -90,12 +93,13 @@ export default function PLPClient({ collection, showAllProducts = false }: Props
     setInStockOnly(false);
   };
 
-  const activeFilterCount = selectedTypes.length + selectedFabrics.length +
+  const activeFilterCount = selectedOccasions.length + selectedTypes.length + selectedFabrics.length +
     selectedWorks.length + selectedColors.length + (inStockOnly ? 1 : 0) +
     (priceRange[0] > 0 || priceRange[1] < maxPrice ? 1 : 0);
 
   const filterProps = {
     sortKey, onSortChange: setSortKey,
+    selectedOccasions, onOccasionChange: setSelectedOccasions,
     selectedTypes, onTypeChange: setSelectedTypes,
     selectedFabrics, onFabricChange: setSelectedFabrics,
     selectedWorks, onWorkChange: setSelectedWorks,

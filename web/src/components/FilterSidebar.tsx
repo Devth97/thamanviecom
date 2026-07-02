@@ -9,6 +9,7 @@ const SORT_OPTIONS = [
   { label: "Price: High to Low", value: "PRICE_DESC" },
 ];
 
+const OCCASIONS = ["Wedding", "Festive", "Party Wear", "Reception", "Casual", "Daily Wear"];
 const SAREE_TYPES = ["Baluchari", "Banarasi", "Bandhani", "Embellished", "Embroidery", "Floral Printed", "Foil Printed", "Geometric Printed", "Kanjivaram", "Mysore Silk"];
 const FABRICS = ["Chanderi", "Chanderi Cotton", "Chiffon", "Cotton", "Cotton Linen", "Cotton Silk", "Georgette", "Silk", "Tussar Silk"];
 const WORKS = ["Abstract", "Bandhani", "Dyed", "Embellished", "Embroidery", "Floral Printed", "Foil Printed", "Gota Lace", "Woven Zari"];
@@ -28,6 +29,8 @@ const COLORS = [
 type Props = {
   sortKey: string;
   onSortChange: (key: string) => void;
+  selectedOccasions?: string[];
+  onOccasionChange?: (occasions: string[]) => void;
   selectedTypes?: string[];
   onTypeChange?: (types: string[]) => void;
   selectedFabrics?: string[];
@@ -166,6 +169,7 @@ function CheckList({
 
 export default function FilterSidebar({
   sortKey, onSortChange,
+  selectedOccasions = [], onOccasionChange = () => {},
   selectedTypes = [], onTypeChange = () => {},
   selectedFabrics = [], onFabricChange = () => {},
   selectedWorks = [], onWorkChange = () => {},
@@ -176,7 +180,7 @@ export default function FilterSidebar({
   onReset,
 }: Props) {
   const hasFilters =
-    selectedTypes.length > 0 || selectedFabrics.length > 0 ||
+    selectedOccasions.length > 0 || selectedTypes.length > 0 || selectedFabrics.length > 0 ||
     selectedWorks.length > 0 || selectedColors.length > 0 ||
     inStockOnly || priceRange[0] > 0 || priceRange[1] < maxPrice;
 
@@ -224,6 +228,11 @@ export default function FilterSidebar({
             checked={inStockOnly}
             onChange={() => onInStockChange(!inStockOnly)}
           />
+        </Section>
+
+        {/* Occasion */}
+        <Section title="Occasion" defaultOpen={false}>
+          <CheckList items={OCCASIONS} selected={selectedOccasions} onChange={onOccasionChange} />
         </Section>
 
         {/* Price Range */}
