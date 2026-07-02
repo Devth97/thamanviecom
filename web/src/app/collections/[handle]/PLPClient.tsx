@@ -53,10 +53,17 @@ export default function PLPClient({ collection, showAllProducts = false }: Props
 
   // Client-side filtering
   const filteredProducts = useMemo(() => {
-    const matchesAny = (productTags: string[], selected: string[]) => {
+    // A product matches a filter if any selected value is either an exact tag
+    // OR appears in the product name — so naming a saree "Kanjivaram Silk…"
+    // makes it show under the Kanjivaram filter without needing a tag.
+    const matchesAny = (p: ShopifyProduct, selected: string[]) => {
       if (selected.length === 0) return true;
-      const lowerTags = productTags.map(t => t.toLowerCase());
-      return selected.some(s => lowerTags.includes(s.toLowerCase()));
+      const lowerTags = p.tags.map(t => t.toLowerCase());
+      const title = p.title.toLowerCase();
+      return selected.some(s => {
+        const sl = s.toLowerCase();
+        return lowerTags.includes(sl) || title.includes(sl);
+      });
     };
 
     return allProducts.filter(p => {
@@ -65,15 +72,13 @@ export default function PLPClient({ collection, showAllProducts = false }: Props
       // Price
       const price = Number(p.priceRange.minVariantPrice.amount);
       if (price < priceRange[0] || price > priceRange[1]) return false;
-      // Occasion / Type / Fabric / Work / Colour — matched against Shopify product tags.
-      // Requires the corresponding tag (e.g. "Wedding", "Kanjivaram", "Silk", "Maroon")
-      // to be set on the product in Shopify Admin; products without tags won't match
-      // any of these filters.
-      if (!matchesAny(p.tags, selectedOccasions)) return false;
-      if (!matchesAny(p.tags, selectedTypes)) return false;
-      if (!matchesAny(p.tags, selectedFabrics)) return false;
-      if (!matchesAny(p.tags, selectedWorks)) return false;
-      if (!matchesAny(p.tags, selectedColors)) return false;
+      // Occasion / Type / Fabric / Work / Colour — matched against the product's
+      // tags or its name (case-insensitive).
+      if (!matchesAny(p, selectedOccasions)) return false;
+      if (!matchesAny(p, selectedTypes)) return false;
+      if (!matchesAny(p, selectedFabrics)) return false;
+      if (!matchesAny(p, selectedWorks)) return false;
+      if (!matchesAny(p, selectedColors)) return false;
       return true;
     });
   }, [allProducts, inStockOnly, priceRange, selectedOccasions, selectedTypes, selectedFabrics, selectedWorks, selectedColors]);

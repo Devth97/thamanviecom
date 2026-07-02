@@ -72,21 +72,27 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
   }, [allProducts]);
 
   const filtered = useMemo(() => {
-    const matchesAny = (productTags: string[], selected: string[]) => {
+    // Match a filter value against the product's tags OR its name, so a saree
+    // named "Kanjivaram Silk…" shows under the Kanjivaram filter without a tag.
+    const matchesAny = (p: ShopifyProduct, selected: string[]) => {
       if (selected.length === 0) return true;
-      const lowerTags = productTags.map(t => t.toLowerCase());
-      return selected.some(s => lowerTags.includes(s.toLowerCase()));
+      const lowerTags = p.tags.map(t => t.toLowerCase());
+      const title = p.title.toLowerCase();
+      return selected.some(s => {
+        const sl = s.toLowerCase();
+        return lowerTags.includes(sl) || title.includes(sl);
+      });
     };
 
     return allProducts.filter(p => {
       if (inStockOnly && !p.variants.nodes.some(v => v.availableForSale)) return false;
       const price = Number(p.priceRange.minVariantPrice.amount);
       if (price < priceRange[0] || price > priceRange[1]) return false;
-      if (!matchesAny(p.tags, selectedOccasions)) return false;
-      if (!matchesAny(p.tags, selectedTypes)) return false;
-      if (!matchesAny(p.tags, selectedFabrics)) return false;
-      if (!matchesAny(p.tags, selectedWorks)) return false;
-      if (!matchesAny(p.tags, selectedColors)) return false;
+      if (!matchesAny(p, selectedOccasions)) return false;
+      if (!matchesAny(p, selectedTypes)) return false;
+      if (!matchesAny(p, selectedFabrics)) return false;
+      if (!matchesAny(p, selectedWorks)) return false;
+      if (!matchesAny(p, selectedColors)) return false;
       return true;
     });
   }, [allProducts, inStockOnly, priceRange, selectedOccasions, selectedTypes, selectedFabrics, selectedWorks, selectedColors]);
