@@ -25,7 +25,7 @@ export const metadata: Metadata = {
     template: "%s | Thamanvi Silks",
   },
   description:
-    "Saree shop in Puttur, Karnataka with authentic Kanjivaram, Banarasi & Mysore silk sarees. 4.8★ on Google. COD available, free shipping across India.",
+    "Saree shop in Puttur, Karnataka with authentic Kanjivaram, Banarasi & Mysore silk sarees. 4.8★ on Google. Free shipping across India.",
   keywords: [
     "saree shop", "saree shop near me", "saree shop puttur", "saree shop karnataka",
     "saree", "buy saree online", "silk saree", "kanjivaram saree", "banarasi saree",
@@ -39,7 +39,7 @@ export const metadata: Metadata = {
     url: SITE_URL,
     title: "Thamanvi Silks | Saree Shop in Puttur | Kanjivaram Silk",
     description:
-      "Saree shop in Puttur, Karnataka with authentic Kanjivaram, Banarasi & Mysore silk sarees. 4.8★ on Google. COD available, free shipping across India.",
+      "Saree shop in Puttur, Karnataka with authentic Kanjivaram, Banarasi & Mysore silk sarees. 4.8★ on Google. Free shipping across India.",
     images: [{ url: "/logo-512.png", width: 512, height: 512, alt: "Thamanvi Silks" }],
   },
   twitter: {

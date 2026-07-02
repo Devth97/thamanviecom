@@ -108,7 +108,7 @@ export default function PincodeChecker() {
             <p className="text-xs text-[#555] mt-0.5">
               Delivers to <strong>{result.city}</strong> in <strong>{result.days}</strong>
             </p>
-            <p className="text-xs text-[#888] mt-1">Free shipping · COD available · Open box return</p>
+            <p className="text-xs text-[#888] mt-1">Free shipping · Open box return</p>
           </div>
         </div>
       )}

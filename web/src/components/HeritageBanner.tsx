@@ -8,7 +8,7 @@ const stats = [
   { value: "2023", label: "Founded in Puttur", sub: "Karnataka, India" },
   { value: `${GOOGLE_REVIEW_COUNT}+`, label: "Google Reviews", sub: "4.8 star rating" },
   { value: "100%", label: "Authentic Silk", sub: "Direct from weavers" },
-  { value: "COD", label: "Cash on Delivery", sub: "Pan India" },
+  { value: "Free", label: "Shipping", sub: "Pan India" },
 ];
 
 export default function HeritageBanner() {

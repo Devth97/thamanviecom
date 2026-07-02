@@ -9,8 +9,8 @@ const FAQS = [
     a: "Yes. Every saree is sourced directly from authentic weaving regions, including Kanjivaram from Kanchipuram, Banarasi from Varanasi, and Mysore Silk from Karnataka's silk farms. Each product page lists fabric type, weave, and zari purity.",
   },
   {
-    q: "Does Thamanvi Silks offer Cash on Delivery (COD)?",
-    a: "Yes, COD is available across India on eligible pincodes. You can check delivery and COD availability for your area directly on any product page using the pincode checker.",
+    q: "Do you offer free shipping?",
+    a: "Yes, we offer free shipping across India on all orders. You can check the delivery estimate for your area directly on any product page using the pincode checker.",
   },
   {
     q: "What is the exchange and return policy?",
