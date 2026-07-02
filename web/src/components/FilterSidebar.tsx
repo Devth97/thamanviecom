@@ -87,7 +87,7 @@ function RadioOption({
   onChange: () => void;
 }) {
   return (
-    <label className="flex items-center gap-3 py-1 cursor-pointer group">
+    <label onClick={onChange} className="flex items-center gap-3 py-1 cursor-pointer group">
       <span className={`flex-shrink-0 w-4 h-4 rounded-full border-2 flex items-center justify-center transition-colors ${
         checked ? "border-[#8B1A1A]" : "border-[#CCC] group-hover:border-[#8B1A1A]"
       }`}>
@@ -110,7 +110,7 @@ function CheckOption({
   onChange: () => void;
 }) {
   return (
-    <label className="flex items-center gap-3 py-1 cursor-pointer group">
+    <label onClick={onChange} className="flex items-center gap-3 py-1 cursor-pointer group">
       <span className={`flex-shrink-0 w-4 h-4 rounded-sm border-2 flex items-center justify-center transition-colors ${
         checked ? "border-[#8B1A1A] bg-[#8B1A1A]" : "border-[#CCC] group-hover:border-[#8B1A1A]"
       }`}>
