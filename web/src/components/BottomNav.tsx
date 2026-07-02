@@ -6,7 +6,7 @@ import { useState } from "react";
 import { useCartContext } from "@/contexts/CartContext";
 
 // Shopify's hosted customer account portal — real orders, addresses, reorders.
-const SHOPIFY_ACCOUNT_URL = "https://thamanvi-silks.myshopify.com/account";
+const SHOPIFY_ACCOUNT_URL = "https://shopify.com/82183880953/account";
 
 export default function BottomNav() {
   const pathname = usePathname();
