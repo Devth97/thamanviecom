@@ -73,7 +73,7 @@ export default function HeroSection() {
           </p>
           <a
             ref={ctaRef}
-            href="/collections/kanjivaram-silk"
+            href="/#shop"
             className="opacity-0 inline-flex items-center gap-4 group"
           >
             <span className="bg-[#8B1A1A] text-white text-sm tracking-[0.15em] uppercase px-8 py-4 hover:bg-[#B8860B] transition-colors duration-300">
