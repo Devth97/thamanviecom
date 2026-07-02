@@ -20,7 +20,7 @@ const NAV_ITEMS = [
   },
   {
     label: "Trending",
-    href: "/collections/kanjivaram-silk",
+    href: "/?type=Kanjivaram#shop",
     icon: TrendingUp,
     match: (p: string) => p.includes("kanjivaram"),
   },
@@ -87,7 +87,7 @@ export default function BottomNav() {
 
           {/* Trending */}
           <Link
-            href="/collections/kanjivaram-silk"
+            href="/?type=Kanjivaram#shop"
             className={`flex-1 flex flex-col items-center justify-center py-2 gap-1 text-[10px] font-medium tracking-wide transition-colors ${
               pathname.includes("kanjivaram") ? "text-[#B8860B]" : "text-[#555]"
             }`}
@@ -119,11 +119,11 @@ export default function BottomNav() {
             <div className="grid grid-cols-2 gap-3">
               {[
                 { label: "All Sarees", href: "/#shop", emoji: "🧣" },
-                { label: "Kanjivaram", href: "/collections/kanjivaram-silk", emoji: "✨" },
-                { label: "Banarasi Silk", href: "/collections/banarasi-silk", emoji: "👑" },
-                { label: "Mysore Silk", href: "/collections/mysore-silk", emoji: "💚" },
-                { label: "Bridal", href: "/collections/wedding-silk", emoji: "👰" },
-                { label: "Cotton Weaves", href: "/collections/casual-cotton", emoji: "🌸" },
+                { label: "Kanjivaram", href: "/?type=Kanjivaram#shop", emoji: "✨" },
+                { label: "Banarasi Silk", href: "/?type=Banarasi#shop", emoji: "👑" },
+                { label: "Mysore Silk", href: "/?type=Mysore Silk#shop", emoji: "💚" },
+                { label: "Bridal", href: "/?occasion=Wedding#shop", emoji: "👰" },
+                { label: "Cotton Weaves", href: "/?fabric=Cotton#shop", emoji: "🌸" },
               ].map(({ label, href, emoji }) => (
                 <Link
                   key={label}

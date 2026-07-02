@@ -15,7 +15,7 @@ export default async function OrdersPage() {
           Your order history will appear here once you&apos;ve placed your first order.
         </p>
         <a
-          href="/collections/kanjivaram-silk"
+          href="/#shop"
           className="mt-4 inline-block text-sm text-[#8B1A1A] underline underline-offset-2"
         >
           Start Shopping

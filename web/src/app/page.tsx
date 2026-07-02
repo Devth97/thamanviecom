@@ -78,7 +78,7 @@ export default async function HomePage() {
             <p className="text-white/60 text-base leading-relaxed mb-8 max-w-sm">
               Each Kanjivaram saree at Thamanvi is sourced directly from master weavers in Kanchipuram. Pure mulberry silk, interlocked zari, no compromises.
             </p>
-            <Link href="/collections/kanjivaram-silk" className="inline-flex items-center gap-4 group self-start">
+            <Link href="/?type=Kanjivaram#shop" className="inline-flex items-center gap-4 group self-start">
               <span className="border border-[#B8860B] text-[#B8860B] text-sm tracking-[0.15em] uppercase px-8 py-4 hover:bg-[#B8860B] hover:text-[#0D0808] transition-colors duration-300">
                 Explore Kanjivaram
               </span>
