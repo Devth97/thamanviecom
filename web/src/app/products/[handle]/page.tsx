@@ -112,7 +112,7 @@ export default async function ProductPage({
         </div>
       </div>
 
-      <div className="mx-auto max-w-6xl px-4 py-8">
+      <div className="mx-auto max-w-6xl px-4 pt-8 pb-4">
 
         <div className="grid md:grid-cols-2 gap-10 lg:gap-16">
           {/* Gallery */}
@@ -261,11 +261,11 @@ export default async function ProductPage({
 
       {/* ── People Also Bought ── */}
       {relatedProducts.length > 0 && (
-        <section className="bg-[#FAF6F0] border-t border-[#E8DDD0] py-12 md:py-16">
+        <section className="bg-[#FAF6F0] border-t border-[#E8DDD0] pt-6 md:pt-8 pb-10 md:pb-12">
           <div className="mx-auto max-w-6xl px-4">
             {/* Centered heading */}
-            <div className="text-center mb-10">
-              <div className="flex items-center justify-center gap-4 mb-3">
+            <div className="text-center mb-5 md:mb-6">
+              <div className="flex items-center justify-center gap-4 mb-2">
                 <div className="h-px w-12 bg-[#B8860B]" />
                 <span className="text-[#B8860B] text-[10px] tracking-[0.3em] uppercase">Customers Love</span>
                 <div className="h-px w-12 bg-[#B8860B]" />
@@ -281,7 +281,7 @@ export default async function ProductPage({
             </div>
 
             {/* View All CTA */}
-            <div className="text-center mt-10">
+            <div className="text-center mt-8">
               <a
                 href={relatedProducts[0]?.collections?.nodes?.[0]?.handle
                   ? `/collections/${relatedProducts[0].collections.nodes[0].handle}`
