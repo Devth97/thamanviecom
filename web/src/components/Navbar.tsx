@@ -19,6 +19,13 @@ export default function Navbar() {
   const isHomepage = pathname === "/";
   const isDark = !isHomepage || scrolled;
 
+  // Header links. "Shop All" jumps to the shop section on the homepage
+  // (works from any page — Next resolves the hash after navigating home).
+  const NAV_LINKS = [
+    { label: "Shop All", href: "/#shop" },
+    { label: "About", href: "/about" },
+  ];
+
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 60);
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -52,12 +59,7 @@ export default function Navbar() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-10">
-            {[
-              { label: "Collections", href: "/collections/kanjivaram-silk" },
-              { label: "Kanjivaram", href: "/collections/kanjivaram-silk" },
-              { label: "Wedding", href: "/collections/wedding-silk" },
-              { label: "About", href: "/about" },
-            ].map(({ label, href }) => (
+            {NAV_LINKS.map(({ label, href }) => (
               <Link
                 key={label}
                 href={href}
@@ -95,12 +97,7 @@ export default function Navbar() {
         {/* Mobile menu */}
         {menuOpen && (
           <div className="md:hidden bg-[#0D0808] border-t border-white/10 px-6 py-6 space-y-5">
-            {[
-              { label: "Collections", href: "/collections/kanjivaram-silk" },
-              { label: "Kanjivaram", href: "/collections/kanjivaram-silk" },
-              { label: "Wedding", href: "/collections/wedding-silk" },
-              { label: "About", href: "/about" },
-            ].map(({ label, href }) => (
+            {NAV_LINKS.map(({ label, href }) => (
               <Link
                 key={label}
                 href={href}
