@@ -9,10 +9,8 @@ import WishlistButton from "@/components/WishlistButton";
 import SizeGuideModal from "@/components/SizeGuideModal";
 import PincodeChecker from "@/components/PincodeChecker";
 import NotifyMe from "@/components/NotifyMe";
-import RecentlyViewed from "@/components/RecentlyViewed";
 import ProductReviews from "@/components/ProductReviews";
 import AddToCartButton from "./AddToCartButton";
-import RecentlyViewedTracker from "./RecentlyViewedTracker";
 import { GOOGLE_RATING, GOOGLE_REVIEW_COUNT } from "@/data/googleReviews";
 
 export const revalidate = 60;
@@ -78,14 +76,6 @@ export default async function ProductPage({
   const videoUrl = getProductVideoUrl(product);
   const whatsappNumber = "919535779597";
   const whatsappMsg = `Hi! I'm interested in the ${product.title} on your website. Can you share more details?`;
-
-  // Data for Recently Viewed tracker
-  const recentItem = {
-    handle: product.handle,
-    title: product.title,
-    price: formatPrice(price),
-    image: product.images.nodes[0]?.url ?? "",
-  };
 
   return (
     <>
@@ -361,14 +351,8 @@ export default async function ProductPage({
         }}
       />
 
-      {/* Recently Viewed — kept above reviews so product browsing comes first */}
-      <RecentlyViewed currentHandle={product.handle} />
-
       {/* Reviews (real Google reviews, store-wide) */}
       <ProductReviews />
-
-      {/* Track this product visit */}
-      <RecentlyViewedTracker item={recentItem} />
 
       <WhatsAppCTA />
       <CartDrawer />
