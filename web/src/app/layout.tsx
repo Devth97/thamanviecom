@@ -82,10 +82,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               areaServed: "IN",
               geo: {
                 "@type": "GeoCoordinates",
-                latitude: 12.7632858,
-                longitude: 75.2018421,
+                latitude: 12.7622995,
+                longitude: 75.1959182,
               },
-              hasMap: "https://www.google.com/maps?q=Bappalige+Tower+Bypass+Road+Bappalige+Mani+Puttur+Karnataka+574201",
+              hasMap: "https://maps.app.goo.gl/PUph1M7Xqv5kGVYG9",
               aggregateRating: {
                 "@type": "AggregateRating",
                 ratingValue: GOOGLE_RATING,

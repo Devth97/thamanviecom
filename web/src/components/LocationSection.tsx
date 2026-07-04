@@ -33,7 +33,7 @@ export default function LocationSection() {
         <div className="aspect-video w-full rounded overflow-hidden border border-[#B8860B]/20">
           <iframe
             title="Thamanvi Silks location on Google Maps"
-            src="https://www.google.com/maps?q=Bappalige+Tower+Bypass+Road+Bappalige+Mani+Puttur+Karnataka+574201&output=embed"
+            src="https://www.google.com/maps?q=Thamanvi+Silks,+Bappalige,+Mani,+Puttur&ll=12.7622995,75.1959182&z=17&output=embed"
             width="100%"
             height="100%"
             style={{ border: 0 }}
