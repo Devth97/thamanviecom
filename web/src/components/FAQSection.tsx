@@ -22,7 +22,7 @@ const FAQS = [
   },
   {
     q: "Where is Thamanvi Silks located?",
-    a: "Our store is at Ground Floor, Bappalige Tower, Bypass Road, Bappalige, Mani, Puttur, Karnataka 574201. We're rated 4.8★ on Google with 421+ reviews.",
+    a: "Our store is at Ground Floor, Bappalige Tower, Bypass Road, Bappalige, Mani, Puttur, Karnataka 574201. We're rated 4.8★ on Google with 425+ reviews.",
   },
   {
     q: "Can I get a blouse stitched with my saree?",

@@ -2,7 +2,7 @@
 // Add more here as the user supplies them — no API, manually curated to avoid paid review-app fees.
 
 export const GOOGLE_RATING = 4.8;
-export const GOOGLE_REVIEW_COUNT = 421;
+export const GOOGLE_REVIEW_COUNT = 425;
 
 export type GoogleReview = {
   name: string;
