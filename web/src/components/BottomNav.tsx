@@ -74,6 +74,7 @@ export default function BottomNav() {
                 { label: "Mysore Silk", href: "/?type=Mysore Silk#shop", emoji: "💚" },
                 { label: "Bridal", href: "/?occasion=Wedding#shop", emoji: "👰" },
                 { label: "Cotton Weaves", href: "/?fabric=Cotton#shop", emoji: "🌸" },
+                { label: "Men's Wear", href: "/#mens", emoji: "👔" },
               ].map(({ label, href, emoji }) => (
                 <Link
                   key={label}

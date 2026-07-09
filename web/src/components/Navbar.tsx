@@ -24,6 +24,7 @@ export default function Navbar() {
   const NAV_LINKS = [
     { label: "Shop All", href: "/#shop" },
     { label: "Wedding", href: "/?occasion=Wedding#shop" },
+    { label: "Men", href: "/#mens" },
     { label: "About", href: "/about" },
   ];
 
