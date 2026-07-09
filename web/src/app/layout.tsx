@@ -8,7 +8,7 @@ import { CartProvider } from "@/contexts/CartContext";
 import { GOOGLE_RATING, GOOGLE_REVIEW_COUNT } from "@/data/googleReviews";
 import "./globals.css";
 
-// ── Retargeting pixel IDs ──
+// ── Retargeting pixel IDs (rendered inside <body>, not <html>) ──
 const META_PIXEL_ID = process.env.NEXT_PUBLIC_META_PIXEL_ID ?? "3272610399588521";
 const GOOGLE_ADS_ID = process.env.NEXT_PUBLIC_GOOGLE_ADS_ID ?? "AW-18284564481";
 
@@ -52,6 +52,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
       <html lang="en" className={`${inter.variable} ${playfair.variable}`}>
+        <body className="bg-[#FAF6F0] text-[#1A1A1A] font-sans antialiased pb-16 md:pb-0">
         {/* ── LocalBusiness structured data — powers Google Maps/Search rich results
             and is what AI answer engines (ChatGPT, Perplexity, Google AI Overviews)
             read to answer "saree shop in Puttur" / "is Thamanvi Silks real" queries ── */}
@@ -137,7 +138,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             `}</Script>
           </>
         )}
-        <body className="bg-[#FAF6F0] text-[#1A1A1A] font-sans antialiased pb-16 md:pb-0">
           <PostHogProvider>
             <CartProvider>
             <Navbar />

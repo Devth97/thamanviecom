@@ -67,6 +67,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ action: "update", cartId, lineId, quantity }),
       });
       setCart(updated);
+    } catch (err) {
+      console.error("Update cart failed:", err);
     } finally {
       setLoading(false);
     }
@@ -82,6 +84,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
         body: JSON.stringify({ action: "remove", cartId, lineIds: [lineId] }),
       });
       setCart(updated);
+    } catch (err) {
+      console.error("Remove from cart failed:", err);
     } finally {
       setLoading(false);
     }

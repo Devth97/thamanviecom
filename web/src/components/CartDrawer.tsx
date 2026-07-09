@@ -2,9 +2,20 @@
 import { useEffect, useRef } from "react";
 import { gsap } from "gsap";
 import Image from "next/image";
-import { X, Minus, Plus, ShoppingBag } from "lucide-react";
+import { X, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { useCartContext as useCart } from "@/contexts/CartContext";
-import { formatPrice } from "@/lib/shopify";
+import { formatPrice, type ShopifyCartLine } from "@/lib/shopify";
+
+/**
+ * A cart line is at its stock limit when Shopify reports a finite available
+ * quantity and the line already holds that many. Shopify silently caps updates
+ * to available inventory, so we disable "+" here to give the shopper feedback
+ * instead of a button that appears to do nothing.
+ */
+function atStockLimit(line: ShopifyCartLine): boolean {
+  const max = line.merchandise.quantityAvailable;
+  return max != null && line.quantity >= max;
+}
 
 export default function CartDrawer() {
   const { cart, loading, isOpen, setIsOpen, updateItem, removeItem } = useCart();
@@ -97,29 +108,38 @@ export default function CartDrawer() {
                       onClick={() => updateItem(line.id, line.quantity - 1)}
                       disabled={loading || line.quantity <= 1}
                       aria-label="Decrease quantity"
-                      className="rounded-full border border-[#D4A96A] p-0.5 disabled:opacity-40 hover:bg-[#F5EDE0] transition-colors"
+                      className="rounded-full border border-[#D4A96A] p-1 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#F5EDE0] transition-colors"
                     >
-                      <Minus className="h-3 w-3" />
+                      <Minus className="h-3.5 w-3.5" />
                     </button>
-                    <span className="text-sm w-5 text-center">{line.quantity}</span>
+                    <span className="text-sm w-5 text-center tabular-nums">{line.quantity}</span>
                     <button
                       onClick={() => updateItem(line.id, line.quantity + 1)}
-                      disabled={loading}
+                      disabled={loading || atStockLimit(line)}
                       aria-label="Increase quantity"
-                      className="rounded-full border border-[#D4A96A] p-0.5 disabled:opacity-40 hover:bg-[#F5EDE0] transition-colors"
+                      title={atStockLimit(line) ? "No more in stock" : undefined}
+                      className="rounded-full border border-[#D4A96A] p-1 disabled:opacity-40 disabled:cursor-not-allowed hover:bg-[#F5EDE0] transition-colors"
                     >
-                      <Plus className="h-3 w-3" />
+                      <Plus className="h-3.5 w-3.5" />
                     </button>
                   </div>
+                  {atStockLimit(line) && (
+                    <p className="mt-1 text-[11px] text-[#B8860B]">
+                      Only {line.merchandise.quantityAvailable} in stock
+                    </p>
+                  )}
                 </div>
-                <div className="text-right shrink-0">
+                <div className="flex flex-col items-end justify-between shrink-0 self-stretch">
                   <p className="text-sm font-semibold text-[#8B1A1A]">
                     {formatPrice(line.cost.totalAmount)}
                   </p>
                   <button
                     onClick={() => removeItem(line.id)}
-                    className="mt-1 text-xs text-[#999] hover:text-[#C62828] transition-colors"
+                    disabled={loading}
+                    aria-label={`Remove ${line.merchandise.product.title} from cart`}
+                    className="mt-2 inline-flex items-center gap-1 rounded border border-[#E0D6C4] px-2.5 py-1.5 text-xs font-medium text-[#8B1A1A] hover:bg-[#8B1A1A] hover:text-white hover:border-[#8B1A1A] disabled:opacity-40 transition-colors"
                   >
+                    <Trash2 className="h-3.5 w-3.5" aria-hidden="true" />
                     Remove
                   </button>
                 </div>

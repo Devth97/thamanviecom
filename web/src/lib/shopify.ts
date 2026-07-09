@@ -75,6 +75,7 @@ export type ShopifyCartLine = {
   merchandise: {
     id: string;
     title: string;
+    quantityAvailable: number | null;
     product: {
       title: string;
       handle: string;
@@ -203,6 +204,7 @@ const CART_FRAGMENT = `
         ... on ProductVariant {
           id
           title
+          quantityAvailable
           product {
             title
             handle
@@ -507,14 +509,23 @@ export async function updateCartLine(
         cart {
           ${CART_FRAGMENT}
         }
+        userErrors {
+          field
+          message
+        }
       }
     }
   `;
 
-  const data = await shopifyFetch<{ cartLinesUpdate: { cart: ShopifyCart } }>(gql, {
+  const data = await shopifyFetch<{
+    cartLinesUpdate: { cart: ShopifyCart; userErrors: { field: string[]; message: string }[] };
+  }>(gql, {
     cartId,
     lines: [{ id: lineId, quantity }],
   });
+  if (data.cartLinesUpdate.userErrors.length > 0) {
+    throw new Error(data.cartLinesUpdate.userErrors[0].message);
+  }
   return data.cartLinesUpdate.cart;
 }
 
