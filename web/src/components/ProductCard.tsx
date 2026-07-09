@@ -4,16 +4,32 @@ import Link from "next/link";
 import { ShopifyProduct, formatPrice } from "@/lib/shopify";
 import WishlistButton from "./WishlistButton";
 import { useCartContext } from "@/contexts/CartContext";
+import { promoConfig, type PromoSurface } from "@/config/promo";
+import { getPromoPricing } from "@/lib/promo";
+import PromoPrice from "./PromoPrice";
+import PromoCountdown from "./PromoCountdown";
+import { FeatureBadges, OfferBadge } from "./PromoBadges";
 
-export default function ProductCard({ product }: { product: ShopifyProduct }) {
+export default function ProductCard({
+  product,
+  surface,
+}: {
+  product: ShopifyProduct;
+  /** Which card surface this is on — gates promo display via config.showOn. */
+  surface?: PromoSurface;
+}) {
   const { addItem, loading } = useCartContext();
   const image = product.images.nodes[0];
   const hoverImage = product.images.nodes[1]; // second image on hover if available
   const price = product.priceRange.minVariantPrice;
-  const comparePrice = product.compareAtPriceRange.minVariantPrice;
-  const hasDiscount = Number(comparePrice.amount) > Number(price.amount);
   const firstVariantId = product.variants.nodes[0]?.id ?? "";
   const inStock = product.variants.nodes.some(v => v.availableForSale);
+
+  // Promo pricing is gated by the master switch and the per-surface toggle.
+  const promoOn =
+    promoConfig.enabled && (surface ? promoConfig.showOn[surface] : true);
+  const promo = getPromoPricing(product);
+  const showPromo = promoOn && promo.show;
 
   const handleQuickAdd = async (e: React.MouseEvent) => {
     e.preventDefault();
@@ -49,9 +65,7 @@ export default function ProductCard({ product }: { product: ShopifyProduct }) {
 
         {/* Badges */}
         <div className="absolute top-2 left-2 flex flex-col gap-1">
-          {hasDiscount && (
-            <span className="bg-[#8B1A1A] text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">SALE</span>
-          )}
+          {promoOn && <FeatureBadges tags={product.tags} />}
           {!inStock && (
             <span className="bg-[#666] text-white text-[10px] font-bold px-2 py-0.5 rounded-sm">SOLD OUT</span>
           )}
@@ -78,12 +92,19 @@ export default function ProductCard({ product }: { product: ShopifyProduct }) {
 
       <div className="mt-3 flex-1 px-0.5">
         <h3 className="text-sm font-medium line-clamp-2 text-[#1A1A1A] mb-1">{product.title}</h3>
-        <div className="flex items-center gap-2">
-          <span className="text-sm font-bold text-[#8B1A1A]">{formatPrice(price)}</span>
-          {hasDiscount && (
-            <span className="text-xs text-[#999] line-through">{formatPrice(comparePrice)}</span>
-          )}
-        </div>
+        {showPromo ? (
+          <>
+            <PromoPrice pricing={promo} />
+            <div className="mt-1 flex flex-col gap-1">
+              <OfferBadge />
+              <PromoCountdown />
+            </div>
+          </>
+        ) : (
+          <div className="flex items-center gap-2">
+            <span className="text-sm font-bold text-[#8B1A1A]">{formatPrice(price)}</span>
+          </div>
+        )}
       </div>
     </Link>
   );

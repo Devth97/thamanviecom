@@ -32,3 +32,29 @@ html { scroll-behavior: smooth; }
 .font-display {
   font-family: var(--font-playfair), Georgia, serif;
 }
+
+/* ── Promotional pricing micro-interactions ─────────────────────────────── */
+/* Gentle fade so promo pricing/badges settle in without layout shift. */
+@keyframes promoFade {
+  from { opacity: 0; transform: translateY(2px); }
+  to   { opacity: 1; transform: none; }
+}
+
+.promo-fade {
+  animation: promoFade 0.4s ease-out both;
+}
+
+.promo-badge-hover {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.promo-badge-hover:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(139, 26, 26, 0.25);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .promo-fade { animation: none; }
+  .promo-badge-hover { transition: none; }
+  .promo-badge-hover:hover { transform: none; box-shadow: none; }
+}

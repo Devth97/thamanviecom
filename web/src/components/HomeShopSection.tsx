@@ -164,7 +164,7 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
               </div>
             ) : (
               <div ref={gridRef} className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
-                {filtered.map(p => <ProductCard key={p.id} product={p} />)}
+                {filtered.map(p => <ProductCard key={p.id} product={p} surface="home" />)}
               </div>
             )}
           </div>

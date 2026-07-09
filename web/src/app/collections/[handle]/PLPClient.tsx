@@ -173,7 +173,7 @@ export default function PLPClient({ collection, showAllProducts = false }: Props
               </div>
             ) : (
               <div ref={gridRef} className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-                {filteredProducts.map(p => <ProductCard key={p.id} product={p} />)}
+                {filteredProducts.map(p => <ProductCard key={p.id} product={p} surface="collection" />)}
               </div>
             )}
           </div>

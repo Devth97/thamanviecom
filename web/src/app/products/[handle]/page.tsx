@@ -276,7 +276,7 @@ export default async function ProductPage({
             {/* Desktop: 4-col grid | Mobile: 2-col grid */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
               {relatedProducts.slice(0, 4).map((p) => (
-                <ProductCard key={p.id} product={p} />
+                <ProductCard key={p.id} product={p} surface="related" />
               ))}
             </div>
 
