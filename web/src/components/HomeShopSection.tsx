@@ -3,6 +3,7 @@ import { useState, useEffect, useRef, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { gsap } from "gsap";
 import { ShopifyProduct } from "@/lib/shopify";
+import { isMensWear } from "@/lib/mensWear";
 import ProductCard from "@/components/ProductCard";
 import FilterSidebar from "@/components/FilterSidebar";
 import { SlidersHorizontal, X } from "lucide-react";
@@ -89,6 +90,7 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
     };
 
     return allProducts.filter(p => {
+      if (isMensWear(p)) return false; // men's wear has its own section
       if (inStockOnly && !p.variants.nodes.some(v => v.availableForSale)) return false;
       const price = Number(p.priceRange.minVariantPrice.amount);
       if (price < priceRange[0] || price > priceRange[1]) return false;

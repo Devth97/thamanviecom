@@ -9,7 +9,9 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import FAQSection from "@/components/FAQSection";
 import LocationSection from "@/components/LocationSection";
 import HomeShopSection from "@/components/HomeShopSection";
+import MensWearSection from "@/components/MensWearSection";
 import { getProducts } from "@/lib/shopify";
+import { isMensWear } from "@/lib/mensWear";
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -18,6 +20,9 @@ export const revalidate = 60;
 export default async function HomePage() {
   // Newest uploaded first (no real sales history to rank "bestsellers" by).
   const { products: allProducts } = await getProducts({ first: 48, sortKey: "CREATED_AT", reverse: true }).catch(() => ({ products: [], hasNextPage: false, endCursor: null }));
+
+  // Split men's wear out of the saree catalogue so each gets its own section.
+  const mensProducts = allProducts.filter(isMensWear);
 
   return (
     <>
@@ -54,6 +59,9 @@ export default async function HomePage() {
       <Suspense fallback={null}>
         <HomeShopSection initial={allProducts} />
       </Suspense>
+
+      {/* Men's Wear — auto-hides when no men's-tagged products exist */}
+      <MensWearSection products={mensProducts} />
 
       <HeritageBanner />
 
