@@ -223,7 +223,7 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
           <button
             onClick={() => setZoomOpen(false)}
             aria-label="Close image viewer"
-            className="absolute top-4 right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 transition-colors"
+            className="absolute top-4 right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition-colors"
           >
             <X className="h-6 w-6" />
           </button>
@@ -231,7 +231,7 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
           {/* Full image — object-contain so the whole saree is visible.
               stopPropagation so clicking the image doesn't close the viewer. */}
           <div
-            className="relative h-[85vh] w-[92vw] max-w-4xl"
+            className="relative h-[88vh] w-[94vw] md:w-[92vw] max-w-5xl"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
@@ -249,14 +249,14 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
               <button
                 onClick={(e) => { e.stopPropagation(); prev(); }}
                 aria-label="Previous image"
-                className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 transition-colors"
+                className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition-colors"
               >
                 <ChevronLeft className="h-6 w-6" />
               </button>
               <button
                 onClick={(e) => { e.stopPropagation(); next(); }}
                 aria-label="Next image"
-                className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 transition-colors"
+                className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition-colors"
               >
                 <ChevronRight className="h-6 w-6" />
               </button>
