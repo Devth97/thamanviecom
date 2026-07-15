@@ -1,12 +1,13 @@
 "use client";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { gsap } from "gsap";
 import { ShopifyImage } from "@/lib/shopify";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, ZoomIn, X } from "lucide-react";
 
 export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
   const [active, setActive] = useState(0);
+  const [zoomOpen, setZoomOpen] = useState(false);
   const mainRef = useRef<HTMLDivElement>(null);
   const thumbsRef = useRef<HTMLDivElement>(null);
 
@@ -34,8 +35,31 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
     }
   }, []);
 
-  const prev = () => switchImage((active - 1 + images.length) % images.length);
-  const next = () => switchImage((active + 1) % images.length);
+  const prev = useCallback(
+    () => setActive((a) => (a - 1 + images.length) % images.length),
+    [images.length]
+  );
+  const next = useCallback(
+    () => setActive((a) => (a + 1) % images.length),
+    [images.length]
+  );
+
+  // Lightbox: lock body scroll and wire up keyboard (Esc to close, arrows to navigate).
+  useEffect(() => {
+    if (!zoomOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setZoomOpen(false);
+      else if (e.key === "ArrowLeft") prev();
+      else if (e.key === "ArrowRight") next();
+    };
+    document.addEventListener("keydown", onKey);
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.body.style.overflow = prevOverflow;
+    };
+  }, [zoomOpen, prev, next]);
 
   if (images.length === 0) {
     return (
@@ -44,6 +68,18 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
       </div>
     );
   }
+
+  // Reusable floating zoom button shown on each main image.
+  const ZoomButton = () => (
+    <button
+      type="button"
+      onClick={() => setZoomOpen(true)}
+      aria-label="Zoom image to full screen"
+      className="absolute bottom-3 right-3 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/85 backdrop-blur-sm shadow-md text-[#8B1A1A] hover:bg-white hover:scale-105 transition-all"
+    >
+      <ZoomIn className="h-5 w-5" />
+    </button>
+  );
 
   return (
     <div className="w-full">
@@ -68,16 +104,27 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
           ))}
         </div>
 
-        {/* Main image */}
-        <div ref={mainRef} className="flex-1 relative aspect-[3/4] rounded overflow-hidden bg-[#F5EDE0]">
-          <Image
-            src={images[active].url}
-            alt={images[active].altText ?? ""}
-            fill
-            className="object-contain"
-            sizes="50vw"
-            priority={active === 0}
-          />
+        {/* Main image — click or zoom button opens the full-screen viewer */}
+        <div className="flex-1 relative aspect-[3/4] rounded overflow-hidden bg-[#F5EDE0]">
+          <div
+            ref={mainRef}
+            role="button"
+            tabIndex={0}
+            onClick={() => setZoomOpen(true)}
+            onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setZoomOpen(true)}
+            aria-label="Zoom image to full screen"
+            className="absolute inset-0 cursor-zoom-in"
+          >
+            <Image
+              src={images[active].url}
+              alt={images[active].altText ?? ""}
+              fill
+              className="object-contain"
+              sizes="50vw"
+              priority={active === 0}
+            />
+          </div>
+          <ZoomButton />
         </div>
       </div>
 
@@ -86,7 +133,15 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
 
         {/* Main image with prev/next arrows */}
         <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg bg-[#F5EDE0]">
-          <div ref={mainRef} className="w-full h-full">
+          <div
+            ref={mainRef}
+            role="button"
+            tabIndex={0}
+            onClick={() => setZoomOpen(true)}
+            onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setZoomOpen(true)}
+            aria-label="Zoom image to full screen"
+            className="w-full h-full cursor-zoom-in"
+          >
             <Image
               src={images[active].url}
               alt={images[active].altText ?? ""}
@@ -96,6 +151,8 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
               priority={active === 0}
             />
           </div>
+
+          <ZoomButton />
 
           {/* Prev / Next arrows — only when multiple images */}
           {images.length > 1 && (
@@ -116,7 +173,7 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
               </button>
 
               {/* Image counter badge */}
-              <div className="absolute bottom-2 right-2 bg-black/50 text-white text-[10px] px-2 py-0.5 rounded-full">
+              <div className="absolute bottom-2 left-2 bg-black/50 text-white text-[10px] px-2 py-0.5 rounded-full">
                 {active + 1} / {images.length}
               </div>
             </>
@@ -152,6 +209,75 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
           </div>
         )}
       </div>
+
+      {/* ── Full-screen lightbox ── */}
+      {zoomOpen && (
+        <div
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/90 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-label="Image viewer"
+          onClick={() => setZoomOpen(false)}
+        >
+          {/* Close */}
+          <button
+            onClick={() => setZoomOpen(false)}
+            aria-label="Close image viewer"
+            className="absolute top-4 right-4 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 transition-colors"
+          >
+            <X className="h-6 w-6" />
+          </button>
+
+          {/* Full image — object-contain so the whole saree is visible.
+              stopPropagation so clicking the image doesn't close the viewer. */}
+          <div
+            className="relative h-[85vh] w-[92vw] max-w-4xl"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <Image
+              src={images[active].url}
+              alt={images[active].altText ?? ""}
+              fill
+              className="object-contain select-none"
+              sizes="92vw"
+              priority
+            />
+          </div>
+
+          {images.length > 1 && (
+            <>
+              <button
+                onClick={(e) => { e.stopPropagation(); prev(); }}
+                aria-label="Previous image"
+                className="absolute left-3 md:left-6 top-1/2 -translate-y-1/2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 transition-colors"
+              >
+                <ChevronLeft className="h-6 w-6" />
+              </button>
+              <button
+                onClick={(e) => { e.stopPropagation(); next(); }}
+                aria-label="Next image"
+                className="absolute right-3 md:right-6 top-1/2 -translate-y-1/2 z-10 flex h-11 w-11 items-center justify-center rounded-full bg-white/15 text-white hover:bg-white/30 transition-colors"
+              >
+                <ChevronRight className="h-6 w-6" />
+              </button>
+
+              {/* Counter + thumbnail dots */}
+              <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
+                {images.map((img, i) => (
+                  <button
+                    key={img.url}
+                    onClick={(e) => { e.stopPropagation(); setActive(i); }}
+                    aria-label={`View image ${i + 1}`}
+                    className={`h-2 rounded-full transition-all ${
+                      i === active ? "w-6 bg-white" : "w-2 bg-white/40 hover:bg-white/70"
+                    }`}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
 
     </div>
   );
