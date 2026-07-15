@@ -4,69 +4,115 @@ import { getProducts, type ShopifyProduct } from "@/lib/shopify";
 /**
  * AI Search — natural-language product search powered by an NVIDIA-hosted LLM.
  *
- * Approach: LLM-over-catalog. We send the shopper's request plus a compact
- * catalogue to NVIDIA's OpenAI-compatible chat API and ask it to return the
- * best-matching product handles as JSON. Handles are then resolved back to real
- * products (and filtered to ones that actually exist), so the model can never
- * invent a product.
+ * Approach: AI-assisted FILTERING (not AI-picks-products). The LLM only turns
+ * the shopper's request into a structured filter (price range + colour / fabric
+ * / type / occasion / keywords). We then apply that filter deterministically
+ * against the whole catalogue, so EVERY matching product is returned — not a
+ * curated handful. This mirrors the on-site filters and guarantees completeness
+ * (e.g. "under 3000" returns all products at or below ₹3000).
  *
- * Requires NVIDIA_API_KEY (get one free at build.nvidia.com). The model can be
- * overridden with NVIDIA_MODEL.
+ * Requires NVIDIA_API_KEY (free at build.nvidia.com). Model overridable via
+ * NVIDIA_MODEL.
  */
 const NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
 // A FAST, SMALL instruct model — search must feel instant. Reasoning models
 // (e.g. GLM-5.2) and even 70B models can be slow/queued on the free tier; an 8B
-// instruct model is plenty for matching a short query to a small catalogue.
+// instruct model is plenty for extracting a small filter from a short query.
 const NVIDIA_MODEL = process.env.NVIDIA_MODEL ?? "meta/llama-3.1-8b-instruct";
 
-const SYSTEM_PROMPT = `You are the shopping assistant for Thamanvi Silks, a premium Indian saree store.
-Match the customer's request to products in the CATALOG (a JSON array).
-Consider colour, fabric/weave (Kanjivaram, Banarasi, Mysore silk, cotton, semi silk),
-occasion (wedding, festive, party, casual, daily), and price in INR.
-Return ONLY compact JSON of the form {"handles": ["<handle>", ...]}, ordered best-match
-first, at most 12 handles, using ONLY handles that appear in the catalog. Prefer in-stock
-items. If nothing is a reasonable match, return {"handles": []}. Do not add any prose.`;
+const SYSTEM_PROMPT = `You convert a saree-shop customer's request into a JSON search filter.
+Output ONLY this JSON object, no prose, no code fences:
+{"minPrice": number|null, "maxPrice": number|null, "types": string[], "occasions": string[], "colors": string[], "fabrics": string[], "keywords": string[]}
+Rules:
+- Prices are INR. "under/below/upto X" -> maxPrice X. "above/over/from X" -> minPrice X. "between A and B" -> minPrice A, maxPrice B.
+- types: any of ["Banarasi","Kanjivaram","Mysore Silk","Semi Silk"] the request implies, else [].
+- occasions: any of ["Wedding","Festive","Party Wear","Reception","Casual","Daily Wear"], else [].
+- colors: colour words mentioned (e.g. "red","navy blue","yellow"), else [].
+- fabrics: e.g. ["Silk","Cotton"], else [].
+- keywords: other useful descriptive terms (e.g. "zari","brocade","floral","border"), else [].
+Use null for prices and [] for arrays when not specified. Output only the JSON object.`;
 
-/**
- * Pull the {"handles":[...]} array out of a model response, tolerating the
- * extras reasoning models add: <think>…</think> blocks, ```json fences, and
- * prose around the JSON. Our target JSON is flat ({"handles":[...]}), so we scan
- * for the object that actually contains a handles array.
- */
-function extractHandles(text: string): string[] {
+interface SearchFilter {
+  minPrice: number | null;
+  maxPrice: number | null;
+  types: string[];
+  occasions: string[];
+  colors: string[];
+  fabrics: string[];
+  keywords: string[];
+}
+
+const EMPTY_FILTER: SearchFilter = {
+  minPrice: null,
+  maxPrice: null,
+  types: [],
+  occasions: [],
+  colors: [],
+  fabrics: [],
+  keywords: [],
+};
+
+const asStringArray = (v: unknown): string[] =>
+  Array.isArray(v) ? v.filter((x): x is string => typeof x === "string" && x.trim().length > 0) : [];
+
+const asPrice = (v: unknown): number | null =>
+  typeof v === "number" && Number.isFinite(v) && v > 0 ? v : null;
+
+/** Parse the structured filter out of a model response, tolerating stray text/fences. */
+function parseFilter(text: string): SearchFilter {
   const cleaned = text
     .replace(/<think>[\s\S]*?<\/think>/gi, "")
     .replace(/```(?:json)?/gi, "");
-
-  const asHandles = (value: unknown): string[] | null =>
-    value && typeof value === "object" && Array.isArray((value as { handles?: unknown }).handles)
-      ? (value as { handles: unknown[] }).handles.filter((h): h is string => typeof h === "string")
-      : null;
-
-  // Prefer the last flat {...} object that parses and has a handles array.
-  const candidates = cleaned.match(/\{[^{}]*\}/g) ?? [];
-  for (const candidate of candidates.reverse()) {
-    try {
-      const result = asHandles(JSON.parse(candidate));
-      if (result) return result;
-    } catch {
-      /* try the next candidate */
-    }
-  }
-
-  // Fallback: greedy outermost object.
+  const match = cleaned.match(/\{[\s\S]*\}/);
+  if (!match) return { ...EMPTY_FILTER };
   try {
-    const match = cleaned.match(/\{[\s\S]*\}/);
-    return asHandles(JSON.parse(match ? match[0] : cleaned)) ?? [];
+    const o = JSON.parse(match[0]) as Record<string, unknown>;
+    return {
+      minPrice: asPrice(o.minPrice),
+      maxPrice: asPrice(o.maxPrice),
+      types: asStringArray(o.types),
+      occasions: asStringArray(o.occasions),
+      colors: asStringArray(o.colors),
+      fabrics: asStringArray(o.fabrics),
+      keywords: asStringArray(o.keywords),
+    };
   } catch {
-    return [];
+    return { ...EMPTY_FILTER };
   }
 }
 
-/**
- * Diagnostic: reports which model is live and whether the key is configured.
- * Makes no NVIDIA call and returns no secret — used to confirm deploys/config.
- */
+/** Regex fallback for price bounds, so "under 3000" works even if the LLM misses it. */
+function priceFromText(q: string): { min: number | null; max: number | null } {
+  const num = (s: string) => parseInt(s.replace(/[,\s]/g, ""), 10);
+  let min: number | null = null;
+  let max: number | null = null;
+  const between = q.match(/between\s*₹?\s*([\d,]+)\s*(?:and|-|to)\s*₹?\s*([\d,]+)/i);
+  if (between) {
+    const a = num(between[1]);
+    const b = num(between[2]);
+    min = Math.min(a, b);
+    max = Math.max(a, b);
+    return { min, max };
+  }
+  const under = q.match(/(?:under|below|less than|upto|up to|within|max|cheaper than|<=?)\s*₹?\s*([\d,]+)/i);
+  if (under) max = num(under[1]);
+  const over = q.match(/(?:above|over|more than|from|min|starting|>=?)\s*₹?\s*([\d,]+)/i);
+  if (over) min = num(over[1]);
+  return { min, max };
+}
+
+const STOPWORDS = new Set([
+  "saree", "sarees", "sari", "saris", "silk", "for", "the", "and", "with", "under",
+  "below", "above", "over", "less", "more", "than", "want", "need", "show", "me",
+  "find", "some", "any", "please", "buy", "in", "a", "an", "of", "to", "at",
+]);
+
+/** Does the product's title/tags contain any value in the facet? Empty facet = match all. */
+function facetMatches(haystack: string, facet: string[]): boolean {
+  if (facet.length === 0) return true;
+  return facet.some((v) => haystack.includes(v.toLowerCase().trim()));
+}
+
 export function GET() {
   return NextResponse.json({
     model: NVIDIA_MODEL,
@@ -89,26 +135,11 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Compact catalogue — only what the model needs to match on.
-  const { products } = await getProducts({
-    first: 100,
-    sortKey: "CREATED_AT",
-    reverse: true,
-  }).catch(() => ({ products: [] as ShopifyProduct[], hasNextPage: false, endCursor: null }));
-
-  const catalog = products.map((p) => ({
-    handle: p.handle,
-    title: p.title,
-    tags: p.tags,
-    price: Math.round(Number(p.priceRange.minVariantPrice.amount)),
-    inStock: p.variants.nodes.some((v) => v.availableForSale),
-  }));
-
-  // Hard cap so a slow or hung upstream never leaves the shopper's search
-  // spinning. A healthy call returns in a couple of seconds.
+  // Hard cap so a slow/hung upstream never leaves the shopper's search spinning.
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 20_000);
 
+  let filter: SearchFilter = { ...EMPTY_FILTER };
   try {
     const res = await fetch(NVIDIA_URL, {
       method: "POST",
@@ -121,10 +152,10 @@ export async function POST(req: NextRequest) {
         model: NVIDIA_MODEL,
         messages: [
           { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: `CUSTOMER REQUEST: ${query}\n\nCATALOG:\n${JSON.stringify(catalog)}` },
+          { role: "user", content: query },
         ],
-        temperature: 0.2,
-        max_tokens: 512,
+        temperature: 0.1,
+        max_tokens: 256,
       }),
     });
 
@@ -135,16 +166,7 @@ export async function POST(req: NextRequest) {
     }
 
     const data = await res.json();
-    const content: string = data.choices?.[0]?.message?.content ?? "";
-    const handles = extractHandles(content);
-
-    const byHandle = new Map(products.map((p) => [p.handle, p]));
-    const matched = handles
-      .map((h) => byHandle.get(h))
-      .filter((p): p is ShopifyProduct => Boolean(p))
-      .slice(0, 12);
-
-    return NextResponse.json({ products: matched });
+    filter = parseFilter(data.choices?.[0]?.message?.content ?? "");
   } catch (err) {
     if ((err as Error).name === "AbortError") {
       return NextResponse.json(
@@ -157,4 +179,52 @@ export async function POST(req: NextRequest) {
   } finally {
     clearTimeout(timeout);
   }
+
+  // Regex price fallback fills any gap the model left.
+  const rx = priceFromText(query);
+  const minPrice = filter.minPrice ?? rx.min;
+  const maxPrice = filter.maxPrice ?? rx.max;
+
+  // If the model extracted nothing usable, fall back to matching the raw query
+  // tokens (minus generic words) so a specific query never returns everything.
+  const hasFacets =
+    filter.types.length || filter.occasions.length || filter.colors.length ||
+    filter.fabrics.length || filter.keywords.length;
+  if (!hasFacets && minPrice === null && maxPrice === null) {
+    filter.keywords = query
+      .toLowerCase()
+      .split(/[^a-z0-9]+/)
+      .filter((t: string) => t.length > 2 && !STOPWORDS.has(t));
+  }
+
+  // Fetch the catalogue and filter deterministically — return ALL that match.
+  const { products } = await getProducts({
+    first: 250,
+    sortKey: "CREATED_AT",
+    reverse: true,
+  }).catch(() => ({ products: [] as ShopifyProduct[], hasNextPage: false, endCursor: null }));
+
+  const attributeFacets = [
+    filter.types,
+    filter.occasions,
+    filter.colors,
+    filter.fabrics,
+    filter.keywords,
+  ];
+
+  const matched = products
+    .filter((p) => {
+      const price = Number(p.priceRange.minVariantPrice.amount);
+      if (minPrice !== null && price < minPrice) return false;
+      if (maxPrice !== null && price > maxPrice) return false;
+      const haystack = `${p.title} ${p.tags.join(" ")}`.toLowerCase();
+      // Each specified attribute facet must match (empty facets are ignored).
+      return attributeFacets.every((facet) => facetMatches(haystack, facet));
+    })
+    .sort(
+      (a, b) =>
+        Number(a.priceRange.minVariantPrice.amount) - Number(b.priceRange.minVariantPrice.amount)
+    );
+
+  return NextResponse.json({ products: matched });
 }
