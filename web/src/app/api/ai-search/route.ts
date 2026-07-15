@@ -21,16 +21,36 @@ const NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
 const NVIDIA_MODEL = process.env.NVIDIA_MODEL ?? "meta/llama-3.1-8b-instruct";
 
 const SYSTEM_PROMPT = `You convert a saree-shop customer's request into a JSON search filter.
-Output ONLY this JSON object, no prose, no code fences:
+Extract ONLY attributes the customer explicitly states. If something is not mentioned, use null (prices) or [] (arrays). NEVER list options the customer did not ask for.
+
+Output ONLY this JSON, no prose, no code fences:
 {"minPrice": number|null, "maxPrice": number|null, "types": string[], "occasions": string[], "colors": string[], "fabrics": string[], "keywords": string[]}
-Rules:
-- Prices are INR. "under/below/upto X" -> maxPrice X. "above/over/from X" -> minPrice X. "between A and B" -> minPrice A, maxPrice B.
-- types: any of ["Banarasi","Kanjivaram","Mysore Silk","Semi Silk"] the request implies, else [].
-- occasions: any of ["Wedding","Festive","Party Wear","Reception","Casual","Daily Wear"], else [].
-- colors: colour words mentioned (e.g. "red","navy blue","yellow"), else [].
-- fabrics: e.g. ["Silk","Cotton"], else [].
-- keywords: other useful descriptive terms (e.g. "zari","brocade","floral","border"), else [].
-Use null for prices and [] for arrays when not specified. Output only the JSON object.`;
+
+Field guide (include a value ONLY if the customer mentions it):
+- types: subset of ["Banarasi","Kanjivaram","Mysore Silk","Semi Silk"].
+- occasions: subset of ["Wedding","Festive","Party Wear","Reception","Casual","Daily Wear"].
+- colors: colour words the customer used (e.g. "red","navy blue","yellow").
+- fabrics: e.g. "Silk","Cotton".
+- keywords: other concrete terms (e.g. "zari","brocade","floral"). Never subjective words like "nice" or "elegant".
+- Prices in INR: "under/below/upto X" -> maxPrice X; "above/over/from X" -> minPrice X; "between A and B" -> both.
+
+Examples:
+"under 3000" -> {"minPrice":null,"maxPrice":3000,"types":[],"occasions":[],"colors":[],"fabrics":[],"keywords":[]}
+"wedding sarees" -> {"minPrice":null,"maxPrice":null,"types":[],"occasions":["Wedding"],"colors":[],"fabrics":[],"keywords":[]}
+"blue silk saree under 2000" -> {"minPrice":null,"maxPrice":2000,"types":[],"occasions":[],"colors":["blue"],"fabrics":["Silk"],"keywords":[]}
+"kanjivaram for reception" -> {"minPrice":null,"maxPrice":null,"types":["Kanjivaram"],"occasions":["Reception"],"colors":[],"fabrics":[],"keywords":[]}
+"red banarasi with zari work" -> {"minPrice":null,"maxPrice":null,"types":["Banarasi"],"occasions":[],"colors":["red"],"fabrics":[],"keywords":["zari"]}`;
+
+// Closed enums used to detect "the model dumped every option" (= no real constraint).
+const KNOWN_TYPES = ["banarasi", "kanjivaram", "mysore silk", "semi silk"];
+const KNOWN_OCCASIONS = ["wedding", "festive", "party wear", "reception", "casual", "daily wear"];
+
+/** If a facet lists (nearly) every option in its enum, the model dumped the list — treat as no constraint. */
+function deDump(facet: string[], known: string[]): string[] {
+  const lower = facet.map((f) => f.toLowerCase().trim());
+  const coverage = known.filter((k) => lower.includes(k)).length;
+  return coverage >= known.length ? [] : facet;
+}
 
 interface SearchFilter {
   minPrice: number | null;
@@ -180,6 +200,10 @@ export async function POST(req: NextRequest) {
   } finally {
     clearTimeout(timeout);
   }
+
+  // Defend against the model dumping whole enum lists (= "no constraint").
+  filter.types = deDump(filter.types, KNOWN_TYPES);
+  filter.occasions = deDump(filter.occasions, KNOWN_OCCASIONS);
 
   // Regex price fallback fills any gap the model left.
   const rx = priceFromText(query);
