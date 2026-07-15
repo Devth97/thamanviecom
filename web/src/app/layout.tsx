@@ -4,7 +4,9 @@ import Script from "next/script";
 import PostHogProvider from "@/components/PostHogProvider";
 import Navbar from "@/components/Navbar";
 import BottomNav from "@/components/BottomNav";
+import AiSearchModal from "@/components/AiSearchModal";
 import { CartProvider } from "@/contexts/CartContext";
+import { SearchProvider } from "@/contexts/SearchContext";
 import { GOOGLE_RATING, GOOGLE_REVIEW_COUNT } from "@/data/googleReviews";
 import "./globals.css";
 
@@ -140,6 +142,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         )}
           <PostHogProvider>
             <CartProvider>
+            <SearchProvider>
             <Navbar />
             {children}
             <footer className="bg-[#0D0808] border-t border-[#B8860B]/10 py-12">
@@ -181,6 +184,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </div>
             </footer>
             <BottomNav />
+            <AiSearchModal />
+            </SearchProvider>
             </CartProvider>
           </PostHogProvider>
         </body>

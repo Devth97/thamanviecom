@@ -1,17 +1,19 @@
 "use client";
 import { useEffect, useRef, useState } from "react";
 import { gsap } from "gsap";
-import { ShoppingBag, Menu, X, User } from "lucide-react";
+import { ShoppingBag, Menu, X, User, Search } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCartContext as useCart } from "@/contexts/CartContext";
+import { useSearch } from "@/contexts/SearchContext";
 
 export default function Navbar() {
   const navRef = useRef<HTMLElement>(null);
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { cart, setIsOpen } = useCart();
+  const { open: openSearch } = useSearch();
   const pathname = usePathname();
   const itemCount = cart?.totalQuantity ?? 0;
 
@@ -74,6 +76,14 @@ export default function Navbar() {
 
           {/* Right */}
           <div className="flex items-center gap-4">
+            {/* AI Search */}
+            <button
+              onClick={openSearch}
+              aria-label="AI Search"
+              className="text-white/80 hover:text-[#B8860B] transition-colors"
+            >
+              <Search className="h-5 w-5" />
+            </button>
             {/* Account — Shopify customer portal (desktop only; mobile uses bottom nav) */}
             <a
               href="https://shopify.com/82183880953/account"
