@@ -14,9 +14,10 @@ import { getProducts, type ShopifyProduct } from "@/lib/shopify";
  * overridden with NVIDIA_MODEL.
  */
 const NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
-// A FAST instruct model — search must feel instant. Reasoning models such as
-// GLM-5.2 answer well but take ~60-85s, which is unusable for a search box.
-const NVIDIA_MODEL = process.env.NVIDIA_MODEL ?? "meta/llama-3.3-70b-instruct";
+// A FAST, SMALL instruct model — search must feel instant. Reasoning models
+// (e.g. GLM-5.2) and even 70B models can be slow/queued on the free tier; an 8B
+// instruct model is plenty for matching a short query to a small catalogue.
+const NVIDIA_MODEL = process.env.NVIDIA_MODEL ?? "meta/llama-3.1-8b-instruct";
 
 const SYSTEM_PROMPT = `You are the shopping assistant for Thamanvi Silks, a premium Indian saree store.
 Match the customer's request to products in the CATALOG (a JSON array).
@@ -60,6 +61,17 @@ function extractHandles(text: string): string[] {
   } catch {
     return [];
   }
+}
+
+/**
+ * Diagnostic: reports which model is live and whether the key is configured.
+ * Makes no NVIDIA call and returns no secret — used to confirm deploys/config.
+ */
+export function GET() {
+  return NextResponse.json({
+    model: NVIDIA_MODEL,
+    keyConfigured: Boolean(process.env.NVIDIA_API_KEY),
+  });
 }
 
 export async function POST(req: NextRequest) {
