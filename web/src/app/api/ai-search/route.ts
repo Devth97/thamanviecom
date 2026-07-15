@@ -121,6 +121,7 @@ export function GET() {
 }
 
 export async function POST(req: NextRequest) {
+  const debug = new URL(req.url).searchParams.has("debug");
   const body = await req.json().catch(() => null);
   const query = typeof body?.query === "string" ? body.query.trim() : "";
   if (!query) {
@@ -226,5 +227,8 @@ export async function POST(req: NextRequest) {
         Number(a.priceRange.minVariantPrice.amount) - Number(b.priceRange.minVariantPrice.amount)
     );
 
-  return NextResponse.json({ products: matched });
+  return NextResponse.json({
+    products: matched,
+    ...(debug ? { _debug: { filter, minPrice, maxPrice, matched: matched.length } } : {}),
+  });
 }
