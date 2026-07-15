@@ -86,8 +86,8 @@ export default async function ProductPage({
           {(() => {
             const col = product.collections.nodes[0];
             const isFrontpage = !col || col.handle === "frontpage";
-            const backHref = isFrontpage ? "/" : `/collections/${col.handle}`;
-            const backLabel = isFrontpage ? "Home" : col.title;
+            const backHref = isFrontpage ? "/#shop" : `/collections/${col.handle}`;
+            const backLabel = isFrontpage ? "Shop" : col.title;
             return (
               <a href={backHref} className="inline-flex items-center gap-2 text-xs text-[#666] hover:text-[#8B1A1A] transition-colors group">
                 <span className="group-hover:-translate-x-1 transition-transform">←</span>
@@ -305,11 +305,17 @@ export default async function ProductPage({
             "@type": "Product",
             name: product.title,
             description: product.description,
-            image: product.images.nodes[0]?.url,
+            image: product.images.nodes.map((n) => n.url),
+            brand: { "@type": "Brand", name: "Thamanvi Silks" },
+            category: "Saris & Lehengas",
             offers: {
               "@type": "Offer",
               price: Number(price.amount),
               priceCurrency: price.currencyCode,
+              itemCondition: "https://schema.org/NewCondition",
+              url: `https://thamanvi.com/products/${product.handle}`,
+              priceValidUntil: new Date(Date.now() + 31_536_000_000).toISOString().split("T")[0],
+              seller: { "@type": "Organization", name: "Thamanvi Silks" },
               availability: product.variants.nodes.some((v) => v.availableForSale)
                 ? "https://schema.org/InStock"
                 : "https://schema.org/OutOfStock",

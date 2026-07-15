@@ -74,13 +74,13 @@ export default function Navbar() {
             ))}
           </div>
 
-          {/* Right */}
-          <div className="flex items-center gap-4">
+          {/* Right — icons use 44px touch targets for reliable mobile tapping */}
+          <div className="flex items-center gap-0.5 md:gap-1 -mr-2">
             {/* AI Search */}
             <button
               onClick={openSearch}
               aria-label="AI Search"
-              className="text-white/80 hover:text-[#B8860B] transition-colors"
+              className="flex h-11 w-11 items-center justify-center text-white/80 hover:text-[#B8860B] transition-colors"
             >
               <Search className="h-5 w-5" />
             </button>
@@ -88,24 +88,24 @@ export default function Navbar() {
             <a
               href="https://shopify.com/82183880953/account"
               aria-label="My account"
-              className="hidden md:block text-white/80 hover:text-[#B8860B] transition-colors"
+              className="hidden md:flex h-11 w-11 items-center justify-center text-white/80 hover:text-[#B8860B] transition-colors"
             >
               <User className="h-5 w-5" />
             </a>
             <button
               onClick={() => setIsOpen(true)}
               aria-label={`Cart (${itemCount} items)`}
-              className="relative text-white/80 hover:text-[#B8860B] transition-colors"
+              className="relative flex h-11 w-11 items-center justify-center text-white/80 hover:text-[#B8860B] transition-colors"
             >
               <ShoppingBag className="h-5 w-5" />
               {itemCount > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 h-4 w-4 rounded-full bg-[#8B1A1A] text-[10px] font-bold text-white flex items-center justify-center">
+                <span className="absolute top-1.5 right-1.5 h-4 w-4 rounded-full bg-[#8B1A1A] text-[10px] font-bold text-white flex items-center justify-center">
                   {itemCount}
                 </span>
               )}
             </button>
             <button
-              className="md:hidden text-white/80 hover:text-white"
+              className="md:hidden flex h-11 w-11 items-center justify-center text-white/80 hover:text-white"
               onClick={() => setMenuOpen(!menuOpen)}
               aria-label="Toggle menu"
             >
