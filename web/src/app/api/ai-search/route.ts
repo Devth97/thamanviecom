@@ -14,7 +14,9 @@ import { getProducts, type ShopifyProduct } from "@/lib/shopify";
  * overridden with NVIDIA_MODEL.
  */
 const NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
-const NVIDIA_MODEL = process.env.NVIDIA_MODEL ?? "z-ai/glm-5.2";
+// A FAST instruct model — search must feel instant. Reasoning models such as
+// GLM-5.2 answer well but take ~60-85s, which is unusable for a search box.
+const NVIDIA_MODEL = process.env.NVIDIA_MODEL ?? "meta/llama-3.3-70b-instruct";
 
 const SYSTEM_PROMPT = `You are the shopping assistant for Thamanvi Silks, a premium Indian saree store.
 Match the customer's request to products in the CATALOG (a JSON array).
@@ -90,9 +92,15 @@ export async function POST(req: NextRequest) {
     inStock: p.variants.nodes.some((v) => v.availableForSale),
   }));
 
+  // Hard cap so a slow or hung upstream never leaves the shopper's search
+  // spinning. A healthy call returns in a couple of seconds.
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 20_000);
+
   try {
     const res = await fetch(NVIDIA_URL, {
       method: "POST",
+      signal: controller.signal,
       headers: {
         Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
@@ -104,8 +112,7 @@ export async function POST(req: NextRequest) {
           { role: "user", content: `CUSTOMER REQUEST: ${query}\n\nCATALOG:\n${JSON.stringify(catalog)}` },
         ],
         temperature: 0.2,
-        // Headroom for reasoning-model "thinking" tokens before the JSON answer.
-        max_tokens: 4096,
+        max_tokens: 512,
       }),
     });
 
@@ -127,7 +134,15 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ products: matched });
   } catch (err) {
+    if ((err as Error).name === "AbortError") {
+      return NextResponse.json(
+        { error: "AI Search took too long. Please try again." },
+        { status: 504 }
+      );
+    }
     console.error("AI search failed:", err);
     return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+  } finally {
+    clearTimeout(timeout);
   }
 }
