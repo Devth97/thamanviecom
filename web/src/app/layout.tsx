@@ -159,10 +159,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                     <h4 className="text-white/60 text-xs tracking-[0.2em] uppercase mb-4">Collections</h4>
                     <div className="space-y-2">
                       {[
-                        { label: "Kanjivaram Silk", href: "/?type=Kanjivaram#shop" },
-                        { label: "Banarasi Silk", href: "/?type=Banarasi#shop" },
-                        { label: "Mysore Silk", href: "/?type=Mysore Silk#shop" },
-                        { label: "Bridal", href: "/?occasion=Wedding#shop" },
+                        { label: "Kanjivaram Silk", href: "/sarees/kanjivaram" },
+                        { label: "Banarasi Silk", href: "/sarees/banarasi" },
+                        { label: "Mysore Silk", href: "/sarees/mysore-silk" },
+                        { label: "Bridal", href: "/sarees/wedding" },
                       ].map(({ label, href }) => (
                         <div key={label}><a href={href} className="text-white/40 hover:text-[#B8860B] text-sm transition-colors">{label}</a></div>
                       ))}

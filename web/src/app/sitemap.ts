@@ -1,5 +1,6 @@
 import { MetadataRoute } from "next";
 import { getProducts, getCollections } from "@/lib/shopify";
+import { LANDING_PAGES } from "@/lib/landingPages";
 
 const BASE_URL = "https://thamanvi.com";
 
@@ -23,8 +24,16 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.9,
   }));
 
+  const landingUrls = LANDING_PAGES.map((p) => ({
+    url: `${BASE_URL}/sarees/${p.slug}`,
+    lastModified: new Date(),
+    changeFrequency: "weekly" as const,
+    priority: 0.9,
+  }));
+
   return [
     { url: BASE_URL, lastModified: new Date(), changeFrequency: "daily", priority: 1.0 },
+    ...landingUrls,
     ...collectionUrls,
     ...productUrls,
   ];
