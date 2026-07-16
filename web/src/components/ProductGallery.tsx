@@ -94,7 +94,7 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
   );
 
   return (
-    <div className="w-full">
+    <div className="w-full min-w-0">
 
       {/* ── Desktop layout: vertical thumbnails left + main image right ── */}
       <div className="hidden md:flex gap-3">
@@ -133,7 +133,7 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
       </div>
 
       {/* ── Mobile layout: swipeable main + horizontal thumbnails below ── */}
-      <div className="md:hidden">
+      <div className="md:hidden min-w-0">
 
         {/* Main image with prev/next arrows + swipe */}
         <div

@@ -117,8 +117,9 @@ export default async function ProductPage({
       <div className="mx-auto max-w-6xl px-4 pt-8 pb-4">
 
         <div className="grid md:grid-cols-2 gap-10 lg:gap-16">
-          {/* Gallery */}
-          <div>
+          {/* Gallery — min-w-0 lets this grid item shrink so the mobile
+              thumbnail strip scrolls internally instead of widening the page */}
+          <div className="min-w-0">
             <ProductGallery images={product.images.nodes} />
             {videoUrl && (
               <video src={videoUrl} controls className="mt-4 w-full rounded" aria-label="Product video" />
