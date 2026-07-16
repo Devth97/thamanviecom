@@ -104,17 +104,9 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
           ))}
         </div>
 
-        {/* Main image — click or zoom button opens the full-screen viewer */}
+        {/* Main image — the zoom button (not the whole image) opens the viewer */}
         <div className="flex-1 relative aspect-[3/4] rounded overflow-hidden bg-[#F5EDE0]">
-          <div
-            ref={mainRef}
-            role="button"
-            tabIndex={0}
-            onClick={() => setZoomOpen(true)}
-            onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setZoomOpen(true)}
-            aria-label="Zoom image to full screen"
-            className="absolute inset-0 cursor-zoom-in"
-          >
+          <div ref={mainRef} className="absolute inset-0">
             <Image
               src={images[active].url}
               alt={images[active].altText ?? ""}
@@ -133,15 +125,7 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
 
         {/* Main image with prev/next arrows */}
         <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg bg-[#F5EDE0]">
-          <div
-            ref={mainRef}
-            role="button"
-            tabIndex={0}
-            onClick={() => setZoomOpen(true)}
-            onKeyDown={(e) => (e.key === "Enter" || e.key === " ") && setZoomOpen(true)}
-            aria-label="Zoom image to full screen"
-            className="w-full h-full cursor-zoom-in"
-          >
+          <div ref={mainRef} className="w-full h-full">
             <Image
               src={images[active].url}
               alt={images[active].altText ?? ""}
