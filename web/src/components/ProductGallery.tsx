@@ -44,6 +44,18 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
     [images.length]
   );
 
+  // Touch swipe on mobile: swipe left → next image, swipe right → previous.
+  const touchStartX = useRef<number | null>(null);
+  const onTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+  };
+  const onTouchEnd = (e: React.TouchEvent) => {
+    if (touchStartX.current === null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX.current;
+    touchStartX.current = null;
+    if (Math.abs(dx) > 40) (dx < 0 ? next : prev)();
+  };
+
   // Lightbox: lock body scroll and wire up keyboard (Esc to close, arrows to navigate).
   useEffect(() => {
     if (!zoomOpen) return;
@@ -123,8 +135,12 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
       {/* ── Mobile layout: swipeable main + horizontal thumbnails below ── */}
       <div className="md:hidden">
 
-        {/* Main image with prev/next arrows */}
-        <div className="relative aspect-[3/4] w-full overflow-hidden rounded-lg bg-[#F5EDE0]">
+        {/* Main image with prev/next arrows + swipe */}
+        <div
+          className="relative aspect-[3/4] w-full overflow-hidden rounded-lg bg-[#F5EDE0]"
+          onTouchStart={onTouchStart}
+          onTouchEnd={onTouchEnd}
+        >
           <div ref={mainRef} className="w-full h-full">
             <Image
               src={images[active].url}
