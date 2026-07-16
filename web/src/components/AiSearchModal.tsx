@@ -1,6 +1,6 @@
 "use client";
 import { useState, useEffect, useCallback } from "react";
-import { X, Sparkles, Search } from "lucide-react";
+import { X, Sparkles, Search, ImageIcon } from "lucide-react";
 import { useSearch } from "@/contexts/SearchContext";
 import ProductCard from "@/components/ProductCard";
 import type { ShopifyProduct } from "@/lib/shopify";
@@ -52,6 +52,39 @@ export default function AiSearchModal() {
     []
   );
 
+  // Visual search: read the uploaded photo and match it against the catalogue.
+  const runImage = useCallback(async (file: File) => {
+    if (!file.type.startsWith("image/")) return;
+    setQuery("");
+    setLoading(true);
+    setError(null);
+    try {
+      const dataUrl = await new Promise<string>((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      const res = await fetch("/api/visual-search", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ image: dataUrl }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error ?? "Image search failed. Please try another photo.");
+        setResults([]);
+      } else {
+        setResults(data.products ?? []);
+      }
+    } catch {
+      setError("Couldn't read that image. Please try another.");
+      setResults([]);
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
   // Esc to close + scroll lock while open; reset state when closed.
   useEffect(() => {
     if (!isOpen) {
@@ -102,7 +135,9 @@ export default function AiSearchModal() {
 
         {/* Search form */}
         <div className="px-5 pt-5">
-          <p className="text-sm text-[#666] mb-3">Describe what you&apos;re looking for in plain language.</p>
+          <p className="text-sm text-[#666] mb-3">
+            Describe what you&apos;re looking for &mdash; or tap the photo icon to search by image.
+          </p>
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -119,6 +154,24 @@ export default function AiSearchModal() {
               aria-label="Search products"
               className="flex-1 rounded-full border border-[#D4A96A] bg-white px-4 py-3 text-sm outline-none focus:border-[#8B1A1A] transition-colors"
             />
+            {/* Visual search — upload a saree photo */}
+            <label
+              title="Search by photo"
+              aria-label="Search by photo"
+              className="flex h-11 w-11 shrink-0 cursor-pointer items-center justify-center rounded-full border border-[#D4A96A] text-[#8B1A1A] hover:bg-[#F0E8DC] transition-colors"
+            >
+              <ImageIcon className="h-5 w-5" />
+              <input
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={(e) => {
+                  const f = e.target.files?.[0];
+                  if (f) runImage(f);
+                  e.target.value = "";
+                }}
+              />
+            </label>
             <button
               type="submit"
               disabled={loading || !query.trim()}

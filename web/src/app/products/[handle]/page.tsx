@@ -10,6 +10,8 @@ import SizeGuideModal from "@/components/SizeGuideModal";
 import PincodeChecker from "@/components/PincodeChecker";
 import NotifyMe from "@/components/NotifyMe";
 import ProductReviews from "@/components/ProductReviews";
+import AiStylist from "@/components/AiStylist";
+import AiRecommendations from "@/components/AiRecommendations";
 import AddToCartButton from "./AddToCartButton";
 import { GOOGLE_RATING, GOOGLE_REVIEW_COUNT } from "@/data/googleReviews";
 
@@ -254,10 +256,16 @@ export default async function ProductPage({
                 dangerouslySetInnerHTML={{ __html: product.descriptionHtml }}
               />
             )}
+
+            {/* AI Stylist — complete the look */}
+            <AiStylist handle={product.handle} />
           </div>
         </div>
 
       </div>
+
+      {/* ── AI "You may also like" ── */}
+      <AiRecommendations handle={product.handle} />
 
       {/* ── People Also Bought ── */}
       {relatedProducts.length > 0 && (
