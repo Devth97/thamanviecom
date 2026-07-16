@@ -24,6 +24,18 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
     return () => window.removeEventListener("resize", check);
   }, []);
 
+  // Land on the shop grid when arriving via /#shop (e.g. "Back to Shop" or nav
+  // links). The native hash scroll is unreliable here because this section
+  // streams in after the hero/collections above it, so re-assert the scroll
+  // once this component has mounted and again after layout settles.
+  useEffect(() => {
+    if (typeof window === "undefined" || window.location.hash !== "#shop") return;
+    const toShop = () => document.getElementById("shop")?.scrollIntoView({ block: "start" });
+    toShop();
+    const timers = [setTimeout(toShop, 200), setTimeout(toShop, 600)];
+    return () => timers.forEach(clearTimeout);
+  }, []);
+
   // Filter state
   const [selectedOccasions, setSelectedOccasions] = useState<string[]>([]);
   const [selectedTypes, setSelectedTypes] = useState<string[]>([]);
