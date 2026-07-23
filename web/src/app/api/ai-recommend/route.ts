@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getProducts, type ShopifyProduct } from "@/lib/shopify";
+import { isMensWear } from "@/lib/mensWear";
 import { callNvidia, parseJsonReply, AiError } from "@/lib/nvidia";
 
 /**
@@ -20,7 +21,11 @@ export async function POST(req: NextRequest) {
   const current = products.find((p) => p.handle === handle);
   if (!current) return NextResponse.json({ products: [] });
 
-  const others = products.filter((p) => p.handle !== handle);
+  // Stay within the same category: men's wear recommends men's wear only,
+  // sarees recommend sarees only.
+  const mens = isMensWear(current);
+  const others = products.filter((p) => p.handle !== handle && isMensWear(p) === mens);
+  if (others.length === 0) return NextResponse.json({ products: [] });
   const catalog = others.map((p) => ({
     handle: p.handle,
     title: p.title,
@@ -34,7 +39,7 @@ export async function POST(req: NextRequest) {
         {
           role: "system",
           content:
-            "You are a saree merchandiser for Thamanvi Silks. From the CATALOG, pick up to 4 products that best complement or resemble the product the customer is viewing (similar colour family, occasion, weave or style). Return ONLY JSON {\"handles\": [\"...\"]} using handles from the catalog, best first. No prose.",
+            "You are a merchandiser for Thamanvi Silks, an Indian clothing store. From the CATALOG, pick up to 4 products that best complement or resemble the product the customer is viewing (similar colour family, occasion, fabric or style). Return ONLY JSON {\"handles\": [\"...\"]} using handles from the catalog, best first. No prose.",
         },
         {
           role: "user",

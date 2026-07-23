@@ -14,6 +14,7 @@ import AiStylist from "@/components/AiStylist";
 import AiRecommendations from "@/components/AiRecommendations";
 import AddToCartButton from "./AddToCartButton";
 import { GOOGLE_RATING, GOOGLE_REVIEW_COUNT } from "@/data/googleReviews";
+import { isMensWear } from "@/lib/mensWear";
 
 export const revalidate = 60;
 
@@ -76,6 +77,8 @@ export default async function ProductPage({
   ].filter((row): row is [string, string] => Boolean(row[1]));
 
   const videoUrl = getProductVideoUrl(product);
+  // Men's wear gets neutral copy — no saree-specific guides/badges/styling.
+  const mens = isMensWear(product);
   const whatsappNumber = "919535779597";
   const whatsappMsg = `Hi! I'm interested in the ${product.title} on your website. Can you share more details?`;
 
@@ -179,8 +182,8 @@ export default async function ProductPage({
               })()}
             </div>
 
-            {/* Size guide link */}
-            <SizeGuideModal />
+            {/* Size guide link — saree draping guide, not relevant for men's wear */}
+            {!mens && <SizeGuideModal />}
 
             {/* Add to cart or Notify Me */}
             {product.variants.nodes.some(v => v.availableForSale)
@@ -220,7 +223,7 @@ export default async function ProductPage({
               {[
                 { icon: "🚚", label: "Free Shipping", sub: "Pan India" },
                 { icon: "📦", label: "Open Box Return", sub: "On delivery only" },
-                { icon: "✓", label: "100% Authentic", sub: "Pure Silk Certified" },
+                { icon: "✓", label: "100% Authentic", sub: mens ? "Quality Checked" : "Pure Silk Certified" },
               ].map(({ icon, label, sub }) => (
                 <div key={label} className="flex flex-col items-center text-center py-3 rounded border border-[#E8DDD0]">
                   <span className="text-lg mb-1">{icon}</span>
