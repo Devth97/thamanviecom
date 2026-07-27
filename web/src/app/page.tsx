@@ -10,6 +10,7 @@ import FAQSection from "@/components/FAQSection";
 import LocationSection from "@/components/LocationSection";
 import HomeShopSection from "@/components/HomeShopSection";
 import MensWearSection from "@/components/MensWearSection";
+import GenderCurations from "@/components/GenderCurations";
 import { getProducts } from "@/lib/shopify";
 import { isMensWear } from "@/lib/mensWear";
 import Link from "next/link";
@@ -28,6 +29,7 @@ export default async function HomePage() {
     <>
       <HeroSection />
       <MarqueeStrip />
+      <GenderCurations />
 
       {/* Category quick-links */}
       <div className="bg-[#FAF6F0] border-b border-[#E8DDD0]">
