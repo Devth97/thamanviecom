@@ -45,15 +45,45 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
   );
 
   // Touch swipe on mobile: swipe left → next image, swipe right → previous.
+  // Guarded against multi-touch pinch zooming and vertical scrolling.
   const touchStartX = useRef<number | null>(null);
+  const touchStartY = useRef<number | null>(null);
+  const isMultiTouchRef = useRef<boolean>(false);
+
   const onTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length > 1) {
+      isMultiTouchRef.current = true;
+      return;
+    }
+    isMultiTouchRef.current = false;
     touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
   };
+
+  const onTouchMove = (e: React.TouchEvent) => {
+    if (e.touches.length > 1) {
+      isMultiTouchRef.current = true;
+    }
+  };
+
   const onTouchEnd = (e: React.TouchEvent) => {
-    if (touchStartX.current === null) return;
+    if (isMultiTouchRef.current || touchStartX.current === null || touchStartY.current === null) {
+      touchStartX.current = null;
+      touchStartY.current = null;
+      isMultiTouchRef.current = false;
+      return;
+    }
+
     const dx = e.changedTouches[0].clientX - touchStartX.current;
+    const dy = e.changedTouches[0].clientY - touchStartY.current;
+
     touchStartX.current = null;
-    if (Math.abs(dx) > 40) (dx < 0 ? next : prev)();
+    touchStartY.current = null;
+
+    // Only switch image if movement is strictly horizontal and exceeds 70px threshold
+    if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) {
+      (dx < 0 ? next : prev)();
+    }
   };
 
   // Lightbox: lock body scroll and wire up keyboard (Esc to close, arrows to navigate).
@@ -139,6 +169,7 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
         <div
           className="relative aspect-[3/4] w-full overflow-hidden rounded-lg bg-[#F5EDE0]"
           onTouchStart={onTouchStart}
+          onTouchMove={onTouchMove}
           onTouchEnd={onTouchEnd}
         >
           <div ref={mainRef} className="w-full h-full">
