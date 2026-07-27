@@ -20,7 +20,7 @@ export const revalidate = 60;
 
 export default async function HomePage() {
   // Newest uploaded first (no real sales history to rank "bestsellers" by).
-  const { products: allProducts } = await getProducts({ first: 48, sortKey: "CREATED_AT", reverse: true }).catch(() => ({ products: [], hasNextPage: false, endCursor: null }));
+  const { products: allProducts } = await getProducts({ first: 100, sortKey: "CREATED_AT", reverse: true }).catch(() => ({ products: [], hasNextPage: false, endCursor: null }));
 
   // Split men's wear out of the saree catalogue so each gets its own section.
   const mensProducts = allProducts.filter(isMensWear);
