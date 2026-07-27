@@ -10,7 +10,7 @@ const SORT_OPTIONS = [
 ];
 
 const OCCASIONS = ["Wedding", "Festive", "Party Wear", "Reception", "Casual", "Daily Wear"];
-const SAREE_TYPES = ["Banarasi", "Kanjivaram", "Mysore Silk", "Semi Silk"];
+const PRODUCT_TYPES = ["Banarasi", "Kanjivaram", "Mysore Silk", "Semi Silk", "Kurta", "Kurta Set"];
 
 type Props = {
   sortKey: string;
@@ -249,7 +249,7 @@ export default function FilterSidebar({
 
         {/* Type */}
         <Section title="Type" defaultOpen={false}>
-          <CheckList items={SAREE_TYPES} selected={selectedTypes} onChange={onTypeChange} />
+          <CheckList items={PRODUCT_TYPES} selected={selectedTypes} onChange={onTypeChange} />
         </Section>
 
       </div>

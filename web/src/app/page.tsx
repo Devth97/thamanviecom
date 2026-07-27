@@ -40,7 +40,8 @@ export default async function HomePage() {
               { label: "Mysore Silk", href: "/?type=Mysore Silk#shop" },
               { label: "Wedding", href: "/?occasion=Wedding#shop" },
               { label: "Cotton", href: "/?fabric=Cotton#shop" },
-              { label: "Men", href: "/#mens" },
+              { label: "Men's Wear", href: "/#mens" },
+              { label: "Kurtas", href: "/#mens" },
             ].map(({ label, href }) => (
               <a
                 key={label}
