@@ -101,8 +101,13 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
       });
     };
 
-    return allProducts.filter(p => {
-      if (isMensWear(p)) return false; // men's wear has its own section
+    // Separate men's products out of saree catalogue.
+    const womenProducts = allProducts.filter(p => !isMensWear(p));
+    // If women's/saree products exist in Shopify, show those; otherwise fall back
+    // to all products so the storefront catalogue is never empty.
+    const baseProducts = womenProducts.length > 0 ? womenProducts : allProducts;
+
+    return baseProducts.filter(p => {
       if (inStockOnly && !p.variants.nodes.some(v => v.availableForSale)) return false;
       const price = Number(p.priceRange.minVariantPrice.amount);
       if (price < priceRange[0] || price > priceRange[1]) return false;
@@ -147,7 +152,7 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
               <span className="text-[#B8860B] text-[10px] tracking-[0.25em] uppercase">Our Sarees</span>
             </div>
             <h2 className="font-display text-2xl md:text-4xl text-[#0D0808]">Shop All</h2>
-            <p className="text-xs text-[#666] mt-1">{filtered.length} saree{filtered.length !== 1 ? "s" : ""}{activeCount > 0 ? " (filtered)" : ""}</p>
+            <p className="text-xs text-[#666] mt-1">{filtered.length} style{filtered.length !== 1 ? "s" : ""}{activeCount > 0 ? " (filtered)" : ""}</p>
           </div>
           {/* Mobile filter button */}
           <button
