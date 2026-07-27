@@ -61,8 +61,8 @@ export interface PromoConfig {
 
 export const promoConfig: PromoConfig = {
   enabled: true,
-  fallbackDiscountPercent: 15,
-  applyFallback: true,
+  fallbackDiscountPercent: 0,
+  applyFallback: false,
   showSavings: true,
   offerBadge: { enabled: true, text: "LIMITED OFFER" },
   countdown: { enabled: false, durationHours: 24, label: "Offer ends in" },

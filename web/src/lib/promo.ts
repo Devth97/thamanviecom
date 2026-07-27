@@ -93,7 +93,7 @@ export function getPromoPricing(
     return noPromo;
   }
 
-  // 1. Genuine Shopify sale wins.
+  // Genuine Shopify sale set by admin via Compare At Price in Shopify Dashboard.
   if (compareAmount > priceAmount) {
     return {
       show: true,
@@ -105,24 +105,6 @@ export function getPromoPricing(
     };
   }
 
-  // 2. Synthesised MRP (never touches checkout price).
-  //    A per-product tag (e.g. `promo:20`) wins; otherwise the global fallback
-  //    applies only when `applyFallback` is on. No tag + fallback off = no promo.
-  const tagPct = product.tags ? getTagDiscountPercent(product.tags) : null;
-  const pct = tagPct ?? (config.applyFallback ? config.fallbackDiscountPercent : null);
-  if (pct === null || !(pct > 0 && pct < 100)) return noPromo;
-
-  const factor = 1 - pct / 100;
-  // Inflate upward, then round to a tidy multiple of 10 for a believable MRP.
-  let original = Math.round(priceAmount / factor / 10) * 10;
-  if (original <= priceAmount) original = priceAmount + 10;
-
-  return {
-    show: true,
-    isRealSale: false,
-    current: price,
-    original: money(original, price.currencyCode),
-    discountPercent: percentOff(original, priceAmount),
-    savings: money(original - priceAmount, price.currencyCode),
-  };
+  // No Compare-at-Price set in Shopify Dashboard → show regular price only
+  return noPromo;
 }
