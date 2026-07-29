@@ -282,13 +282,21 @@ export default function VariantSelector({ product }: { product: ShopifyProduct }
                     onClick={() => pick(opt.name, value)}
                     disabled={!avail}
                     aria-pressed={active}
-                    className={`min-w-[44px] px-3 py-2 text-sm rounded border transition-colors ${
+                    title={avail ? `${opt.name}: ${value}` : `${value} — Sold Out`}
+                    className={`relative min-w-[48px] px-3.5 py-2 text-sm font-semibold rounded border transition-all ${
                       active
-                        ? "border-[#8B1A1A] bg-[#8B1A1A] text-white"
-                        : "border-[#D4A96A] text-[#1A1A1A] hover:border-[#8B1A1A]"
-                    } ${!avail ? "opacity-40 line-through" : ""}`}
+                        ? "border-[#8B1A1A] bg-[#8B1A1A] text-white shadow-sm scale-105"
+                        : avail
+                        ? "border-[#D0C7BA] bg-white text-[#1A1A1A] hover:border-[#8B1A1A] hover:text-[#8B1A1A]"
+                        : "border-[#E5E5E5] bg-[#F5F5F5] text-[#A0A0A0] cursor-not-allowed opacity-60"
+                    }`}
                   >
                     {value}
+                    {!avail && (
+                      <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                        <span className="w-full h-[1.5px] bg-[#999] rotate-[-25deg]" />
+                      </span>
+                    )}
                   </button>
                 );
               })}
