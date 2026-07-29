@@ -233,6 +233,43 @@ export default function VariantSelector({ product }: { product: ShopifyProduct }
   const inStock = selectedVariant?.availableForSale ?? false;
   const pricesVary = variants.some((v) => v.price.amount !== variants[0].price.amount);
 
+  // Dynamic stock indicator based on exact selected variant (Color + Size)
+  const stockBadge = useMemo(() => {
+    if (!selectedVariant || !selectedVariant.availableForSale) {
+      return (
+        <p className="mt-1 text-xs font-semibold text-[#C62828] flex items-center gap-1.5">
+          <span className="inline-block w-2 h-2 rounded-full bg-[#C62828]" />
+          Currently Out of Stock
+        </p>
+      );
+    }
+
+    const qty = selectedVariant.quantityAvailable;
+    if (qty !== null && qty > 0 && qty <= 3) {
+      return (
+        <p className="mt-1 text-xs font-semibold text-[#C62828] flex items-center gap-1.5">
+          <span className="inline-block w-2 h-2 rounded-full bg-[#C62828] animate-pulse" />
+          Only {qty} left in stock — order soon!
+        </p>
+      );
+    }
+    if (qty !== null && qty > 3 && qty <= 7) {
+      return (
+        <p className="mt-1 text-xs font-semibold text-[#E65100] flex items-center gap-1.5">
+          <span className="inline-block w-2 h-2 rounded-full bg-[#E65100]" />
+          Selling fast — {qty} pieces left
+        </p>
+      );
+    }
+
+    return (
+      <p className="mt-1 text-xs font-semibold text-[#2E7D32] flex items-center gap-1.5">
+        <span className="inline-block w-2 h-2 rounded-full bg-[#2E7D32]" />
+        In Stock · Ready to Ship
+      </p>
+    );
+  }, [selectedVariant]);
+
   return (
     <div className="space-y-4">
       {options.map((opt) => {
@@ -304,6 +341,8 @@ export default function VariantSelector({ product }: { product: ShopifyProduct }
           </div>
         );
       })}
+
+      {stockBadge}
 
       {pricesVary && selectedVariant && (
         <p className="text-lg font-bold text-[#8B1A1A]">{formatPrice(selectedVariant.price)}</p>
