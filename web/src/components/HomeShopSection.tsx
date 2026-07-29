@@ -101,11 +101,9 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
       });
     };
 
-    // Separate men's products out of saree catalogue.
-    const womenProducts = allProducts.filter(p => !isMensWear(p));
-    // If women's/saree products exist in Shopify, show those; otherwise fall back
-    // to all products so the storefront catalogue is never empty.
-    const baseProducts = womenProducts.length > 0 ? womenProducts : allProducts;
+    // Separate men's products out of saree/women catalogue. Kurtas & men's items
+    // live strictly in the Men's Wear section (#mens) and never in "For Her".
+    const baseProducts = allProducts.filter(p => !isMensWear(p));
 
     return baseProducts.filter(p => {
       if (inStockOnly && !p.variants.nodes.some(v => v.availableForSale)) return false;

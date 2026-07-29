@@ -13,6 +13,13 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
   const thumbsRef = useRef<HTMLDivElement>(null);
   const media = useProductMedia();
 
+  // Show only the selected colour's images when a colour is chosen, else all.
+  const displayImages =
+    media?.colourImages && media.colourImages.length > 0 ? media.colourImages : images;
+  // Guard against a stale index right after the image set shrinks.
+  const safeActive = Math.min(active, Math.max(0, displayImages.length - 1));
+  const count = displayImages.length;
+
   const switchImage = useCallback((idx: number) => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
     if (!mq.matches && mainRef.current) {
@@ -37,14 +44,24 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
     }
   }, []);
 
-  const prev = useCallback(
-    () => setActive((a) => (a - 1 + images.length) % images.length),
-    [images.length]
-  );
-  const next = useCallback(
-    () => setActive((a) => (a + 1) % images.length),
-    [images.length]
-  );
+  const prev = useCallback(() => setActive((a) => (a - 1 + count) % count), [count]);
+  const next = useCallback(() => setActive((a) => (a + 1) % count), [count]);
+
+  // Reset to the first image whenever the colour image set changes.
+  const colourKey = media?.colourImages?.map((i) => i.url).join("|") ?? "";
+  useEffect(() => {
+    setActive(0);
+  }, [colourKey]);
+
+  // Jump to specific selected variant/colour image
+  useEffect(() => {
+    if (!media?.selectedImage) return;
+    const targetUrl = media.selectedImage.url;
+    const foundIdx = displayImages.findIndex((i) => i.url === targetUrl);
+    if (foundIdx >= 0) {
+      setActive(foundIdx);
+    }
+  }, [media?.selectedImage, displayImages]);
 
   // Touch swipe on mobile: swipe left → next image, swipe right → previous.
   // Guarded against multi-touch pinch zooming and vertical scrolling.
@@ -88,18 +105,6 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
     }
   };
 
-  // When a colour is selected, jump the gallery to that variant's photo.
-  const activeImageUrl = media?.activeImageUrl;
-  useEffect(() => {
-    if (!activeImageUrl) return;
-    const base = (u: string) => u.split("?")[0];
-    const idx = images.findIndex(
-      (im) => im.url === activeImageUrl || base(im.url) === base(activeImageUrl)
-    );
-    if (idx >= 0) switchImage(idx);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [activeImageUrl]);
-
   // Lightbox: lock body scroll and wire up keyboard (Esc to close, arrows to navigate).
   useEffect(() => {
     if (!zoomOpen) return;
@@ -117,13 +122,15 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
     };
   }, [zoomOpen, prev, next]);
 
-  if (images.length === 0) {
+  if (count === 0) {
     return (
       <div className="aspect-[3/4] w-full rounded bg-[#F5EDE0] flex items-center justify-center text-6xl">
         🧣
       </div>
     );
   }
+
+  const currentImage = displayImages[safeActive];
 
   // Reusable floating zoom button shown on each main image.
   const ZoomButton = () => (
@@ -144,13 +151,13 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
       <div className="hidden md:flex gap-3">
         {/* Vertical thumbnails */}
         <div className="flex flex-col gap-2 w-16 shrink-0">
-          {images.map((img, i) => (
+          {displayImages.map((img, i) => (
             <button
               key={img.url}
               onClick={() => switchImage(i)}
               aria-label={`View image ${i + 1}`}
               className={`relative aspect-square w-full overflow-hidden rounded border-2 transition-all duration-200 ${
-                i === active
+                i === safeActive
                   ? "border-[#8B1A1A] shadow-md"
                   : "border-transparent hover:border-[#D4A96A]"
               }`}
@@ -164,12 +171,12 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
         <div className="flex-1 relative aspect-[3/4] rounded overflow-hidden bg-[#F5EDE0]">
           <div ref={mainRef} className="absolute inset-0">
             <Image
-              src={images[active].url}
-              alt={images[active].altText ?? ""}
+              src={currentImage.url}
+              alt={currentImage.altText ?? ""}
               fill
               className="object-contain"
               sizes="50vw"
-              priority={active === 0}
+              priority={safeActive === 0}
             />
           </div>
           <ZoomButton />
@@ -188,19 +195,19 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
         >
           <div ref={mainRef} className="w-full h-full">
             <Image
-              src={images[active].url}
-              alt={images[active].altText ?? ""}
+              src={currentImage.url}
+              alt={currentImage.altText ?? ""}
               fill
               className="object-contain"
               sizes="100vw"
-              priority={active === 0}
+              priority={safeActive === 0}
             />
           </div>
 
           <ZoomButton />
 
           {/* Prev / Next arrows — only when multiple images */}
-          {images.length > 1 && (
+          {count > 1 && (
             <>
               <button
                 onClick={prev}
@@ -219,25 +226,25 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
 
               {/* Image counter badge */}
               <div className="absolute bottom-2 left-2 bg-black/50 text-white text-[10px] px-2 py-0.5 rounded-full">
-                {active + 1} / {images.length}
+                {safeActive + 1} / {count}
               </div>
             </>
           )}
         </div>
 
         {/* Horizontal thumbnail strip */}
-        {images.length > 1 && (
+        {count > 1 && (
           <div
             ref={thumbsRef}
             className="flex gap-2 mt-3 overflow-x-auto no-scrollbar pb-1"
           >
-            {images.map((img, i) => (
+            {displayImages.map((img, i) => (
               <button
                 key={img.url}
                 onClick={() => switchImage(i)}
                 aria-label={`View image ${i + 1}`}
                 className={`relative aspect-square shrink-0 w-16 h-16 overflow-hidden rounded border-2 transition-all duration-200 ${
-                  i === active
+                  i === safeActive
                     ? "border-[#8B1A1A] shadow-sm scale-105"
                     : "border-[#E0D8CF] opacity-70 hover:opacity-100 hover:border-[#D4A96A]"
                 }`}
@@ -273,15 +280,15 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
             <X className="h-6 w-6" />
           </button>
 
-          {/* Full image — object-contain so the whole saree is visible.
+          {/* Full image — object-contain so the whole garment is visible.
               stopPropagation so clicking the image doesn't close the viewer. */}
           <div
             className="relative h-[88vh] w-[94vw] md:w-[92vw] max-w-5xl"
             onClick={(e) => e.stopPropagation()}
           >
             <Image
-              src={images[active].url}
-              alt={images[active].altText ?? ""}
+              src={currentImage.url}
+              alt={currentImage.altText ?? ""}
               fill
               className="object-contain select-none"
               sizes="92vw"
@@ -289,7 +296,7 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
             />
           </div>
 
-          {images.length > 1 && (
+          {count > 1 && (
             <>
               <button
                 onClick={(e) => { e.stopPropagation(); prev(); }}
@@ -308,13 +315,13 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
 
               {/* Counter + thumbnail dots */}
               <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-10 flex items-center gap-2">
-                {images.map((img, i) => (
+                {displayImages.map((img, i) => (
                   <button
                     key={img.url}
                     onClick={(e) => { e.stopPropagation(); setActive(i); }}
                     aria-label={`View image ${i + 1}`}
                     className={`h-2 rounded-full transition-all ${
-                      i === active ? "w-6 bg-white" : "w-2 bg-white/40 hover:bg-white/70"
+                      i === safeActive ? "w-6 bg-white" : "w-2 bg-white/40 hover:bg-white/70"
                     }`}
                   />
                 ))}
