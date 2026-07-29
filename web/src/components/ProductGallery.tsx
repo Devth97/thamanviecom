@@ -4,12 +4,14 @@ import Image from "next/image";
 import { gsap } from "gsap";
 import { ShopifyImage } from "@/lib/shopify";
 import { ChevronLeft, ChevronRight, ZoomIn, X } from "lucide-react";
+import { useProductMedia } from "@/components/ProductMediaSync";
 
 export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
   const [active, setActive] = useState(0);
   const [zoomOpen, setZoomOpen] = useState(false);
   const mainRef = useRef<HTMLDivElement>(null);
   const thumbsRef = useRef<HTMLDivElement>(null);
+  const media = useProductMedia();
 
   const switchImage = useCallback((idx: number) => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -85,6 +87,18 @@ export default function ProductGallery({ images }: { images: ShopifyImage[] }) {
       (dx < 0 ? next : prev)();
     }
   };
+
+  // When a colour is selected, jump the gallery to that variant's photo.
+  const activeImageUrl = media?.activeImageUrl;
+  useEffect(() => {
+    if (!activeImageUrl) return;
+    const base = (u: string) => u.split("?")[0];
+    const idx = images.findIndex(
+      (im) => im.url === activeImageUrl || base(im.url) === base(activeImageUrl)
+    );
+    if (idx >= 0) switchImage(idx);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [activeImageUrl]);
 
   // Lightbox: lock body scroll and wire up keyboard (Esc to close, arrows to navigate).
   useEffect(() => {

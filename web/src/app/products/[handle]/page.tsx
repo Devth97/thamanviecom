@@ -12,7 +12,8 @@ import NotifyMe from "@/components/NotifyMe";
 import ProductReviews from "@/components/ProductReviews";
 import AiStylist from "@/components/AiStylist";
 import AiRecommendations from "@/components/AiRecommendations";
-import AddToCartButton from "./AddToCartButton";
+import VariantSelector from "./VariantSelector";
+import { ProductMediaProvider } from "@/components/ProductMediaSync";
 import { GOOGLE_RATING, GOOGLE_REVIEW_COUNT } from "@/data/googleReviews";
 import { isMensWear } from "@/lib/mensWear";
 
@@ -117,6 +118,7 @@ export default async function ProductPage({
         </div>
       </div>
 
+      <ProductMediaProvider>
       <div className="mx-auto max-w-6xl px-4 pt-8 pb-4">
 
         <div className="grid md:grid-cols-2 gap-10 lg:gap-16">
@@ -185,9 +187,9 @@ export default async function ProductPage({
             {/* Size guide link — saree draping guide, not relevant for men's wear */}
             {!mens && <SizeGuideModal />}
 
-            {/* Add to cart or Notify Me */}
+            {/* Variant options (colour/size) + add to cart, or Notify Me */}
             {product.variants.nodes.some(v => v.availableForSale)
-              ? <AddToCartButton product={product} />
+              ? <VariantSelector product={product} />
               : <NotifyMe productTitle={product.title} />
             }
 
@@ -267,6 +269,7 @@ export default async function ProductPage({
         </div>
 
       </div>
+      </ProductMediaProvider>
 
       {/* ── AI "You may also like" ── */}
       <AiRecommendations handle={product.handle} />

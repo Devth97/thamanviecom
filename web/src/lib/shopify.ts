@@ -29,6 +29,14 @@ export type ShopifyVariant = {
   availableForSale: boolean;
   quantityAvailable: number | null;
   selectedOptions: { name: string; value: string }[];
+  /** The image assigned to this variant in Shopify (e.g. the colour's photo). */
+  image: ShopifyImage | null;
+};
+
+/** A product option, e.g. { name: "Colour", values: ["Black", "White"] }. */
+export type ShopifyOption = {
+  name: string;
+  optionValues: { name: string }[];
 };
 
 export type ShopifyProduct = {
@@ -40,6 +48,7 @@ export type ShopifyProduct = {
   priceRange: { minVariantPrice: ShopifyMoney };
   compareAtPriceRange: { minVariantPrice: ShopifyMoney };
   images: { nodes: ShopifyImage[] };
+  options?: ShopifyOption[];
   variants: { nodes: ShopifyVariant[] };
   metafields: (ShopifyMetafield | null)[];
   collections: { nodes: { handle: string; title: string }[] };
@@ -123,7 +132,13 @@ const PRODUCT_FRAGMENT = `
       height
     }
   }
-  variants(first: 20) {
+  options {
+    name
+    optionValues {
+      name
+    }
+  }
+  variants(first: 100) {
     nodes {
       id
       title
@@ -140,6 +155,12 @@ const PRODUCT_FRAGMENT = `
       selectedOptions {
         name
         value
+      }
+      image {
+        url
+        altText
+        width
+        height
       }
     }
   }
