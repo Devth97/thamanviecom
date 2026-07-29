@@ -151,28 +151,63 @@ export default function VariantSelector({ product }: { product: ShopifyProduct }
     if (!colour) return null;
     const all = product.images.nodes;
 
+    // 1. Match by alt text if alt text contains colour name
     const byAlt = all.filter((im) => (im.altText ?? "").toLowerCase().includes(colour));
     if (byAlt.length > 0) return byAlt;
 
-    const variantUrls = new Set(
-      variants
-        .filter(
-          (v) =>
-            v.selectedOptions.some(
-              (o) => o.name === colourOption.name && o.value.toLowerCase().trim() === colour
-            ) && v.image
-        )
-        .map((v) => v.image!.url)
-    );
-    const byVariant = all.filter((im) => variantUrls.has(im.url));
-    return byVariant.length > 0 ? byVariant : null;
+    // 2. Check if variant images in Shopify are TRULY distinct across different colours
+    const colorVariantImageMap = new Map<string, string>();
+    for (const v of variants) {
+      const colVal = v.selectedOptions
+        .find((o) => o.name === colourOption.name)
+        ?.value.toLowerCase()
+        .trim();
+      if (colVal && v.image?.url) {
+        colorVariantImageMap.set(colVal, v.image.url);
+      }
+    }
+
+    const uniqueImageUrlsAcrossColors = new Set(colorVariantImageMap.values());
+    const isDistinctPerColor = uniqueImageUrlsAcrossColors.size > 1;
+
+    if (isDistinctPerColor) {
+      const variantUrls = new Set(
+        variants
+          .filter(
+            (v) =>
+              v.selectedOptions.some(
+                (o) => o.name === colourOption.name && o.value.toLowerCase().trim() === colour
+              ) && v.image
+          )
+          .map((v) => v.image!.url)
+      );
+      const byVariant = all.filter((im) => variantUrls.has(im.url));
+      if (byVariant.length > 0) return byVariant;
+    }
+
+    // 3. Match by URL filename if it contains the colour name
+    const byUrl = all.filter((im) => im.url.toLowerCase().includes(colour));
+    if (byUrl.length > 0) return byUrl;
+
+    // Default: show ALL uploaded images so no photos are hidden
+    return null;
   }, [colourOption, selected, variants, product.images.nodes]);
 
   useEffect(() => {
     media?.setColourImages(colourImages);
+
     if (selectedVariant?.image) {
-      media?.setSelectedImage(selectedVariant.image);
-    } else if (colourOption && selected[colourOption.name]) {
+      const isSharedDefaultImage = variants.every(
+        (v) => v.image?.url === selectedVariant.image?.url
+      );
+
+      if (!isSharedDefaultImage) {
+        media?.setSelectedImage(selectedVariant.image);
+        return;
+      }
+    }
+
+    if (colourOption && selected[colourOption.name]) {
       const colourName = selected[colourOption.name].toLowerCase().trim();
       const match = product.images.nodes.find(
         (im) =>
@@ -181,7 +216,7 @@ export default function VariantSelector({ product }: { product: ShopifyProduct }
       );
       if (match) media?.setSelectedImage(match);
     }
-  }, [colourImages, selectedVariant, selected, colourOption, product.images.nodes]);
+  }, [colourImages, selectedVariant, selected, colourOption, product.images.nodes, variants]);
 
   const pick = (optionName: string, value: string) =>
     setSelected((s) => ({ ...s, [optionName]: value }));
