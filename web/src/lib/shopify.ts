@@ -31,6 +31,10 @@ export type ShopifyVariant = {
   selectedOptions: { name: string; value: string }[];
   /** The image assigned to this variant in Shopify (e.g. the colour's photo). */
   image: ShopifyImage | null;
+  /** custom.variant_gallery metafield — the full set of images for this colour. */
+  variantGallery?: {
+    references: { nodes: { image: ShopifyImage | null }[] };
+  } | null;
 };
 
 /** A product option, e.g. { name: "Colour", values: ["Black", "White"] }. */
@@ -161,6 +165,20 @@ const PRODUCT_FRAGMENT = `
         altText
         width
         height
+      }
+      variantGallery: metafield(namespace: "custom", key: "variant_gallery") {
+        references(first: 25) {
+          nodes {
+            ... on MediaImage {
+              image {
+                url
+                altText
+                width
+                height
+              }
+            }
+          }
+        }
       }
     }
   }

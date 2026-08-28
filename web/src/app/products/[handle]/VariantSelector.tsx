@@ -1,7 +1,7 @@
 "use client";
 import { useMemo, useState, useEffect } from "react";
 import { Check } from "lucide-react";
-import { ShopifyProduct, ShopifyVariant, formatPrice } from "@/lib/shopify";
+import { ShopifyProduct, ShopifyVariant, ShopifyImage, formatPrice } from "@/lib/shopify";
 import { useCartContext as useCart } from "@/contexts/CartContext";
 import { useProductMedia } from "@/components/ProductMediaSync";
 
@@ -150,6 +150,24 @@ export default function VariantSelector({ product }: { product: ShopifyProduct }
     const colour = selected[colourOption.name]?.toLowerCase().trim();
     if (!colour) return null;
     const all = product.images.nodes;
+
+    // 0. custom.variant_gallery metafield — the authoritative per-colour image
+    // set. Gather from every variant of this colour, de-duplicated by URL.
+    const galleryImages: ShopifyImage[] = [];
+    const seen = new Set<string>();
+    for (const v of variants) {
+      const isColour = v.selectedOptions.some(
+        (o) => o.name === colourOption.name && o.value.toLowerCase().trim() === colour
+      );
+      if (!isColour) continue;
+      for (const node of v.variantGallery?.references?.nodes ?? []) {
+        if (node.image && !seen.has(node.image.url)) {
+          seen.add(node.image.url);
+          galleryImages.push(node.image);
+        }
+      }
+    }
+    if (galleryImages.length > 0) return galleryImages;
 
     // 1. Match by alt text if alt text contains colour name
     const byAlt = all.filter((im) => (im.altText ?? "").toLowerCase().includes(colour));
