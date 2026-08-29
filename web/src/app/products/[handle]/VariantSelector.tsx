@@ -160,6 +160,12 @@ export default function VariantSelector({ product }: { product: ShopifyProduct }
         (o) => o.name === colourOption.name && o.value.toLowerCase().trim() === colour
       );
       if (!isColour) continue;
+      // The variant's featured image (the "hero" plate shot) goes first…
+      if (v.image && !seen.has(v.image.url)) {
+        seen.add(v.image.url);
+        galleryImages.push(v.image);
+      }
+      // …then the variant_gallery detail images (drape, blouse piece, border).
       for (const node of v.variantGallery?.references?.nodes ?? []) {
         if (node.image && !seen.has(node.image.url)) {
           seen.add(node.image.url);
