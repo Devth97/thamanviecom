@@ -66,7 +66,7 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
 
   useEffect(() => {
     setLoading(true);
-    fetch(`/api/shopify/products?sortKey=${sortKey}&first=100`)
+    fetch(`/api/shopify/products?sortKey=${sortKey}&first=250`)
       .then(r => r.json())
       .then(({ products: p }: { products: ShopifyProduct[] }) => {
         // Only update if we actually got products — never overwrite with empty

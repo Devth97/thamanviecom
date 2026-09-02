@@ -54,7 +54,7 @@ export default async function SareeLandingPage({
   if (!page) notFound();
 
   const { products: all } = await getProducts({
-    first: 100,
+    first: 250,
     sortKey: "CREATED_AT",
     reverse: true,
   }).catch(() => ({ products: [] as ShopifyProduct[], hasNextPage: false, endCursor: null }));

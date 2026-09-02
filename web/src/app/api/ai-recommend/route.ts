@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   const handle = typeof body?.handle === "string" ? body.handle : "";
   if (!handle) return NextResponse.json({ error: "Missing product handle." }, { status: 400 });
 
-  const { products } = await getProducts({ first: 100, sortKey: "CREATED_AT", reverse: true }).catch(
+  const { products } = await getProducts({ first: 250, sortKey: "CREATED_AT", reverse: true }).catch(
     () => ({ products: [] as ShopifyProduct[], hasNextPage: false, endCursor: null })
   );
 
