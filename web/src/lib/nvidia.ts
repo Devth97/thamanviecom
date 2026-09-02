@@ -58,6 +58,12 @@ interface CallOpts {
   timeoutMs?: number;
 }
 
+/**
+ * Minimum token budget. Reasoning models emit hidden reasoning first, so a
+ * 256-token cap left `content` empty and silently broke the stylist.
+ */
+const REASONING_TOKEN_FLOOR = 1500;
+
 /** A model that's retired/missing/overloaded — worth falling through to the next. */
 const shouldTryNextModel = (status: number) =>
   status === 404 || status === 410 || status === 429 || status >= 500;
@@ -82,7 +88,13 @@ async function callOnce(
         model,
         messages,
         temperature: opts.temperature ?? 0.2,
-        max_tokens: opts.maxTokens ?? 512,
+        // Reasoning models (gpt-oss, nemotron) spend max_tokens on hidden
+        // reasoning BEFORE emitting content — with a small budget they return
+        // an empty answer. Keep a floor so the actual reply always fits.
+        max_tokens: Math.max(opts.maxTokens ?? 512, REASONING_TOKEN_FLOOR),
+        // Verified safe on every model in our chains; keeps reasoning short so
+        // responses stay fast.
+        reasoning_effort: "low",
       }),
     });
 
@@ -96,7 +108,10 @@ async function callOnce(
     }
 
     const data = await res.json();
-    return data.choices?.[0]?.message?.content ?? "";
+    const msg = data.choices?.[0]?.message ?? {};
+    // Reasoning models sometimes leave `content` null and put everything in
+    // `reasoning`; use that rather than returning nothing.
+    return (msg.content || msg.reasoning || "") as string;
   } finally {
     clearTimeout(timeout);
   }
