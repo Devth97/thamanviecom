@@ -11,7 +11,9 @@ const collections = [
   { num: "02", handle: "banarasi-silk", href: "/?type=Banarasi#shop", title: "Banarasi Silk", origin: "Varanasi, UP", desc: "Royal brocade weaving with intricate motifs from the holy city.", image: "/collections/banarasi-silk.png" },
   { num: "03", handle: "mysore-silk", href: "/?type=Mysore Silk#shop", title: "Mysore Silk", origin: "Mysuru, Karnataka", desc: "Lustrous silk with pure gold zari, the pride of Karnataka.", image: "/collections/mysore-silk.png" },
   { num: "04", handle: "wedding-silk", href: "/?occasion=Wedding#shop", title: "Bridal Collection", origin: "Curated Selection", desc: "The most auspicious sarees for your most treasured moments.", image: "/collections/wedding-silk.png" },
-  { num: "05", handle: "casual-cotton", href: "/?fabric=Cotton#shop", title: "Cotton Weaves", origin: "South India", desc: "Lightweight elegance for everyday grace and comfort.", image: "/collections/casual-cotton.jpg" },
+  // Matches the tag "Cotton Saree" (not plain "Cotton") — the men's shirts are
+  // cotton too, so the broader term pulled in the wrong category.
+  { num: "05", handle: "casual-cotton", href: "/?fabric=Cotton Saree#shop", title: "Cotton Weaves", origin: "South India", desc: "Lightweight elegance for everyday grace and comfort.", image: "/collections/casual-cotton.jpg" },
 ];
 
 export default function CollectionsShowcase() {
