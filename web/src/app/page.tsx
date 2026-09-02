@@ -36,14 +36,15 @@ export default async function HomePage() {
         <div className="mx-auto max-w-7xl px-4 py-4">
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
             {[
+              // Saree quick-links only. "Cotton" was dropped (no cotton sarees
+              // in the catalogue — it led to an empty grid) and "Men's Wear" /
+              // "Kurtas" were dropped as duplicates of the MEN nav link and the
+              // Men's Wear section further down this page.
               { label: "All Sarees", href: "/#shop" },
               { label: "Kanjivaram", href: "/?type=Kanjivaram#shop" },
               { label: "Banarasi", href: "/?type=Banarasi#shop" },
               { label: "Mysore Silk", href: "/?type=Mysore Silk#shop" },
               { label: "Wedding", href: "/?occasion=Wedding#shop" },
-              { label: "Cotton", href: "/?fabric=Cotton#shop" },
-              { label: "Men's Wear", href: "/#mens" },
-              { label: "Kurtas", href: "/#mens" },
             ].map(({ label, href }) => (
               <a
                 key={label}
