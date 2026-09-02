@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getProducts, type ShopifyProduct } from "@/lib/shopify";
 import { callNvidia, parseJsonReply, AiError, VISION_MODELS } from "@/lib/nvidia";
+import { isMensWear } from "@/lib/mensWear";
 
 /**
  * Visual search — the shopper uploads a photo; a multimodal model reads its
@@ -13,6 +14,8 @@ import { callNvidia, parseJsonReply, AiError, VISION_MODELS } from "@/lib/nvidia
  * kurtas, which then matched nothing.
  */
 interface VisualFilter {
+  /** "saree" | "kurta" | "shirt" | "other" — keeps results in the right aisle. */
+  garment: string;
   colors: string[];
   fabrics: string[];
   types: string[];
@@ -36,13 +39,14 @@ function facetMatch(haystack: string, facet: string[]): boolean {
 }
 
 const VISION_PROMPT =
-  'Look at this clothing photo (it may be a saree, kurta, shirt or other garment) and describe it as ONLY this JSON: ' +
-  '{"colors":[],"fabrics":[],"types":[],"keywords":[]}. ' +
+  'Look at this clothing photo and describe it as ONLY this JSON: ' +
+  '{"garment":"","colors":[],"fabrics":[],"types":[],"keywords":[]}. ' +
+  'garment = exactly one of "saree","kurta","shirt","other" — what the item actually is. ' +
   'colors = the main colours you actually see (e.g. "red","navy blue","sage green"). ' +
   'fabrics = e.g. "Silk","Cotton","Linen". ' +
-  'types = any of ["Banarasi","Kanjivaram","Mysore Silk","Semi Silk","Saree","Kurta","Shirt"] it resembles, else []. ' +
+  'types = weave if obvious (e.g. "Banarasi","Kanjivaram","Mysore Silk"), else []. ' +
   'keywords = notable features (e.g. "zari","floral","border","brocade","striped","formal"). ' +
-  'Always fill in colors — never return an empty colors array. No prose.';
+  'Always fill in garment and colors. No prose.';
 
 export async function POST(req: NextRequest) {
   const body = await req.json().catch(() => null);
@@ -71,6 +75,7 @@ export async function POST(req: NextRequest) {
 
     const parsed = parseJsonReply<Record<string, unknown>>(reply) ?? {};
     const filter: VisualFilter = {
+      garment: typeof parsed.garment === "string" ? parsed.garment.toLowerCase().trim() : "",
       colors: asArr(parsed.colors),
       fabrics: asArr(parsed.fabrics),
       types: asArr(parsed.types),
@@ -96,10 +101,20 @@ export async function POST(req: NextRequest) {
       () => ({ products: [] as ShopifyProduct[], hasNextPage: false, endCursor: null })
     );
 
+    // Keep results in the right aisle — a saree photo shouldn't return men's
+    // shirts just because "pink" appears in both. Fall back to the full
+    // catalogue if the category filter leaves nothing.
+    const wantsMens = filter.garment === "kurta" || filter.garment === "shirt";
+    const inCategory =
+      filter.garment && filter.garment !== "other"
+        ? products.filter((p) => isMensWear(p) === wantsMens)
+        : products;
+    const candidates = inCategory.length > 0 ? inCategory : products;
+
     // Rank by how much matches, weighting colour highest. Colour is NOT a hard
     // requirement any more — a fabric/type/keyword match should still surface a
     // product, otherwise one unusual colour word wipes out every result.
-    const scored = products
+    const scored = candidates
       .map((p) => {
         const hay = `${p.title} ${p.tags.join(" ")}`.toLowerCase();
         const score =
