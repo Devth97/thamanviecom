@@ -26,12 +26,32 @@ export async function POST(req: NextRequest) {
   const mens = isMensWear(current);
   const others = products.filter((p) => p.handle !== handle && isMensWear(p) === mens);
   if (others.length === 0) return NextResponse.json({ products: [] });
-  const catalog = others.map((p) => ({
+
+  /**
+   * Deterministic ranking by shared tags — used to shortlist candidates for the
+   * model, and as the fallback when the model is slow or unavailable so this
+   * section still shows something useful.
+   */
+  const currentTags = new Set(current.tags.map((t) => t.toLowerCase().trim()));
+  const byTagOverlap = [...others]
+    .map((p) => ({
+      p,
+      overlap: p.tags.filter((t) => currentTags.has(t.toLowerCase().trim())).length,
+    }))
+    .sort((a, b) => b.overlap - a.overlap);
+
+  // Keep the prompt small: a big catalogue made the reasoning model time out.
+  const shortlist = byTagOverlap.slice(0, 25).map((x) => x.p);
+  const catalog = shortlist.map((p) => ({
     handle: p.handle,
-    title: p.title,
-    tags: p.tags,
-    price: Math.round(Number(p.priceRange.minVariantPrice.amount)),
+    title: p.title.slice(0, 70),
+    tags: p.tags.slice(0, 4),
   }));
+
+  const fallback = byTagOverlap
+    .filter((x) => x.overlap > 0)
+    .slice(0, 4)
+    .map((x) => x.p);
 
   try {
     const reply = await callNvidia(
@@ -59,9 +79,11 @@ export async function POST(req: NextRequest) {
       .filter((p): p is ShopifyProduct => Boolean(p))
       .slice(0, 4);
 
-    return NextResponse.json({ products: picks });
+    // If the model returned nothing usable, still show related products.
+    return NextResponse.json({ products: picks.length > 0 ? picks : fallback });
   } catch (err) {
-    const e = err as AiError;
-    return NextResponse.json({ error: e.message, products: [] }, { status: e.status ?? 500 });
+    // Degrade to tag-overlap recommendations rather than hiding the section.
+    console.error("AI recommend degraded to tag overlap:", (err as AiError).message);
+    return NextResponse.json({ products: fallback });
   }
 }
