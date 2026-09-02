@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getProducts, type ShopifyProduct } from "@/lib/shopify";
+import { callNvidia, AiError, TEXT_MODELS } from "@/lib/nvidia";
 
 /**
  * AI Search — natural-language product search powered by an NVIDIA-hosted LLM.
@@ -14,12 +15,6 @@ import { getProducts, type ShopifyProduct } from "@/lib/shopify";
  * Requires NVIDIA_API_KEY (free at build.nvidia.com). Model overridable via
  * NVIDIA_MODEL.
  */
-const NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
-// A FAST, SMALL instruct model — search must feel instant. Reasoning models
-// (e.g. GLM-5.2) and even 70B models can be slow/queued on the free tier; an 8B
-// instruct model is plenty for extracting a small filter from a short query.
-const NVIDIA_MODEL = process.env.NVIDIA_MODEL ?? "meta/llama-3.1-8b-instruct";
-
 const SYSTEM_PROMPT = `You convert a saree-shop customer's request into a JSON search filter.
 Extract ONLY attributes the customer explicitly states. If something is not mentioned, use null (prices) or [] (arrays). NEVER list options the customer did not ask for.
 
@@ -135,7 +130,7 @@ function facetMatches(haystack: string, facet: string[]): boolean {
 
 export function GET() {
   return NextResponse.json({
-    model: NVIDIA_MODEL,
+    models: TEXT_MODELS,
     keyConfigured: Boolean(process.env.NVIDIA_API_KEY),
   });
 }
@@ -156,49 +151,23 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Hard cap so a slow/hung upstream never leaves the shopper's search spinning.
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 20_000);
-
+  // The LLM only enriches the query. If it's unavailable (model retired, rate
+  // limited, slow) we DEGRADE to plain keyword matching below rather than
+  // failing the search — a shopper should always get results.
   let filter: SearchFilter = { ...EMPTY_FILTER };
+  let aiOk = true;
   try {
-    const res = await fetch(NVIDIA_URL, {
-      method: "POST",
-      signal: controller.signal,
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: NVIDIA_MODEL,
-        messages: [
-          { role: "system", content: SYSTEM_PROMPT },
-          { role: "user", content: query },
-        ],
-        temperature: 0.1,
-        max_tokens: 256,
-      }),
-    });
-
-    if (!res.ok) {
-      const detail = (await res.text()).slice(0, 300);
-      console.error("NVIDIA AI search error:", res.status, detail);
-      return NextResponse.json({ error: "AI Search is temporarily unavailable." }, { status: 502 });
-    }
-
-    const data = await res.json();
-    filter = parseFilter(data.choices?.[0]?.message?.content ?? "");
+    const reply = await callNvidia(
+      [
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: query },
+      ],
+      { temperature: 0.1, maxTokens: 256 }
+    );
+    filter = parseFilter(reply);
   } catch (err) {
-    if ((err as Error).name === "AbortError") {
-      return NextResponse.json(
-        { error: "AI Search took too long. Please try again." },
-        { status: 504 }
-      );
-    }
-    console.error("AI search failed:", err);
-    return NextResponse.json({ error: (err as Error).message }, { status: 500 });
-  } finally {
-    clearTimeout(timeout);
+    aiOk = false;
+    console.error("AI search degraded to keyword matching:", (err as AiError).message);
   }
 
   // Defend against the model dumping whole enum lists (= "no constraint").
@@ -253,6 +222,6 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({
     products: matched,
-    ...(debug ? { _debug: { filter, minPrice, maxPrice, matched: matched.length } } : {}),
+    ...(debug ? { _debug: { aiOk, filter, minPrice, maxPrice, matched: matched.length } } : {}),
   });
 }
