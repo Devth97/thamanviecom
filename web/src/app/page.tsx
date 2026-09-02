@@ -13,6 +13,7 @@ import MensWearSection from "@/components/MensWearSection";
 import GenderCurations from "@/components/GenderCurations";
 import { getProducts } from "@/lib/shopify";
 import { isMensWear } from "@/lib/mensWear";
+import { SAREE_QUICK_LINKS } from "@/lib/collections";
 import Link from "next/link";
 import { Suspense } from "react";
 
@@ -37,17 +38,11 @@ export default async function HomePage() {
       <div className="bg-[#FAF6F0] border-b border-[#E8DDD0]">
         <div className="mx-auto max-w-7xl px-4 py-4">
           <div className="flex items-center gap-2 overflow-x-auto no-scrollbar pb-1">
-            {[
-              // Saree quick-links only. "Cotton" was dropped (no cotton sarees
-              // in the catalogue — it led to an empty grid) and "Men's Wear" /
-              // "Kurtas" were dropped as duplicates of the MEN nav link and the
-              // Men's Wear section further down this page.
-              { label: "All Sarees", href: "/#shop" },
-              { label: "Kanjivaram", href: "/?type=Kanjivaram#shop" },
-              { label: "Banarasi", href: "/?type=Banarasi#shop" },
-              { label: "Mysore Silk", href: "/?type=Mysore Silk#shop" },
-              { label: "Wedding", href: "/?occasion=Wedding#shop" },
-            ].map(({ label, href }) => (
+            {/* "All Sarees" + every collection, from the same list that builds
+                the Our Collections cards, so the two can never drift apart.
+                Men's Wear/Kurtas are deliberately absent — the MEN nav link and
+                the Men's Wear section below already cover them. */}
+            {SAREE_QUICK_LINKS.map(({ label, href }) => (
               <a
                 key={label}
                 href={href}

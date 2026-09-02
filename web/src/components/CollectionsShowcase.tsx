@@ -5,22 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Link from "next/link";
 import Image from "next/image";
 
-// `href` routes to the Shop All section with the matching filter pre-applied.
-const collections = [
-  { num: "01", handle: "kanjivaram-silk", href: "/?type=Kanjivaram#shop", title: "Kanjivaram Silk", origin: "Kanchipuram, TN", desc: "Pure mulberry silk with gold zari. The queen of Indian sarees.", image: "/collections/kanjivaram-silk.png" },
-  { num: "02", handle: "banarasi-silk", href: "/?type=Banarasi#shop", title: "Banarasi Silk", origin: "Varanasi, UP", desc: "Royal brocade weaving with intricate motifs from the holy city.", image: "/collections/banarasi-silk.png" },
-  { num: "03", handle: "mysore-silk", href: "/?type=Mysore Silk#shop", title: "Mysore Silk", origin: "Mysuru, Karnataka", desc: "Lustrous silk with pure gold zari, the pride of Karnataka.", image: "/collections/mysore-silk.png" },
-  { num: "04", handle: "wedding-silk", href: "/?occasion=Wedding#shop", title: "Bridal Collection", origin: "Curated Selection", desc: "The most auspicious sarees for your most treasured moments.", image: "/collections/wedding-silk.png" },
-  // Matches the tag "Cotton Saree" (not plain "Cotton") — the men's shirts are
-  // cotton too, so the broader term pulled in the wrong category.
-  { num: "05", handle: "casual-cotton", href: "/?fabric=Cotton Saree#shop", title: "Cotton Weaves", origin: "South India", desc: "Lightweight elegance for everyday grace and comfort.", image: "/collections/casual-cotton.jpg" },
-  // Each of these matches its own full Shopify tag (e.g. "Fancy Saree") rather
-  // than a single word, so menswear and other fabrics can never leak in.
-  { num: "06", handle: "fancy-saree", href: "/?fabric=Fancy Saree#shop", title: "Fancy Saree", origin: "Party & Occasion", desc: "Contemporary designs with modern drape and detailing.", image: "/collections/fancy-saree.jpg" },
-  { num: "07", handle: "tissue-saree", href: "/?fabric=Tissue Saree#shop", title: "Tissue Saree", origin: "Festive Shimmer", desc: "Sheer, lightweight weave with a soft metallic glow.", image: "/collections/tissue-saree.jpg" },
-  { num: "08", handle: "crepe-saree", href: "/?fabric=Crepe Saree#shop", title: "Crepe Saree", origin: "Soft & Flowing", desc: "Fluid, feather-light fabric that drapes beautifully.", image: "/collections/crepe-saree.jpg" },
-  { num: "09", handle: "semi-silk-saree", href: "/?fabric=Semi Silk Saree#shop", title: "Semi Silk Saree", origin: "Everyday Elegance", desc: "The sheen of silk with easy, everyday comfort.", image: "/collections/semi-silk-saree.jpg" },
-];
+import { SAREE_COLLECTIONS as collections } from "@/lib/collections";
 
 export default function CollectionsShowcase() {
   const sectionRef = useRef<HTMLElement>(null);
