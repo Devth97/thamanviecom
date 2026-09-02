@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { SAREE_TYPE_FILTERS } from "@/lib/collections";
 
 const SORT_OPTIONS = [
   { label: "Bestsellers", value: "BEST_SELLING" },
@@ -10,7 +11,9 @@ const SORT_OPTIONS = [
 ];
 
 const OCCASIONS = ["Wedding", "Festive", "Party Wear", "Reception", "Casual", "Daily Wear"];
-const PRODUCT_TYPES = ["Banarasi", "Kanjivaram", "Mysore Silk", "Semi Silk", "Kurta", "Kurta Set"];
+// Sourced from the collections list so the Type checkboxes always match the
+// homepage collection cards and chips.
+const PRODUCT_TYPES = SAREE_TYPE_FILTERS;
 
 type Props = {
   sortKey: string;
