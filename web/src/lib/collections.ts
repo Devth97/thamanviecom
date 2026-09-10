@@ -39,6 +39,7 @@ const COLLECTIONS: SareeCollection[] = [
   { num: "07", handle: "tissue-saree", param: "type", tag: "Tissue Saree", title: "Tissue Saree", pill: "Tissue Saree", origin: "Festive Shimmer", desc: "Sheer, lightweight weave with a soft metallic glow.", image: "/collections/tissue-saree.jpg" },
   { num: "08", handle: "crepe-saree", param: "type", tag: "Crepe Saree", title: "Crepe Saree", pill: "Crepe Saree", origin: "Soft & Flowing", desc: "Fluid, feather-light fabric that drapes beautifully.", image: "/collections/crepe-saree.jpg" },
   { num: "09", handle: "semi-silk-saree", param: "type", tag: "Semi Silk Saree", title: "Semi Silk Saree", pill: "Semi Silk", origin: "Everyday Elegance", desc: "The sheen of silk with easy, everyday comfort.", image: "/collections/semi-silk-saree.jpg" },
+  { num: "10", handle: "salwar", param: "type", tag: "Salwar", title: "Salwar", pill: "Salwar", origin: "Elegance Suit", desc: "Elegant salwar suits for effortless style and comfort.", image: "/salwar.jpg" },
 ];
 
 /** Shop All link with this category's filter pre-applied. */
