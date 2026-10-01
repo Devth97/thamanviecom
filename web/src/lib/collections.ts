@@ -41,6 +41,7 @@ const COLLECTIONS: SareeCollection[] = [
   { num: "09", handle: "semi-silk-saree", param: "type", tag: "Semi Silk Saree", title: "Semi Silk Saree", pill: "Semi Silk", origin: "Everyday Elegance", desc: "The sheen of silk with easy, everyday comfort.", image: "/collections/semi-silk-saree.jpg" },
   { num: "10", handle: "salwar", param: "type", tag: "Salwar", title: "Salwar", pill: "Salwar", origin: "Elegance Suit", desc: "Elegant salwar suits for effortless style and comfort.", image: "/salwar.jpg" },
   { num: "11", handle: "georgette-saree", param: "type", tag: "Georgette Saree", title: "Georgette Saree", pill: "Georgette Saree", origin: "Floral collection", desc: "Floral sarees in vibrant colours for graceful everyday style.", image: "/collections/georgette-saree.jpg" },
+  { num: "12", handle: "tussar-saree", param: "type", tag: "Tussar Saree", title: "Tussar Saree", pill: "Tussar Saree", origin: "Tussar saree collections", desc: "Elegant Tussar sarees for timeless traditional style.", image: "/collections/tussar-saree.jpg" },
 ];
 
 /** Shop All link with this category's filter pre-applied. */
