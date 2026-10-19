@@ -6,6 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 
 import { SAREE_COLLECTIONS as collections } from "@/lib/collections";
+import { mediaUrl } from "@/lib/media";
 
 export default function CollectionsShowcase() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -47,7 +48,7 @@ export default function CollectionsShowcase() {
               {/* Collection image — shorter aspect on mobile */}
               <div className="relative aspect-[3/4] w-full bg-[#1A0A0A] overflow-hidden mb-2 md:mb-4">
                 <Image
-                  src={image}
+                  src={mediaUrl(image)}
                   alt={title}
                   fill
                   className="object-cover transition-transform duration-700 group-hover:scale-110"

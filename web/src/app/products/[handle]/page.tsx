@@ -17,7 +17,7 @@ import { ProductMediaProvider } from "@/components/ProductMediaSync";
 import { GOOGLE_RATING, GOOGLE_REVIEW_COUNT } from "@/data/googleReviews";
 import { isMensWear } from "@/lib/mensWear";
 
-export const revalidate = 60;
+export const revalidate = 600; // keep in sync with CATALOG_REVALIDATE_SECONDS
 
 export async function generateMetadata({
   params,
@@ -48,12 +48,12 @@ export default async function ProductPage({
   const [recommendations, collectionProducts, allStoreProducts] = await Promise.all([
     getProductRecommendations(product.id).catch(() => []),
     product.collections.nodes[0]
-      ? getProducts({ collection: product.collections.nodes[0].handle, first: 8 })
+      ? getProducts({ collection: product.collections.nodes[0].handle, first: 8, fields: "card" })
           .then(r => r.products.filter(p => p.id !== product.id).slice(0, 4))
           .catch(() => [])
       : Promise.resolve([]),
     // Always fetch store products as final fallback
-    getProducts({ first: 8, sortKey: "BEST_SELLING" })
+    getProducts({ first: 8, sortKey: "BEST_SELLING", fields: "card" })
       .then(r => r.products.filter(p => p.id !== product.id).slice(0, 4))
       .catch(() => []),
   ]);

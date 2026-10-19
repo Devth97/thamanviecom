@@ -2,6 +2,7 @@
 import { useRef, useEffect } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
+import { mediaUrl } from "@/lib/media";
 
 export default function HeroSection() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -42,7 +43,7 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-[#0D0808]" />
         {/* Silk video — full brightness, only text area darkened */}
         <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-90" aria-hidden="true">
-          <source src="/hero-silk.mp4" type="video/mp4" />
+          <source src={mediaUrl("/media/videos/hero-silk.mp4")} type="video/mp4" />
         </video>
         {/* Gradient only on the left third where text lives — right side shows full video */}
         <div className="absolute inset-0 bg-gradient-to-r from-[#0D0808]/90 via-[#0D0808]/50 to-transparent" />

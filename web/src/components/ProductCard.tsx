@@ -1,7 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
-import { ShopifyProduct, formatPrice } from "@/lib/shopify";
+import { ShopifyProductCard, formatPrice } from "@/lib/shopify";
 import WishlistButton from "./WishlistButton";
 import { useCartContext } from "@/contexts/CartContext";
 import { promoConfig, type PromoSurface } from "@/config/promo";
@@ -14,7 +14,7 @@ export default function ProductCard({
   product,
   surface,
 }: {
-  product: ShopifyProduct;
+  product: ShopifyProductCard;
   /** Which card surface this is on — gates promo display via config.showOn. */
   surface?: PromoSurface;
 }) {
@@ -23,7 +23,7 @@ export default function ProductCard({
   const hoverImage = product.images.nodes[1]; // second image on hover if available
   const price = product.priceRange.minVariantPrice;
   const firstVariantId = product.variants.nodes[0]?.id ?? "";
-  const inStock = product.variants.nodes.some(v => v.availableForSale);
+  const inStock = product.availableForSale;
 
   // Promo pricing is gated by the master switch and the per-surface toggle.
   const promoOn =

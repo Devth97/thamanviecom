@@ -49,6 +49,8 @@ export type ShopifyProduct = {
   title: string;
   description: string;
   descriptionHtml: string;
+  /** True when at least one variant can be bought. */
+  availableForSale: boolean;
   priceRange: { minVariantPrice: ShopifyMoney };
   compareAtPriceRange: { minVariantPrice: ShopifyMoney };
   images: { nodes: ShopifyImage[] };
@@ -67,13 +69,25 @@ export type ShopifyProduct = {
 
 export type ShopifyProductPreview = Pick<ShopifyProduct, "id" | "handle" | "title" | "images" | "priceRange">;
 
+/**
+ * The slice of a product that grids and cards need (PRODUCT_CARD_FRAGMENT).
+ * A full ShopifyProduct is assignable to it, so card components accept both.
+ */
+export type ShopifyProductCard = Pick<
+  ShopifyProduct,
+  "id" | "handle" | "title" | "tags" | "availableForSale" | "priceRange" | "compareAtPriceRange" | "images"
+> & {
+  variants: { nodes: Pick<ShopifyVariant, "id" | "availableForSale">[] };
+  collections: { nodes: { handle: string; title: string }[] };
+};
+
 export type ShopifyCollection = {
   id: string;
   handle: string;
   title: string;
   description: string;
   image: ShopifyImage | null;
-  products: { nodes: ShopifyProduct[] };
+  products: { nodes: ShopifyProductCard[] };
 };
 
 // Used by getCollections() which fetches partial product data
@@ -116,6 +130,7 @@ const PRODUCT_FRAGMENT = `
   title
   description
   descriptionHtml
+  availableForSale
   priceRange {
     minVariantPrice {
       amount
@@ -215,6 +230,49 @@ const PRODUCT_FRAGMENT = `
   }
 `;
 
+// Listing pages render hundreds of these, and the result is embedded in the
+// ISR page Vercel stores, so keep it to what ProductCard and the grid filters
+// read. Descriptions, every variant, metafields and media stay on the PDP.
+const PRODUCT_CARD_FRAGMENT = `
+  id
+  handle
+  title
+  tags
+  availableForSale
+  priceRange {
+    minVariantPrice {
+      amount
+      currencyCode
+    }
+  }
+  compareAtPriceRange {
+    minVariantPrice {
+      amount
+      currencyCode
+    }
+  }
+  images(first: 2) {
+    nodes {
+      url
+      altText
+      width
+      height
+    }
+  }
+  variants(first: 1) {
+    nodes {
+      id
+      availableForSale
+    }
+  }
+  collections(first: 1) {
+    nodes {
+      handle
+      title
+    }
+  }
+`;
+
 const CART_FRAGMENT = `
   id
   checkoutUrl
@@ -264,7 +322,22 @@ const CART_FRAGMENT = `
 
 // ─── Internal Fetch ───────────────────────────────────────────────────────────
 
-async function shopifyFetch<T>(query: string, variables?: Record<string, unknown>): Promise<T> {
+// How long catalogue reads stay in Next's data cache. Every refresh that
+// changes the output is a Vercel ISR write, so this trades freshness for cost.
+// Keep in sync with `export const revalidate` on the catalogue pages.
+export const CATALOG_REVALIDATE_SECONDS = 600;
+
+type FetchCacheOptions = Pick<RequestInit, "cache"> & { next?: { revalidate?: number } };
+
+const CATALOG_CACHE: FetchCacheOptions = { next: { revalidate: CATALOG_REVALIDATE_SECONDS } };
+// Carts are per-shopper and mutations must always reach Shopify, so never cache them.
+const NO_CACHE: FetchCacheOptions = { cache: "no-store" };
+
+async function shopifyFetch<T>(
+  query: string,
+  variables?: Record<string, unknown>,
+  cacheOptions: FetchCacheOptions = CATALOG_CACHE
+): Promise<T> {
   const domain = process.env.SHOPIFY_STORE_DOMAIN;
   const token = process.env.SHOPIFY_STOREFRONT_ACCESS_TOKEN;
 
@@ -281,7 +354,7 @@ async function shopifyFetch<T>(query: string, variables?: Record<string, unknown
       "X-Shopify-Storefront-Access-Token": token,
     },
     body: JSON.stringify({ query, variables }),
-    next: { revalidate: 60 },
+    ...cacheOptions,
   });
 
   if (!res.ok) {
@@ -303,28 +376,40 @@ async function shopifyFetch<T>(query: string, variables?: Record<string, unknown
 
 // ─── Products ─────────────────────────────────────────────────────────────────
 
-type GetProductsResult = {
-  products?: {
-    pageInfo: { hasNextPage: boolean; endCursor: string | null };
-    nodes: ShopifyProduct[];
-  };
-  collection?: {
-    products: {
-      pageInfo: { hasNextPage: boolean; endCursor: string | null };
-      nodes: ShopifyProduct[];
-    };
-  };
+type ProductConnection<P> = {
+  pageInfo: { hasNextPage: boolean; endCursor: string | null };
+  nodes: P[];
 };
 
-export async function getProducts(options: {
+type GetProductsResult<P> = {
+  products?: ProductConnection<P>;
+  collection?: { products: ProductConnection<P> };
+};
+
+type GetProductsOptions = {
   collection?: string;
   first?: number;
   after?: string;
   sortKey?: string;
   reverse?: boolean;
   query?: string;
-}): Promise<{ products: ShopifyProduct[]; hasNextPage: boolean; endCursor: string | null }> {
-  const { collection, first = 24, after, sortKey, reverse, query } = options;
+  /** "card" fetches only what product grids render; "full" (default) everything. */
+  fields?: "card" | "full";
+};
+
+type ProductsPage<P> = { products: P[]; hasNextPage: boolean; endCursor: string | null };
+
+export async function getProducts(
+  options: GetProductsOptions & { fields: "card" }
+): Promise<ProductsPage<ShopifyProductCard>>;
+export async function getProducts(
+  options: GetProductsOptions & { fields?: "full" }
+): Promise<ProductsPage<ShopifyProduct>>;
+export async function getProducts(
+  options: GetProductsOptions
+): Promise<ProductsPage<ShopifyProduct | ShopifyProductCard>> {
+  const { collection, first = 24, after, sortKey, reverse, query, fields = "full" } = options;
+  const PRODUCT_FIELDS = fields === "card" ? PRODUCT_CARD_FRAGMENT : PRODUCT_FRAGMENT;
 
   if (collection) {
     const gql = `
@@ -342,14 +427,14 @@ export async function getProducts(options: {
               endCursor
             }
             nodes {
-              ${PRODUCT_FRAGMENT}
+              ${PRODUCT_FIELDS}
             }
           }
         }
       }
     `;
 
-    const data = await shopifyFetch<GetProductsResult>(gql, {
+    const data = await shopifyFetch<GetProductsResult<ShopifyProduct | ShopifyProductCard>>(gql, {
       handle: collection,
       first,
       after: after ?? null,
@@ -378,13 +463,13 @@ export async function getProducts(options: {
             endCursor
           }
           nodes {
-            ${PRODUCT_FRAGMENT}
+            ${PRODUCT_FIELDS}
           }
         }
       }
     `;
 
-    const data = await shopifyFetch<GetProductsResult>(gql, {
+    const data = await shopifyFetch<GetProductsResult<ShopifyProduct | ShopifyProductCard>>(gql, {
       first,
       after: after ?? null,
       sortKey: sortKey ?? null,
@@ -475,9 +560,9 @@ export async function getCollection(handle: string): Promise<ShopifyCollection |
           width
           height
         }
-        products(first: 48) {
+        products(first: 48, sortKey: CREATED, reverse: true) {
           nodes {
-            ${PRODUCT_FRAGMENT}
+            ${PRODUCT_CARD_FRAGMENT}
           }
         }
       }
@@ -500,7 +585,7 @@ export async function getCart(cartId: string): Promise<ShopifyCart | null> {
       }
     }
   `;
-  const data = await shopifyFetch<{ cart: ShopifyCart | null }>(gql, { cartId });
+  const data = await shopifyFetch<{ cart: ShopifyCart | null }>(gql, { cartId }, NO_CACHE);
   return data.cart;
 }
 
@@ -515,7 +600,7 @@ export async function createCart(): Promise<ShopifyCart> {
     }
   `;
 
-  const data = await shopifyFetch<{ cartCreate: { cart: ShopifyCart } }>(gql);
+  const data = await shopifyFetch<{ cartCreate: { cart: ShopifyCart } }>(gql, undefined, NO_CACHE);
   return data.cartCreate.cart;
 }
 
@@ -533,7 +618,7 @@ export async function addToCart(
     }
   `;
 
-  const data = await shopifyFetch<{ cartLinesAdd: { cart: ShopifyCart } }>(gql, { cartId, lines });
+  const data = await shopifyFetch<{ cartLinesAdd: { cart: ShopifyCart } }>(gql, { cartId, lines }, NO_CACHE);
   return data.cartLinesAdd.cart;
 }
 
@@ -561,7 +646,7 @@ export async function updateCartLine(
   }>(gql, {
     cartId,
     lines: [{ id: lineId, quantity }],
-  });
+  }, NO_CACHE);
   if (data.cartLinesUpdate.userErrors.length > 0) {
     throw new Error(data.cartLinesUpdate.userErrors[0].message);
   }
@@ -582,22 +667,22 @@ export async function removeFromCart(cartId: string, lineIds: string[]): Promise
   const data = await shopifyFetch<{ cartLinesRemove: { cart: ShopifyCart } }>(gql, {
     cartId,
     lineIds,
-  });
+  }, NO_CACHE);
   return data.cartLinesRemove.cart;
 }
 
 // ─── Recommendations ──────────────────────────────────────────────────────────
 
-export async function getProductRecommendations(productId: string): Promise<ShopifyProduct[]> {
+export async function getProductRecommendations(productId: string): Promise<ShopifyProductCard[]> {
   const gql = `
     query GetProductRecommendations($productId: ID!) {
       productRecommendations(productId: $productId) {
-        ${PRODUCT_FRAGMENT}
+        ${PRODUCT_CARD_FRAGMENT}
       }
     }
   `;
 
-  const data = await shopifyFetch<{ productRecommendations: ShopifyProduct[] }>(gql, { productId });
+  const data = await shopifyFetch<{ productRecommendations: ShopifyProductCard[] }>(gql, { productId });
   return data.productRecommendations;
 }
 

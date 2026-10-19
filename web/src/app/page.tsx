@@ -9,6 +9,7 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import FAQSection from "@/components/FAQSection";
 import LocationSection from "@/components/LocationSection";
 import HomeShopSection from "@/components/HomeShopSection";
+import LazyVideo from "@/components/LazyVideo";
 import MensWearSection from "@/components/MensWearSection";
 import GenderCurations from "@/components/GenderCurations";
 import { getProducts } from "@/lib/shopify";
@@ -17,13 +18,13 @@ import { SAREE_QUICK_LINKS } from "@/lib/collections";
 import Link from "next/link";
 import { Suspense } from "react";
 
-export const revalidate = 60;
+export const revalidate = 600; // keep in sync with CATALOG_REVALIDATE_SECONDS
 
 export default async function HomePage() {
   // Newest uploaded first (no real sales history to rank "bestsellers" by).
   // 250 is Shopify's max page size. Keep it there so newly added products never
   // silently drop off the homepage as the catalogue grows.
-  const { products: allProducts } = await getProducts({ first: 250, sortKey: "CREATED_AT", reverse: true }).catch(() => ({ products: [], hasNextPage: false, endCursor: null }));
+  const { products: allProducts } = await getProducts({ first: 250, sortKey: "CREATED_AT", reverse: true, fields: "card" }).catch(() => ({ products: [], hasNextPage: false, endCursor: null }));
 
   // Split men's wear out of the saree catalogue so each gets its own section.
   const mensProducts = allProducts.filter(isMensWear);
@@ -72,9 +73,7 @@ export default async function HomePage() {
         <div className="grid md:grid-cols-2 min-h-[80vh]">
           {/* Left — video */}
           <div className="relative bg-[#0D0808] min-h-[50vh] md:min-h-[80vh]">
-            <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover opacity-90" aria-hidden="true">
-              <source src="/videos/saree-unfurling.mp4" type="video/mp4" />
-            </video>
+            <LazyVideo src="/media/videos/saree-unfurling.mp4" className="absolute inset-0 w-full h-full object-cover opacity-90" />
             <div className="absolute inset-0 bg-gradient-to-r from-transparent to-[#0D0808]/30" />
           </div>
           {/* Right — text on warm dark background */}
@@ -100,9 +99,7 @@ export default async function HomePage() {
 
       {/* Heritage video 1 — Hands weaving */}
       <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
-        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" aria-hidden="true">
-          <source src="/videos/hands-weaving.mp4" type="video/mp4" />
-        </video>
+        <LazyVideo src="/media/videos/hands-weaving.mp4" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#0D0808]/20 via-transparent to-[#0D0808]/60" />
         <div className="absolute inset-0 flex flex-col items-center justify-end pb-12 text-center px-4">
           <span className="text-[#B8860B] text-xs tracking-[0.3em] uppercase mb-2">The Craft</span>
@@ -112,9 +109,7 @@ export default async function HomePage() {
 
       {/* Heritage video 2 — Gold zari */}
       <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
-        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" aria-hidden="true">
-          <source src="/videos/gold-zari.mp4" type="video/mp4" />
-        </video>
+        <LazyVideo src="/media/videos/gold-zari.mp4" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-r from-[#0D0808]/60 via-transparent to-transparent" />
         <div className="absolute inset-0 flex flex-col items-start justify-center pl-8 md:pl-20">
           <span className="text-[#B8860B] text-xs tracking-[0.3em] uppercase mb-2">Pure Gold Zari</span>
@@ -124,9 +119,7 @@ export default async function HomePage() {
 
       {/* Heritage video 3 — Silk reeling */}
       <section className="relative h-[40vh] md:h-[60vh] overflow-hidden">
-        <video autoPlay muted loop playsInline className="absolute inset-0 w-full h-full object-cover" aria-hidden="true">
-          <source src="/videos/silk-reeling.mp4" type="video/mp4" />
-        </video>
+        <LazyVideo src="/media/videos/silk-reeling.mp4" className="absolute inset-0 w-full h-full object-cover" />
         <div className="absolute inset-0 bg-gradient-to-t from-[#0D0808]/70 via-transparent to-transparent" />
         <div className="absolute bottom-0 left-0 right-0 p-8 md:p-16 text-center">
           <span className="text-[#B8860B] text-xs tracking-[0.3em] uppercase mb-2 block">The Source</span>

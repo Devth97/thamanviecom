@@ -6,7 +6,7 @@ const BASE_URL = "https://thamanvi.com";
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [{ products }, collections] = await Promise.all([
-    getProducts({ first: 250 }).catch(() => ({ products: [], hasNextPage: false, endCursor: null })),
+    getProducts({ first: 250, fields: "card" }).catch(() => ({ products: [], hasNextPage: false, endCursor: null })),
     getCollections().catch(() => []),
   ]);
 

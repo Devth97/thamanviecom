@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect, useRef, useMemo } from "react";
 import { gsap } from "gsap";
-import { ShopifyCollection, ShopifyProduct } from "@/lib/shopify";
+import { ShopifyCollection, ShopifyProductCard } from "@/lib/shopify";
 import ProductCard from "@/components/ProductCard";
 import FilterSidebar from "@/components/FilterSidebar";
 import CartDrawer from "@/components/CartDrawer";
@@ -13,7 +13,7 @@ import { SlidersHorizontal, X } from "lucide-react";
 type Props = { collection: ShopifyCollection; showAllProducts?: boolean };
 
 export default function PLPClient({ collection, showAllProducts = false }: Props) {
-  const [allProducts, setAllProducts] = useState<ShopifyProduct[]>(collection.products.nodes);
+  const [allProducts, setAllProducts] = useState<ShopifyProductCard[]>(collection.products.nodes);
   const [sortKey, setSortKey] = useState("BEST_SELLING");
   const [loading, setLoading] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false); // mobile drawer
@@ -32,13 +32,19 @@ export default function PLPClient({ collection, showAllProducts = false }: Props
   // In showAllProducts mode the handle isn't a real collection, so fetch the
   // whole catalog (no collection filter) instead of an empty collection.
   useEffect(() => {
+    // The server already rendered the default sort (newest first), so skip the
+    // duplicate download on mount and only fetch when the shopper re-sorts.
+    if (sortKey === "BEST_SELLING" && collection.products.nodes.length > 0) {
+      setAllProducts(collection.products.nodes);
+      return;
+    }
     setLoading(true);
     const url = showAllProducts
       ? `/api/shopify/products?sortKey=${sortKey}&first=48`
       : `/api/shopify/products?collection=${collection.handle}&sortKey=${sortKey}&first=48`;
     fetch(url)
       .then(r => r.json())
-      .then(({ products: p }: { products: ShopifyProduct[] }) => {
+      .then(({ products: p }: { products: ShopifyProductCard[] }) => {
         // Never clobber a populated list with an empty response.
         if (p && p.length > 0) setAllProducts(p);
         const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -49,14 +55,14 @@ export default function PLPClient({ collection, showAllProducts = false }: Props
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [sortKey, collection.handle, showAllProducts]);
+  }, [sortKey, collection.handle, collection.products.nodes, showAllProducts]);
 
   // Client-side filtering
   const filteredProducts = useMemo(() => {
     // A product matches a filter if any selected value is either an exact tag
     // OR appears in the product name — so naming a saree "Kanjivaram Silk…"
     // makes it show under the Kanjivaram filter without needing a tag.
-    const matchesAny = (p: ShopifyProduct, selected: string[]) => {
+    const matchesAny = (p: ShopifyProductCard, selected: string[]) => {
       if (selected.length === 0) return true;
       const lowerTags = p.tags.map(t => t.toLowerCase());
       const title = p.title.toLowerCase();
@@ -68,7 +74,7 @@ export default function PLPClient({ collection, showAllProducts = false }: Props
 
     return allProducts.filter(p => {
       // In stock
-      if (inStockOnly && !p.variants.nodes.some(v => v.availableForSale)) return false;
+      if (inStockOnly && !p.availableForSale) return false;
       // Price
       const price = Number(p.priceRange.minVariantPrice.amount);
       if (price < priceRange[0] || price > priceRange[1]) return false;

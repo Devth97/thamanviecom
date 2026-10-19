@@ -1,6 +1,6 @@
 "use client";
 import { useState, useMemo } from "react";
-import type { ShopifyProduct } from "@/lib/shopify";
+import type { ShopifyProductCard } from "@/lib/shopify";
 import ProductCard from "@/components/ProductCard";
 
 const SUB_CATEGORIES = [
@@ -14,7 +14,7 @@ const SUB_CATEGORIES = [
  * Men's Wear homepage section with interactive sub-category filter pills
  * (e.g. Kurtas & Sets, Shirts, Pants & Dhotis).
  */
-export default function MensWearSection({ products }: { products: ShopifyProduct[] }) {
+export default function MensWearSection({ products }: { products: ShopifyProductCard[] }) {
   const [activeSubCat, setActiveSubCat] = useState("all");
 
   const filteredProducts = useMemo(() => {

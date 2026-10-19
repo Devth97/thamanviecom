@@ -3,7 +3,7 @@ import { redirect } from "next/navigation";
 import { getCollection, getCollections, getProducts, ShopifyCollection } from "@/lib/shopify";
 import PLPClient from "./PLPClient";
 
-export const revalidate = 60;
+export const revalidate = 600; // keep in sync with CATALOG_REVALIDATE_SECONDS
 
 // Map our nav handles to display names for graceful fallback
 const COLLECTION_NAMES: Record<string, string> = {
@@ -53,7 +53,7 @@ export default async function CollectionPage({
 
   // Collection not in Shopify yet — show all products with a friendly label
   const name = COLLECTION_NAMES[handle] ?? handle.replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase());
-  const { products } = await getProducts({ first: 48 }).catch(() => ({ products: [], hasNextPage: false, endCursor: null }));
+  const { products } = await getProducts({ first: 48, sortKey: "CREATED_AT", reverse: true, fields: "card" }).catch(() => ({ products: [], hasNextPage: false, endCursor: null }));
 
   const fallbackCollection: ShopifyCollection = {
     id: handle,

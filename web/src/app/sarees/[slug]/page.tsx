@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getProducts, type ShopifyProduct } from "@/lib/shopify";
+import { getProducts, type ShopifyProductCard } from "@/lib/shopify";
 import ProductCard from "@/components/ProductCard";
 import { LANDING_PAGES, getLandingPage } from "@/lib/landingPages";
 
-export const revalidate = 60;
+export const revalidate = 600; // keep in sync with CATALOG_REVALIDATE_SECONDS
 
 const BASE_URL = "https://thamanvi.com";
 
@@ -36,7 +36,7 @@ export async function generateMetadata({
 }
 
 /** Match products to a landing page by its terms against title + tags. */
-function matchProducts(products: ShopifyProduct[], terms: string[]): ShopifyProduct[] {
+function matchProducts(products: ShopifyProductCard[], terms: string[]): ShopifyProductCard[] {
   const lowered = terms.map((t) => t.toLowerCase());
   return products.filter((p) => {
     const haystack = `${p.title} ${p.tags.join(" ")}`.toLowerCase();
@@ -57,7 +57,8 @@ export default async function SareeLandingPage({
     first: 250,
     sortKey: "CREATED_AT",
     reverse: true,
-  }).catch(() => ({ products: [] as ShopifyProduct[], hasNextPage: false, endCursor: null }));
+    fields: "card",
+  }).catch(() => ({ products: [] as ShopifyProductCard[], hasNextPage: false, endCursor: null }));
 
   const products = matchProducts(all, page.match);
   const url = `${BASE_URL}/sarees/${page.slug}`;

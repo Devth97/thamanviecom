@@ -1,6 +1,7 @@
 "use client";
 import Image from "next/image";
 import Link from "next/link";
+import { mediaUrl } from "@/lib/media";
 
 export default function GenderCurations() {
   const CURATIONS = [
@@ -11,7 +12,7 @@ export default function GenderCurations() {
       subtitle: "Pure Kanjivarams, Banarasis & Silk Creations",
       cta: "Explore Sarees",
       href: "/#shop",
-      image: "/for-her.jpg",
+      image: "/for-her.webp",
       alt: "Thamanvi Silks For Her Collection",
     },
     {
@@ -21,7 +22,7 @@ export default function GenderCurations() {
       subtitle: "Royal Silk Kurtas, Sets & Traditional Wear",
       cta: "Explore Kurtas",
       href: "/#mens",
-      image: "/for-him.jpg",
+      image: "/for-him.webp",
       alt: "Thamanvi Silks For Him Collection",
     },
   ];
@@ -55,7 +56,7 @@ export default function GenderCurations() {
               <div className="relative w-full aspect-[4/5] sm:aspect-square overflow-hidden rounded-t-[75px] sm:rounded-t-[140px] md:rounded-t-[200px] rounded-b-xl border border-[#D4A96A]/40 shadow-lg group-hover:border-[#B8860B] transition-all duration-500 bg-[#0D0808]">
                 {/* Background Image */}
                 <Image
-                  src={item.image}
+                  src={mediaUrl(item.image)}
                   alt={item.alt}
                   fill
                   className="object-cover object-top transition-transform duration-700 ease-out group-hover:scale-105"

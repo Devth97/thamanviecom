@@ -2,14 +2,14 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useSearchParams } from "next/navigation";
 import { gsap } from "gsap";
-import { ShopifyProduct } from "@/lib/shopify";
+import { ShopifyProductCard } from "@/lib/shopify";
 import { isMensWear } from "@/lib/mensWear";
 import ProductCard from "@/components/ProductCard";
 import FilterSidebar from "@/components/FilterSidebar";
 import { SlidersHorizontal, X } from "lucide-react";
 
-export default function HomeShopSection({ initial }: { initial: ShopifyProduct[] }) {
-  const [allProducts, setAllProducts] = useState<ShopifyProduct[]>(initial);
+export default function HomeShopSection({ initial }: { initial: ShopifyProductCard[] }) {
+  const [allProducts, setAllProducts] = useState<ShopifyProductCard[]>(initial);
   const [sortKey, setSortKey] = useState("BEST_SELLING");
   const [loading, setLoading] = useState(false);
   const [filtersOpen, setFiltersOpen] = useState(false);
@@ -65,10 +65,16 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
   }, [queryString]);
 
   useEffect(() => {
+    // The page already rendered the default sort (newest first) server-side, so
+    // don't download the whole catalogue a second time on mount.
+    if (sortKey === "BEST_SELLING" && initial.length > 0) {
+      setAllProducts(initial);
+      return;
+    }
     setLoading(true);
     fetch(`/api/shopify/products?sortKey=${sortKey}&first=250`)
       .then(r => r.json())
-      .then(({ products: p }: { products: ShopifyProduct[] }) => {
+      .then(({ products: p }: { products: ShopifyProductCard[] }) => {
         // Only update if we actually got products — never overwrite with empty
         if (p && p.length > 0) {
           setAllProducts(p);
@@ -81,7 +87,7 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
       })
       .catch(() => {})
       .finally(() => setLoading(false));
-  }, [sortKey]);
+  }, [sortKey, initial]);
 
   const maxPrice = useMemo(() => {
     if (allProducts.length === 0) return 50000;
@@ -91,7 +97,7 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
   const filtered = useMemo(() => {
     // Match a filter value against the product's tags OR its name, so a saree
     // named "Kanjivaram Silk…" shows under the Kanjivaram filter without a tag.
-    const matchesAny = (p: ShopifyProduct, selected: string[]) => {
+    const matchesAny = (p: ShopifyProductCard, selected: string[]) => {
       if (selected.length === 0) return true;
       const lowerTags = p.tags.map(t => t.toLowerCase());
       const title = p.title.toLowerCase();
@@ -106,7 +112,7 @@ export default function HomeShopSection({ initial }: { initial: ShopifyProduct[]
     const baseProducts = allProducts.filter(p => !isMensWear(p));
 
     return baseProducts.filter(p => {
-      if (inStockOnly && !p.variants.nodes.some(v => v.availableForSale)) return false;
+      if (inStockOnly && !p.availableForSale) return false;
       const price = Number(p.priceRange.minVariantPrice.amount);
       if (price < priceRange[0] || price > priceRange[1]) return false;
       if (!matchesAny(p, selectedOccasions)) return false;
