@@ -192,10 +192,9 @@ export default async function ProductPage({
             </div>
 
             {/* Trust badges */}
-            <div className="grid grid-cols-3 gap-2 pt-2 border-t border-[#E8DDD0]">
+            <div className="grid grid-cols-2 gap-2 pt-2 border-t border-[#E8DDD0]">
               {[
                 { icon: "🚚", label: "Free Shipping", sub: "Pan India" },
-                { icon: "📦", label: "Open Box Return", sub: "On delivery only" },
                 { icon: "✓", label: "100% Authentic", sub: mens ? "Quality Checked" : "Pure Silk Certified" },
               ].map(({ icon, label, sub }) => (
                 <div key={label} className="flex flex-col items-center text-center py-3 rounded border border-[#E8DDD0]">
